@@ -1,6 +1,6 @@
 function IdeStatus({ isConnected = false }) {
     return (
-        <div className="flex justify-end w-full h-[6.39vh]">
+        <div className="flex justify-end w-full h-[6.39vh] select-none">
             <div 
                 className={`
                     flex justify-center items-center w-[11.93vw] h-full rounded-[1.04vw] border text-[2.22vh] font-bold transition-colors
