@@ -5,8 +5,8 @@ function IdeStatus({ isConnected = false }) {
                 className={`
                     flex justify-center items-center w-[11.93vw] h-full rounded-[1.04vw] border text-[2.22vh] font-bold transition-colors
                     ${isConnected 
-                        ? 'bg-green500-10 border-green500-20 text-green400' 
-                        : 'bg-red500-10 border-red500-20 text-red400'
+                        ? 'bg-green500-10 border-[0.09vh] border-green500-20 text-green400' 
+                        : 'bg-red500-10 border-[0.09vh] border-red500-20 text-red400'
                     }
                 `}
             >

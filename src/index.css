@@ -86,7 +86,10 @@
 
 @layer components {
   .panel-base {
-    @apply flex flex-col items-center bg-white-3 border border-white-5 rounded-[1.04vw];
+    @apply flex flex-col items-center bg-white-3 border-[0.09vh] border-white-5 rounded-[1.04vw];
+  }
+  .panel-base:not(.no-hover):hover {
+    border-color: var(--color-purple400);
   }
   .panel-title {
     @apply text-[2.5vh] font-bold text-white;

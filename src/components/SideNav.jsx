@@ -7,7 +7,7 @@ function SideNav() {
     const [activeItem, setActiveItem] = useState('DASHBOARD');
 
     return (
-        <div className="panel-base justify-between w-[17vw] h-full py-[1.67vh] px-[0.94vw] select-none">
+        <div className="panel-base no-hover justify-between w-[17vw] h-full py-[1.67vh] px-[0.94vw] select-none">
             <div className="flex flex-col items-center w-[15.10vw] gap-[6.57vh]">
                 <div className="mt-[5.37vh] text-[3.7vh] font-bold text-purple400">CoFix</div>
 
@@ -23,8 +23,8 @@ function SideNav() {
                                 flex items-center w-full h-[7.12vh] px-[2.3vw] rounded-[1.04vw] 
                                 text-[1.85vh] transition-colors cursor-pointer
                                 ${isActive
-                                        ? 'bg-purple500-10 border border-purple500-20 text-purple400 font-bold'
-                                        : 'text-gray400 border border-transparent hover:bg-white-5'
+                                        ? 'bg-purple500-10 border-[0.09vh] border-purple500-20 text-purple400 font-bold'
+                                        : 'text-gray400 border-[0.09vh] border-transparent hover:bg-white-5'
                                     }
                             `}
                             >
