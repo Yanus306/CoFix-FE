@@ -2,9 +2,16 @@
 
 @theme {
   --color-background: #0F1115;
+  --color-gray800-50: rgba(31 41 55 / 50%);
   --color-gray400: #9CA3AF;
+
   --color-white-5: rgb(255 255 255 / 5%);
   --color-white-3: rgb(255 255 255 / 3%);
+
+  --color-purple500-20: rgb(143 57 248 / 20%);
+  --color-purple500-10: rgb(143 57 248 / 10%);
+  --color-purple400: rgba(158 134 245);
+
   --font-sans: "Pretendard", sans-serif;
 }
 
