@@ -71,7 +71,7 @@
 
 @layer components {
   .panel-base {
-    @apply flex flex-col items-center bg-white-3 border border-white-5 rounded-[5vh];
+    @apply flex flex-col items-center bg-white-3 border border-white-5 rounded-[1.04vw];
   }
   .panel-title {
     @apply text-[2.5vh] font-bold text-white;
