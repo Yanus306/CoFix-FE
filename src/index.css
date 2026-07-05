@@ -3,6 +3,8 @@
 @theme {
   --color-background: #0F1115;
   --color-gray400: #9CA3AF;
+  --color-white-5: rgb(255 255 255 / 5%);
+  --color-white-3: rgb(255 255 255 / 3%);
   --font-sans: "Pretendard", sans-serif;
 }
 
@@ -64,5 +66,14 @@
 @layer base {
   html, body {
     @apply bg-background text-gray400;
+  }
+}
+
+@layer components {
+  .panel-base {
+    @apply flex flex-col items-center bg-white-3 border border-white-5 rounded-[5vh];
+  }
+  .panel-title {
+    @apply text-[2.5vh] font-bold text-white;
   }
 }
