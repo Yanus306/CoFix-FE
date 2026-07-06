@@ -1,10 +1,16 @@
-import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import SettingIcon from "../assets/SettingIcon.png";
 
 function SideNav() {
-    const menuItems = ['DASHBOARD', 'REPORT', 'REVIEW NOTE', 'AI CHAT'];
+    const menuItems = [
+        { name: 'DASHBOARD', path: '/' },
+        { name: 'REPORT', path: '/report' },
+        { name: 'REVIEW NOTE', path: '/review-note' },
+        { name: 'AI CHAT', path: '/ai-chat' }
+    ];
 
-    const [activeItem, setActiveItem] = useState('DASHBOARD');
+    const location = useLocation(); 
+    const navigate = useNavigate();
 
     return (
         <div className="panel-base no-hover justify-between w-[17vw] h-full py-[1.67vh] px-[0.94vw] select-none">
@@ -13,12 +19,12 @@ function SideNav() {
 
                 <div className="flex flex-col gap-[1.02vh] w-[15.10vw]">
                     {menuItems.map((item) => {
-                        const isActive = activeItem === item;
+                        const isActive = location.pathname === item.path;
 
                         return (
                             <button
                                 key={item}
-                                onClick={() => setActiveItem(item)}
+                                onClick={() => navigate(item.path)}
                                 className={`
                                 flex items-center w-full h-[7.12vh] px-[2.3vw] rounded-[1.04vw] 
                                 text-[1.85vh] transition-colors cursor-pointer
@@ -28,7 +34,7 @@ function SideNav() {
                                     }
                             `}
                             >
-                                {item}
+                                {item.name}
                             </button>
                         );
                     })}

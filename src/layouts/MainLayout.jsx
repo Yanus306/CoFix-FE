@@ -5,7 +5,7 @@ import IdeStatus from '../components/IdeStatus';
 import IdeDisconnected from '../components/IdeDisconnected'; 
 
 export default function MainLayout() {
-  const [isConnected, setIsConnected] = useState(false); 
+  const [isConnected, setIsConnected] = useState(true); 
 
   return (
     <div className="flex justify-between w-[95.6vw] h-[92.6vh] my-[3.7vh] mx-[2.1vw]">
