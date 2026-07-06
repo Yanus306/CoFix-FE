@@ -1,5 +1,5 @@
 import CodingSummary from '../components/dashboard/CodingSummary';
-import CodeComparison from '../components/dashboard/CodeComparison';
+import CodeComparison from '../components/dashboard/AiCorrectionPanel';
 import VulnerabilityTop2 from '../components/dashboard/VulnerabilityTop2';
 import CustomQuiz from '../components/dashboard/CustomQuiz';
 
