@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SettingIcon from "../../assets/SettingIcon.png";
-// UserModal 컴포넌트 임포트 (경로는 실제에 맞게 수정해 주세요)
 import UserModal from "./UserModal"; 
 
 function SideNav() {
@@ -15,8 +14,23 @@ function SideNav() {
     const location = useLocation(); 
     const navigate = useNavigate();
     
-    // 모달 열림/닫힘 상태 관리
     const [isModalOpen, setIsModalOpen] = useState(false);
+    
+    const modalRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                setIsModalOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     return (
         <div className="panel-base no-hover flex flex-col justify-between w-[17vw] h-full py-[1.67vh] px-[0.94vw] select-none">
@@ -29,7 +43,7 @@ function SideNav() {
 
                         return (
                             <button
-                                key={item.path} // 수정됨: 객체 대신 string 속성 사용
+                                key={item.path} 
                                 onClick={() => navigate(item.path)}
                                 className={`
                                 flex items-center w-full h-[7.12vh] px-[2.3vw] rounded-[1.04vw] 
@@ -47,7 +61,10 @@ function SideNav() {
                 </div>
             </div>
 
-            <div className="relative flex justify-between items-center w-full h-[7.12vh] px-[2.3vw] bg-gray800-50 rounded-[1.04vw]">
+            <div 
+                ref={modalRef} 
+                className="relative flex justify-between items-center w-full h-[7.12vh] px-[2.3vw] bg-gray800-50 rounded-[1.04vw]"
+            >
                 {isModalOpen && (
                     <div className="absolute bottom-[8.5vh] left-[2vw] w-full z-10">
                         <UserModal />
