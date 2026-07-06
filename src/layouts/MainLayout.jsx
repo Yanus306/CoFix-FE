@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { useState } from 'react';
-import SideNav from '../components/SideNav';
+import SideNav from '../components/SideNav/SideNav';
 import IdeStatus from '../components/IdeStatus';
 import IdeDisconnected from '../components/IdeDisconnected'; 
 
