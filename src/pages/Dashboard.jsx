@@ -1,5 +1,5 @@
 import CodingSummary from '../components/dashboard/CodingSummary';
-import VulnerabilityScanner from '../components/dashboard/VulnerabilityScanner';
+import VulnerabilityScanner from '../components/dashboard/VulnerabilityScanner/VulnerabilityScanner';
 import VulnerabilityTop2 from '../components/dashboard/VulnerabilityTop2';
 import CustomQuiz from '../components/dashboard/CustomQuiz/CustomQuiz';
 
