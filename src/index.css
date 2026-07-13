@@ -2,9 +2,32 @@
 
 @theme {
   --color-background: #0F1115;
-  --color-gray400: #9CA3AF;
+  --color-gray900: rgb(31 31 31);
+  --color-gray800-50: rgb(31 41 55 / 50%);
+  --color-gray700: rgb(55 65 81);
+  --color-gray400: rgb(156 163 175);
+  --color-gray200: rgb(229 231 235);
+
   --color-white-5: rgb(255 255 255 / 5%);
   --color-white-3: rgb(255 255 255 / 3%);
+
+  --color-purple500: rgb(143 57 248);
+  --color-purple500-20: rgb(143 57 248 / 20%);
+  --color-purple500-10: rgb(143 57 248 / 10%);
+  --color-purple400: rgb(158 134 245);
+
+  --color-green500-30: rgb(34 197 94 / 30%);
+  --color-green500-20: rgb(34 197 94 / 20%);
+  --color-green500-10: rgb(34 197 94 / 10%);
+  --color-green400: rgb(74 222 128);
+
+  --color-red500-30: rgb(239 68 68 / 30%);
+  --color-red500-20: rgb(239 68 68 / 20%);
+  --color-red500-10: rgb(239 68 68 / 10%);
+  --color-red400: rgb(248 113 113);
+
+  --color-yellow400: rgb(250 204 21);
+
   --font-sans: "Pretendard", sans-serif;
 }
 
@@ -65,13 +88,16 @@
 
 @layer base {
   html, body {
-    @apply bg-background text-gray400;
+    @apply flex w-screen h-screen bg-background text-gray400;
   }
 }
 
 @layer components {
   .panel-base {
-    @apply flex flex-col items-center bg-white-3 border border-white-5 rounded-[5vh];
+    @apply flex flex-col items-center bg-white-3 border-[0.09vh] border-white-5 rounded-[1.04vw];
+  }
+  .panel-base:not(.no-hover):hover {
+    border-color: var(--color-purple400);
   }
   .panel-title {
     @apply text-[2.5vh] font-bold text-white;
