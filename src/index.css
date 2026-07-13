@@ -6,6 +6,7 @@
   --color-gray800-50: rgb(31 41 55 / 50%);
   --color-gray700: rgb(55 65 81);
   --color-gray400: rgb(156 163 175);
+  --color-gray300: rgb(209 213 219);
   --color-gray200: rgb(229 231 235);
 
   --color-white-5: rgb(255 255 255 / 5%);
@@ -27,6 +28,8 @@
   --color-red400: rgb(248 113 113);
 
   --color-yellow400: rgb(250 204 21);
+  --color-yellow400-20: rgb(250 204 21 / 20%);
+  --color-yellow400-10: rgb(250 204 21 / 10%);
 
   --font-sans: "Pretendard", sans-serif;
 }
@@ -101,5 +104,20 @@
   }
   .panel-title {
     @apply text-[2.5vh] font-bold text-white;
+  }
+  .badge {
+    @apply flex justify-center items-center w-fit h-[2.22vh] px-[0.47vw] rounded-[0.74vh] text-[1.11vh] border-[0.09vh];
+  }
+  .badge-purple {
+    @apply bg-purple500-10 border-purple500-20 text-purple400;
+  }
+  .badge-red {
+    @apply bg-red500-10 border-red500-20 text-red400;
+  }
+  .badge-yellow {
+    @apply bg-yellow400-10 border-yellow400-20 text-yellow400;
+  }
+  .badge-white {
+    @apply bg-white-3 border-white-5 text-gray300;
   }
 }
