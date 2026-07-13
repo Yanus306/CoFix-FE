@@ -34,8 +34,8 @@ function AreaChartCore({ data, visible }) {
           <Area
             type="linear"
             dataKey="typeA"
-            stroke="rgb(143 57 248 / 30%)"
-            fill="rgb(143 57 248 / 10%)"
+            stroke="rgb(143 57 248 / 60%)"
+            fill="rgb(143 57 248 / 20%)"
             strokeWidth="0.1vh"
             hide={!visible.typeA}
           />
@@ -43,8 +43,8 @@ function AreaChartCore({ data, visible }) {
           <Area
             type="linear"
             dataKey="typeB"
-            stroke="rgb(59 130 246 / 30%)"
-            fill="rgb(59 130 246 / 10%)"
+            stroke="rgb(59 130 246 / 60%)"
+            fill="rgb(59 130 246 / 20%)"
             strokeWidth="0.1vh"
             hide={!visible.typeB}
           />
