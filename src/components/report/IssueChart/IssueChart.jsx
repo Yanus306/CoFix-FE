@@ -28,8 +28,8 @@ function IssueChart() {
   };
 
   return (
-    <div className="panel-base justify-center w-full h-[39.26vh] gap-[0.5vh]">
-      <div className="panel-title">약점 발생 및 개선 추이</div>
+    <div className="panel-base justify-center w-full h-[39.26vh] gap-[0.2vh]">
+      <div className="panel-title mt-[1vh] mb-[0.5vh]">약점 발생 및 개선 추이</div>
 
       <div className="flex gap-[1vw]">
         <button
