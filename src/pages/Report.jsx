@@ -2,7 +2,7 @@ import WholeSummary from "../components/report/WholeSummary";
 import SkillRadar from "../components/report/SkillRadar/SkillRadar";
 import TopIssues5 from "../components/report/TopIssues5";
 import BadgeList from "../components/report/BadgeList";
-import IssueChart from "../components/report/IssueChart";
+import IssueChart from "../components/report/IssueChart/IssueChart";
 
 function Report() {
   return (

@@ -121,4 +121,7 @@
   .badge-white {
     @apply bg-white-3 border-white-5 text-gray300;
   }
+  .badge-blue {
+    @apply bg-blue-500/10 border-blue-500/20 text-blue-400;
+  }
 }
