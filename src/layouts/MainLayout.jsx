@@ -7,7 +7,7 @@ import NotLoggedIn from '../components/NotLoggedIn';
 
 export default function MainLayout() {
   const [isConnected, setIsConnected] = useState(true); 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);  
+  const [isLoggedIn, setIsLoggedIn] = useState(true);  
 
   return (
     <div className="flex justify-between w-[95.6vw] h-[92.6vh] my-[3.7vh] mx-[2.1vw]">
