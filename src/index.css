@@ -13,6 +13,7 @@
   --color-white-3: rgb(255 255 255 / 3%);
 
   --color-purple500: rgb(143 57 248);
+  --color-purple500-30: rgb(143 57 248 / 30%);
   --color-purple500-20: rgb(143 57 248 / 20%);
   --color-purple500-10: rgb(143 57 248 / 10%);
   --color-purple400: rgb(158 134 245);
@@ -119,5 +120,8 @@
   }
   .badge-white {
     @apply bg-white-3 border-white-5 text-gray300;
+  }
+  .badge-blue {
+    @apply bg-blue-500/10 border-blue-500/20 text-blue-400;
   }
 }
