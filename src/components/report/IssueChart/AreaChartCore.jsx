@@ -8,7 +8,7 @@ import {
 
 function AreaChartCore({ data, visible }) {
   return (
-    <div className="w-[28vw] h-[26vh] mr-[2vw] outline-none">
+    <div className="w-[28vw] h-[26vh] mr-[2vw] outline-none pointer-events-none">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={data}
