@@ -1,3 +1,6 @@
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
 function QuizQuestion({
   currentQuizData,
   currentQuestionIndex,
@@ -21,12 +24,25 @@ function QuizQuestion({
 
       {currentQuizData.codeSnippet && (
         <div className="w-full bg-gray900 rounded-[1.04vw] p-[2vh] mb-[2.7778vh]">
-          <div className="text-gray400 text-[1vh] mb-[1vh] font-bold">
-            JavaScript
+          <div className="text-gray400 text-[1vh] mb-[1vh] font-bold uppercase">
+            {currentQuizData.language || "CODE"}
           </div>
-          <pre className="text-gray200 text-[1.2vh] font-mono whitespace-pre-wrap leading-relaxed">
-            <code>{currentQuizData.codeSnippet}</code>
-          </pre>
+          
+          <SyntaxHighlighter 
+            language={currentQuizData.language || "javascript"} 
+            style={vscDarkPlus}
+            customStyle={{
+              background: 'transparent', 
+              padding: 0,
+              margin: 0,
+              fontSize: '1.2vh',
+            }}
+            codeTagProps={{
+              className: 'font-mono leading-relaxed'
+            }}
+          >
+            {currentQuizData.codeSnippet}
+          </SyntaxHighlighter>
         </div>
       )}
 
