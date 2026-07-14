@@ -5,7 +5,7 @@ import { useQuizLogic } from "./useQuizLogic";
 function QuizPlay({ difficulty = "medium", onClose }) { 
   const difficultyMapping = {
     easy: { label: "쉬움", style: "bg-green500-10 border-green500-20" },
-    medium: { label: "보통", style: "bg-yellow500-10 border-yellow500-20" },
+    medium: { label: "보통", style: "bg-yellow400-10 border-yellow400-20" },
     hard: { label: "어려움", style: "bg-red500-10 border-red500-20" },
   };
   const currentDifficulty = difficultyMapping[difficulty] || difficultyMapping.medium;
@@ -61,7 +61,7 @@ function QuizPlay({ difficulty = "medium", onClose }) {
         <button
           onClick={handleMainButtonClick}
           disabled={!isAnswerSelected} 
-          className="flex justify-center items-center w-[5.4167vw] h-full bg-purple400 text-gray700 font-bold text-[1.4815vh] rounded-[1.04vw] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex justify-center items-center w-[5.4167vw] h-full bg-purple400 text-gray700 font-bold text-[1.4815vh] rounded-[1.04vw] cursor-pointer"
         >
           {!isAnswerChecked 
             ? "정답 확인" 
