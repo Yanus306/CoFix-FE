@@ -1,6 +1,24 @@
 import { useState } from "react";
 
-function QuizPlay({ difficulty = "보통" }) {
+function QuizPlay({ difficulty = "medium" }) { 
+  const difficultyMapping = {
+    easy: {
+      label: "쉬움",
+      style: "bg-green500-10 border-green500-20", 
+    },
+    medium: {
+      label: "보통",
+      style: "bg-yellow500-10 border-yellow500-20", 
+    },
+    hard: {
+      label: "어려움",
+      style: "bg-red500-10 border-red500-20",
+    },
+  };
+
+  // 넘어온 difficulty 값이 매핑 객체에 없으면 기본값으로 medium을 사용
+  const currentDifficulty = difficultyMapping[difficulty] || difficultyMapping.medium;
+
   const [quizData, setQuizData] = useState({
     title: "문제 1.",
     question:
@@ -18,14 +36,16 @@ function QuizPlay({ difficulty = "보통" }) {
 
   return (
     <div className="flex flex-col justify-between w-full h-full">
-      <div className="flex flex-col w-full h-full">
+      <div className="flex flex-col w-full h-[57vh]">
         {/* 헤더 영역 */}
-        <div className="flex items-center w-full h-[2.6852vh] mb-[2.7778vh] gap-[2vw]">
+        <div className="flex items-center w-full h-[2.6852vh] mb-[1.5vh] gap-[2vw]">
           <div className="text-[2.5926vh] font-bold text-white">
             실시간 맞춤 퀴즈
           </div>
-          <div className="flex justify-center items-center w-[4.7917vw] h-[2.6852vh] bg-yellow400-10 border-[0.09vh] border-yellow400-20 text-gray200 rounded-[1.04vw] text-[1.4vh]">
-            {difficulty}
+          
+          {/* 💡 2. 매핑된 스타일과 텍스트 적용 */}
+          <div className={`flex justify-center items-center w-[4.7917vw] h-[2.6852vh] border-[0.09vh] rounded-[1.04vw] text-[1.4vh] text-gray200 ${currentDifficulty.style}`}>
+            {currentDifficulty.label}
           </div>
         </div>
 
@@ -56,10 +76,10 @@ function QuizPlay({ difficulty = "보통" }) {
               <button
                 key={index}
                 onClick={() => setSelectedOption(index)}
-                className={`flex justify-center items-center min-w-[1vw] h-[2.7vh] px-[0.9375vw] text-[1.4815vh] rounded-[1.04vw] cursor-pointer transition-colors ${
+                className={`flex justify-center items-center min-w-[0.5vw] h-[2.7vh] px-[0.2vw] text-[1.4815vh] rounded-[1.04vw] cursor-pointer transition-colors ${
                   selectedOption === index
-                    ? "bg-purple500-10 text-purple400 border-purple500-20" 
-                    : "bg-white-3 border-[0.09vh] border-white-5" 
+                    ? "bg-purple500-10 text-purple400 border-purple500-20"
+                    : "bg-white-3 border-[0.09vh] border-white-5"
                 }`}
               >
                 {option}
@@ -70,13 +90,13 @@ function QuizPlay({ difficulty = "보통" }) {
       </div>
 
       {/* 하단 버튼 영역 */}
-      <div className="flex justify-end w-full h-[3.0556vh] gap-[1.0417vw] mt-auto">
+      <div className="flex justify-end w-full h-[3.2vh] gap-[1.0417vw]">
         <button className="flex justify-center items-center w-[5.4167vw] h-full bg-gray800-50 border-[0.09vh] border-gray500 text-gray400 text-[1.4815vh] rounded-[1.04vw] cursor-pointer">
           이전
         </button>
         <button
-          className="flex justify-center items-center w-[5.4167vw] h-full bg-purple400 text-gray700 font-bold text-[1.4815vh] rounded-[1.04vw] cursor-pointer"
-          disabled={selectedOption === null} 
+          className="flex justify-center items-center w-[5.4167vw] h-full bg-purple400 text-gray700 font-bold text-[1.4815vh] rounded-[1.04vw] cursor-pointer disabled:opacity-50"
+          disabled={selectedOption === null}
         >
           다음
         </button>
