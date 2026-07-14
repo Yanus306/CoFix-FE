@@ -71,11 +71,11 @@ function QuizPlay({ difficulty = "보통" }) {
 
       {/* 하단 버튼 영역 */}
       <div className="flex justify-end w-full h-[3.0556vh] gap-[1.0417vw] mt-auto">
-        <button className="flex justify-center items-center w-[5.4167vw] h-full bg-gray800-50 border-[0.09vh] border-gray500 text-gray400 text-[1.4815vh] rounded-[1.04vw] cursor-pointer hover:bg-gray700 transition-colors">
+        <button className="flex justify-center items-center w-[5.4167vw] h-full bg-gray800-50 border-[0.09vh] border-gray500 text-gray400 text-[1.4815vh] rounded-[1.04vw] cursor-pointer">
           이전
         </button>
         <button
-          className="flex justify-center items-center w-[5.4167vw] h-full bg-purple500 text-white font-bold text-[1.4815vh] rounded-[1.04vw] cursor-pointer hover:bg-purple400 transition-colors disabled:opacity-50"
+          className="flex justify-center items-center w-[5.4167vw] h-full bg-purple400 text-gray700 font-bold text-[1.4815vh] rounded-[1.04vw] cursor-pointer"
           disabled={selectedOption === null} 
         >
           다음
