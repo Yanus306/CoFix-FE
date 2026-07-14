@@ -1,5 +1,6 @@
-import { useState } from "react";
 import { mockQuizList } from "../../mocks/quizData"; 
+import QuizQuestion from "./QuizQuestion";
+import { useQuizLogic } from "./useQuizLogic";
 
 function QuizPlay({ difficulty = "medium", onClose }) { 
   const difficultyMapping = {
@@ -9,49 +10,17 @@ function QuizPlay({ difficulty = "medium", onClose }) {
   };
   const currentDifficulty = difficultyMapping[difficulty] || difficultyMapping.medium;
 
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState({});
-  const [checkedStatus, setCheckedStatus] = useState({});
-
-  const currentQuizData = mockQuizList[currentQuestionIndex];
-  
-  const isAnswerSelected = selectedAnswers[currentQuestionIndex] !== undefined;
-  const isAnswerChecked = checkedStatus[currentQuestionIndex] === true;
-  
-  const isCorrect = selectedAnswers[currentQuestionIndex] === currentQuizData.answerIndex;
-
-  const handleOptionClick = (index) => {
-    if (isAnswerChecked) return; 
-
-    setSelectedAnswers(prev => ({
-      ...prev,
-      [currentQuestionIndex]: index
-    }));
-  };
-
-  const handleMainButtonClick = () => {
-    if (!isAnswerChecked) {
-      setCheckedStatus(prev => ({
-        ...prev,
-        [currentQuestionIndex]: true
-      }));
-      return;
-    }
-
-    if (currentQuestionIndex < mockQuizList.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
-    } else {
-      if (onClose) {
-        onClose();
-      }
-    }
-  };
-
-  const handlePrevClick = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev - 1);
-    }
-  };
+  const {
+    currentQuestionIndex,
+    currentQuizData,
+    isAnswerSelected,
+    isAnswerChecked,
+    isCorrect,
+    selectedAnswer,
+    handleOptionClick,
+    handleMainButtonClick,
+    handlePrevClick
+  } = useQuizLogic({ quizList: mockQuizList, onClose });
 
   return (
     <div className="flex flex-col justify-between w-full h-full">
@@ -65,64 +34,15 @@ function QuizPlay({ difficulty = "medium", onClose }) {
         </div>
 
         {/* 문제 텍스트 및 코드 영역 */}
-        <div className="flex flex-col w-full mb-[2vh] overflow-y-auto pr-[2vw]">
-          <div className="mb-[1.1111vh] text-[2.2222vh] font-bold text-gray400">
-            {currentQuizData.title} 
-            <span className="text-[1.5vh] ml-[0.8vw] font-normal text-gray-500">
-              ({currentQuestionIndex + 1} / {mockQuizList.length})
-            </span>
-          </div>
-          <div className="mb-[2.7778vh] text-[2.2222vh] text-gray400 leading-relaxed">
-            {currentQuizData.question}
-          </div>
-
-          {currentQuizData.codeSnippet && (
-            <div className="w-full bg-gray900 rounded-[1.04vw] p-[2vh] mb-[2.7778vh]">
-              <div className="text-gray400 text-[1vh] mb-[1vh] font-bold">JavaScript</div>
-              <pre className="text-gray200 text-[1.2vh] font-mono whitespace-pre-wrap leading-relaxed">
-                <code>{currentQuizData.codeSnippet}</code>
-              </pre>
-            </div>
-          )}
-
-          {/* 객관식 선택지 영역 */}
-          <div className="flex justify-between mx-[2vw] mb-[2vh]">
-            {currentQuizData.options.map((option, index) => {
-              let optionStyle = "bg-white-3 border-white-5 text-gray-300"; 
-
-              if (isAnswerChecked) {
-                if (index === currentQuizData.answerIndex) {
-                  optionStyle = "bg-green500-10 border-green500-20 text-green400";
-                } else if (selectedAnswers[currentQuestionIndex] === index) {
-                  optionStyle = "bg-red500-10 border-red500-20 text-red400";
-                }
-              } else {
-                if (selectedAnswers[currentQuestionIndex] === index) {
-                  optionStyle = "bg-purple500-10 text-purple400 border-purple500-20";
-                }
-              }
-
-              return (
-                <button
-                  key={index}
-                  onClick={() => handleOptionClick(index)}
-                  className={`flex justify-center items-center min-w-[1vw] h-[2.7vh] px-[1.2vw] text-[1.4815vh] rounded-[1.04vw] transition-colors border-[0.09vh] ${optionStyle} ${isAnswerChecked ? "cursor-default" : "cursor-pointer"}`}
-                >
-                  {option}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* 해설 영역 */}
-          {isAnswerChecked && (
-            <div className={`mt-[1vh] mx-[2vw] text-[1.4815vh] leading-relaxed ${isCorrect ? 'text-green400' : 'text-red400'}`}>
-              <span className="font-bold mr-[0.5vw]">해설:</span>
-              {currentQuizData.explanation}
-            </div>
-          )}
-
-        </div>
+        <QuizQuestion 
+          currentQuizData={currentQuizData}
+          currentQuestionIndex={currentQuestionIndex}
+          totalLength={mockQuizList.length}
+          isAnswerChecked={isAnswerChecked}
+          selectedAnswer={selectedAnswer}
+          isCorrect={isCorrect}
+          onOptionClick={handleOptionClick}
+        />
       </div>
 
       {/* 하단 버튼 영역 */}
