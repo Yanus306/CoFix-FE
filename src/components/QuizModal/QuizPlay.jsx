@@ -16,20 +16,13 @@ function QuizPlay({ difficulty = "medium" }) {
     },
   };
 
-  // 넘어온 difficulty 값이 매핑 객체에 없으면 기본값으로 medium을 사용
   const currentDifficulty = difficultyMapping[difficulty] || difficultyMapping.medium;
 
   const [quizData, setQuizData] = useState({
     title: "문제 1.",
-    question:
-      "다음은 중복 요소를 확인하는 코드입니다. $O(N^2)$의 시간 복잡도를 $O(N)$으로 개선하려고 합니다. 빈칸 [ A ]와 [ B ]에 들어갈 적절한 코드는 무엇인가요?",
+    question: "다음은 중복 요소를 확인하는 코드입니다. $O(N^2)$의 시간 복잡도를 $O(N)$으로 개선하려고 합니다. 빈칸 [ A ]와 [ B ]에 들어갈 적절한 코드는 무엇인가요?",
     codeSnippet: `// AS-IS: $O(N^2)$\nconst hasDuplicate = (arr) => {\n  return arr.some((item, index) => arr.indexOf(item) !== index);\n};\n\n// TO-BE: $O(N)$\nconst optimizedHasDuplicate = (arr) => {\n  const seen = new [  A  ]();\n  return arr.some(item => {\n    if (seen.[  B  ](item)) return true;\n    seen.add(item);\n    return false;\n  });\n};`,
-    options: [
-      "1. A: Set, B: has",
-      "2. A: Array, B: find",
-      "3. A: Map, B: includes",
-      "4. A: Set, B: Contails",
-    ],
+    options: ["1. A: Set, B: has", "2. A: Array, B: find", "3. A: Map, B: includes", "4. A: Set, B: Contails"],
   });
 
   const [selectedOption, setSelectedOption] = useState(null);
@@ -42,15 +35,15 @@ function QuizPlay({ difficulty = "medium" }) {
           <div className="text-[2.5926vh] font-bold text-white">
             실시간 맞춤 퀴즈
           </div>
-          
-          {/* 💡 2. 매핑된 스타일과 텍스트 적용 */}
           <div className={`flex justify-center items-center w-[4.7917vw] h-[2.6852vh] border-[0.09vh] rounded-[1.04vw] text-[1.4vh] text-gray200 ${currentDifficulty.style}`}>
             {currentDifficulty.label}
           </div>
         </div>
 
-        {/* 문제 텍스트 영역 */}
-        <div className="flex flex-col w-full mb-[2vh] overflow-y-auto">
+        {/* 문제 텍스트 영역 (스크롤바 여백 수정 부분) */}
+        {/* 💡 핵심: pr-[2vw]를 추가하여 내부 콘텐츠를 밀어내고, 
+            스크롤바는 맨 오른쪽 끝(div의 경계선)에 위치하게 만들어 간격을 확보합니다. */}
+        <div className="flex flex-col w-full mb-[2vh] overflow-y-auto pr-[2vw]">
           <div className="mb-[1.1111vh] text-[2.2222vh] font-bold text-gray400">
             {quizData.title}
           </div>
