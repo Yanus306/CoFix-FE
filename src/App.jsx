@@ -4,6 +4,8 @@ import Dashboard from './pages/Dashboard';
 import Report from './pages/Report';
 import ReviewNote from './pages/ReviewNote';
 import AiChat from './pages/AiChat';
+import Login from './components/login/Login';
+import Create_account from './components/createaccount/Create_account';
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
           <Route path="/review-note" element={<ReviewNote />} />
           <Route path="/ai-chat" element={<AiChat />} />
         </Route>
+        <Route path="/sign-up" element={<Login />} />
+        <Route path="/create-account" element={<Create_account />} />
       </Routes>
     </BrowserRouter>
   );
