@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { mockQuizList } from "../../mocks/quizData"; 
 
-function QuizPlay({ difficulty = "medium" }) { 
+function QuizPlay({ difficulty = "medium", onClose }) { 
   const difficultyMapping = {
     easy: { label: "쉬움", style: "bg-green500-10 border-green500-20" },
     medium: { label: "보통", style: "bg-yellow500-10 border-yellow500-20" },
@@ -11,13 +11,14 @@ function QuizPlay({ difficulty = "medium" }) {
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
-  
   const [checkedStatus, setCheckedStatus] = useState({});
 
   const currentQuizData = mockQuizList[currentQuestionIndex];
   
   const isAnswerSelected = selectedAnswers[currentQuestionIndex] !== undefined;
   const isAnswerChecked = checkedStatus[currentQuestionIndex] === true;
+  
+  const isCorrect = selectedAnswers[currentQuestionIndex] === currentQuizData.answerIndex;
 
   const handleOptionClick = (index) => {
     if (isAnswerChecked) return; 
@@ -40,7 +41,9 @@ function QuizPlay({ difficulty = "medium" }) {
     if (currentQuestionIndex < mockQuizList.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
     } else {
-      alert("마지막 문제입니다! 채점 화면으로 이동(구현 필요)");
+      if (onClose) {
+        onClose();
+      }
     }
   };
 
@@ -65,7 +68,7 @@ function QuizPlay({ difficulty = "medium" }) {
         <div className="flex flex-col w-full mb-[2vh] overflow-y-auto pr-[2vw]">
           <div className="mb-[1.1111vh] text-[2.2222vh] font-bold text-gray400">
             {currentQuizData.title} 
-            <span className="text-[1.5vh] ml-2 font-normal text-gray-500">
+            <span className="text-[1.5vh] ml-[0.8vw] font-normal text-gray-500">
               ({currentQuestionIndex + 1} / {mockQuizList.length})
             </span>
           </div>
@@ -83,21 +86,42 @@ function QuizPlay({ difficulty = "medium" }) {
           )}
 
           {/* 객관식 선택지 영역 */}
-          <div className="flex justify-between mx-[2vw]">
-            {currentQuizData.options.map((option, index) => (
-              <button
-                key={index}
-                onClick={() => handleOptionClick(index)}
-                className={`flex justify-center items-center min-w-[1vw] h-[2.7vh] px-[1.2vw] text-[1.4815vh] rounded-[1.04vw] transition-colors ${
-                  selectedAnswers[currentQuestionIndex] === index
-                    ? "bg-purple500-10 text-purple400 border-purple500-20"
-                    : "bg-white-3 border-[0.09vh] border-white-5"
-                } ${isAnswerChecked ? "cursor-default" : "cursor-pointer"}`} // 확인 후에는 커서 변경
-              >
-                {option}
-              </button>
-            ))}
+          <div className="flex justify-between mx-[2vw] mb-[2vh]">
+            {currentQuizData.options.map((option, index) => {
+              let optionStyle = "bg-white-3 border-white-5 text-gray-300"; 
+
+              if (isAnswerChecked) {
+                if (index === currentQuizData.answerIndex) {
+                  optionStyle = "bg-green500-10 border-green500-20 text-green400";
+                } else if (selectedAnswers[currentQuestionIndex] === index) {
+                  optionStyle = "bg-red500-10 border-red500-20 text-red400";
+                }
+              } else {
+                if (selectedAnswers[currentQuestionIndex] === index) {
+                  optionStyle = "bg-purple500-10 text-purple400 border-purple500-20";
+                }
+              }
+
+              return (
+                <button
+                  key={index}
+                  onClick={() => handleOptionClick(index)}
+                  className={`flex justify-center items-center min-w-[1vw] h-[2.7vh] px-[1.2vw] text-[1.4815vh] rounded-[1.04vw] transition-colors border-[0.09vh] ${optionStyle} ${isAnswerChecked ? "cursor-default" : "cursor-pointer"}`}
+                >
+                  {option}
+                </button>
+              );
+            })}
           </div>
+
+          {/* 해설 영역 */}
+          {isAnswerChecked && (
+            <div className={`mt-[1vh] mx-[2vw] text-[1.4815vh] leading-relaxed ${isCorrect ? 'text-green400' : 'text-red400'}`}>
+              <span className="font-bold mr-[0.5vw]">해설:</span>
+              {currentQuizData.explanation}
+            </div>
+          )}
+
         </div>
       </div>
 
@@ -121,7 +145,7 @@ function QuizPlay({ difficulty = "medium" }) {
         >
           {!isAnswerChecked 
             ? "정답 확인" 
-            : (currentQuestionIndex === mockQuizList.length - 1 ? "제출" : "다음")
+            : (currentQuestionIndex === mockQuizList.length - 1 ? "나가기" : "다음")
           }
         </button>
       </div>

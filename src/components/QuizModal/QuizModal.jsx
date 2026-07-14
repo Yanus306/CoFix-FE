@@ -50,7 +50,7 @@ function QuizModal({ isOpen, onClose }) {
           )}
           
           {step === 'play' && (
-            <QuizPlay difficulty={difficulty} />
+            <QuizPlay difficulty={difficulty} onClose={handleCloseAndReset} />
           )}
         </div>
       </div>
