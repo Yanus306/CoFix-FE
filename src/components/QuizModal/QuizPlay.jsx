@@ -71,12 +71,12 @@ function QuizPlay({ difficulty = "medium" }) {
           )}
 
           {/* 객관식 선택지 영역 */}
-          <div className="grid grid-cols-4 gap-[1vw] mb-[2vh]">
+          <div className="flex justify-between mx-[2vw]">
             {quizData.options.map((option, index) => (
               <button
                 key={index}
                 onClick={() => setSelectedOption(index)}
-                className={`flex justify-center items-center min-w-[0.5vw] h-[2.7vh] px-[0.2vw] text-[1.4815vh] rounded-[1.04vw] cursor-pointer transition-colors ${
+                className={`flex justify-center items-center min-w-[1vw] h-[2.7vh] px-[1.2vw] text-[1.4815vh] rounded-[1.04vw] cursor-pointer transition-colors ${
                   selectedOption === index
                     ? "bg-purple500-10 text-purple400 border-purple500-20"
                     : "bg-white-3 border-[0.09vh] border-white-5"
