@@ -1,22 +1,29 @@
 import { useEffect } from "react";
+import Spinner from "./Spinner"
 
-function QuizLoading({ difficulty, onComplete }) {
-  
+function QuizLoading({ onComplete }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       onComplete();
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, [onComplete]); 
+  }, [onComplete]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-full">
-      <h2 className="text-[2vh] font-bold">
-        {difficulty === 'hard' ? '어려운' : difficulty === 'medium' ? '보통' : '쉬운'} 
-        난이도 퀴즈를 생성 중입니다...
-      </h2>
-      <p className="mt-4">잠시만 기다려주세요.</p>
+    <div className="flex flex-col justify-center items-center h-full gap-[1vh]">
+      <div className="flex flex-col items-center gap-[1.2vh]">
+        <div className="text-[3.7037vh] text-white font-bold">
+          실시간 맞춤 퀴즈 생성 중
+        </div>
+        <div className="text-[2.9630vh] text-gray400">
+          잠시만 기다려 주세요.
+        </div>
+      </div>
+
+      <div className="flex">
+        <Spinner />
+      </div>
     </div>
   );
 }
