@@ -1,6 +1,3 @@
-import { useState } from "react";
-import Pagination from "../components/Pagination";
-
 export default function ListDetailLayout({ leftContent, rightContent }) {
   return (
     <div className="flex w-full h-full bg-white-3 border-[0.09vh] border-white-5 rounded-[1.04vw]">

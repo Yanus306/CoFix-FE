@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function Pagination({
   currentPage,
   totalItems, 
@@ -8,7 +6,19 @@ export default function Pagination({
 }) {
   const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
 
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+  const maxVisiblePages = 5;
+
+  let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+  let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+  if (endPage - startPage + 1 < maxVisiblePages) {
+    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+  }
+
+  const visiblePages = Array.from(
+    { length: endPage - startPage + 1 },
+    (_, i) => startPage + i
+  );
 
   return (
     <div className="flex justify-center items-center mt-[1.4815vh] gap-[1.1458vw] text-gray400 text-[1.1111vh]">
@@ -21,8 +31,7 @@ export default function Pagination({
         &lt;
       </button>
 
-      {/* 페이지 번호 리스트 */}
-      {pages.map((page) => (
+      {visiblePages.map((page) => (
         <button
           key={page}
           onClick={() => onPageChange(page)}
