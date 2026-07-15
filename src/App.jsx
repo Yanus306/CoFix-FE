@@ -8,14 +8,23 @@ import ReviewNote from './pages/ReviewNote';
 import AiChat from './pages/AiChat';
 import Login from './components/login/Login';
 import Create_account from './components/createaccount/Create_account';
+import Create_done from './components/createaccount/Create_done'; // 3. 확장자 제거
 
 function App() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalOpen1, setIsModalOpen1] = useState(false);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);   // 로그인 모달
+  const [isModalOpen1, setIsModalOpen1] = useState(false); // 회원가입 모달
+  const [isDoneOpen, setIsDoneOpen] = useState(false);     // 완료 모달
+  
+  // 로그인 창 ➔ 회원가입 창 전환
   const handleSwitchToSignUp = () => {
     setIsModalOpen(false);
     setIsModalOpen1(true);
+  };
+
+  // 2. 회원가입 완료 시 동작할 함수 추가
+  const handleSignUpComplete = () => {
+    setIsModalOpen1(false); // 회원가입창 닫고
+    setIsDoneOpen(true);    // 완료창 열기
   };
 
   return (
@@ -29,8 +38,15 @@ function App() {
       <Create_account 
         isOpen1={isModalOpen1} 
         onClose1={() => setIsModalOpen1(false)} 
+        onSignUpComplete={handleSignUpComplete} // 2. 완료 이벤트 props 추가
       />
 
+      <Create_done 
+        isOpen={isDoneOpen} 
+        onClose={() => setIsDoneOpen(false)} 
+        onLoginClick={() => setIsModalOpen(true)} // 1. 정의된 함수 이름으로 수정
+      />
+        
       <BrowserRouter>
         <Routes>
           <Route element={<MainLayout />}>

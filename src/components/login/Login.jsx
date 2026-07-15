@@ -3,11 +3,11 @@ import logo from '../../assets/logo.png';
 function Login({ isOpen, onClose, onSignUpClick }) {
   
   return (
-    // 모달 배경 및 아웃사이드 클릭 닫기 처리
+    // 1. bg-black을 반투명한 bg-black/50으로 바꾸고, 블러 효과를 은은하게 [2px]로 조정 완료!
     <div 
       onClick={onClose}
-      className={`fixed inset-0 bg-black z-50 flex items-center justify-center transition-all duration-500 ${
-        isOpen ? 'opacity-100 visible backdrop-blur-sm' : 'opacity-0 invisible backdrop-blur-none'
+      className={`fixed inset-0 bg-black/50 z-50 flex items-center justify-center transition-all duration-500 ${
+        isOpen ? 'opacity-100 visible backdrop-blur-[2px]' : 'opacity-0 invisible backdrop-blur-none'
       }`}
     >
       {/* 로그인 모달 컨테이너 (내부 클릭 시 닫힘 방지) */}
@@ -63,7 +63,7 @@ function Login({ isOpen, onClose, onSignUpClick }) {
           <span>계정이 없으신가요? </span>
           <button
             onClick={onSignUpClick} 
-            className="text-purple400 text-[13px] underline cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple500"
+            className="text-purple400 text-[13px] underline cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple500 hover:text-purple400"
           >
             회원가입
           </button>
