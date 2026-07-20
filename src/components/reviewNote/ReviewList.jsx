@@ -1,5 +1,5 @@
 export default function ReviewList() {
   return (
-    <>오답노트 리스트</>
+    <div className = "font-bold text-[24px] text-gray200 ">나의 실수 리스트</div>
   );
 }
