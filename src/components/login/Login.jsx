@@ -1,9 +1,15 @@
 import logo from '../../assets/logo.png';
 
-function Login({ isOpen, onClose, onSignUpClick }) {
+function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
   
+  // 💡 엔터키를 눌렀을 때도 로그인이 실행되도록 돕는 함수
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      onLoginSuccess();
+    }
+  };
+
   return (
-    // 1. bg-black을 반투명한 bg-black/50으로 바꾸고, 블러 효과를 은은하게 [2px]로 조정 완료!
     <div 
       onClick={onClose}
       className={`fixed inset-0 bg-black/50 z-50 flex items-center justify-center transition-all duration-500 ${
@@ -41,6 +47,7 @@ function Login({ isOpen, onClose, onSignUpClick }) {
         <div className="text-gray200 w-full text-left px-20 mt-5 font-bold">아이디</div>
         <input 
           type="text" 
+          onKeyDown={handleKeyDown} // 💡 엔터키 감지 추가
           className="hover:bg-gray-600/50 w-[30vw] max-w-[570px] h-[5vh] max-h-[50px] bg-gray800-50 border-white-5 border rounded-lg cursor-pointer pl-4 text-white focus:outline-none focus:ring-2 focus:ring-purple500 transition-all"
         />
 
@@ -48,11 +55,13 @@ function Login({ isOpen, onClose, onSignUpClick }) {
         <div className="text-gray200 w-full text-left px-20 mt-5 font-bold">비밀번호</div>
         <input 
           type="password" 
+          onKeyDown={handleKeyDown} // 💡 엔터키 감지 추가
           className="hover:bg-gray-600/50 w-[30vw] max-w-[570px] h-[5vh] max-h-[50px] bg-gray800-50 border-white/5 border rounded-lg cursor-pointer pl-4 text-white focus:outline-none focus:ring-2 focus:ring-purple500 transition-all"
         />
 
         {/* 로그인 실행 버튼 */}
         <button 
+          onClick={onLoginSuccess}
           className="w-[15vw] max-w-[290px] h-[8vh] max-h-[80px] bg-gray800-50 border-white-5 border rounded-4xl cursor-pointer text-purple400 flex justify-center items-center text-[35px] mt-10 font-bold hover:bg-gray-600/50 transition-all focus:outline-none focus:ring-2 focus:ring-purple500"
         >
           로그인

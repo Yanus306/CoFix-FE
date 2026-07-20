@@ -1,5 +1,5 @@
 import { useState } from 'react'; 
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'; // 💡 useNavigate 추가
 import NotLoggedIn from './components/NotLoggedIn';
 import MainLayout from './layouts/MainLayout';
 import Dashboard from './pages/Dashboard';
@@ -8,23 +8,31 @@ import ReviewNote from './pages/ReviewNote';
 import AiChat from './pages/AiChat';
 import Login from './components/login/Login';
 import Create_account from './components/createaccount/Create_account';
-import Create_done from './components/createaccount/Create_done'; // 3. 확장자 제거
+import Create_done from './components/createaccount/Create_done'; 
 
-function App() {
-  const [isModalOpen, setIsModalOpen] = useState(false);   // 로그인 모달
-  const [isModalOpen1, setIsModalOpen1] = useState(false); // 회원가입 모달
-  const [isDoneOpen, setIsDoneOpen] = useState(false);     // 완료 모달
+function AppContent() {
+  const [isModalOpen, setIsModalOpen] = useState(false);   
+  const [isModalOpen1, setIsModalOpen1] = useState(false); 
+  const [isDoneOpen, setIsDoneOpen] = useState(false);    
+  const [isLoggedIn, setIsLoggedIn] = useState(false);  
   
-  // 로그인 창 ➔ 회원가입 창 전환
+  const navigate = useNavigate(); 
+
   const handleSwitchToSignUp = () => {
     setIsModalOpen(false);
     setIsModalOpen1(true);
   };
 
-  // 2. 회원가입 완료 시 동작할 함수 추가
   const handleSignUpComplete = () => {
-    setIsModalOpen1(false); // 회원가입창 닫고
-    setIsDoneOpen(true);    // 완료창 열기
+    setIsModalOpen1(false);
+    setIsDoneOpen(true);  
+  };
+
+  // 💡 로그인 성공 핸들러 보강
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);  
+    setIsModalOpen(false);
+    navigate('/dashboard');
   };
 
   return (
@@ -33,35 +41,50 @@ function App() {
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         onSignUpClick={handleSwitchToSignUp} 
+        onLoginSuccess={handleLoginSuccess}
       />
 
       <Create_account 
         isOpen1={isModalOpen1} 
         onClose1={() => setIsModalOpen1(false)} 
-        onSignUpComplete={handleSignUpComplete} // 2. 완료 이벤트 props 추가
+        onSignUpComplete={handleSignUpComplete}
       />
 
       <Create_done 
         isOpen={isDoneOpen} 
-        onClose={() => setIsDoneOpen(false)} 
-        onLoginClick={() => setIsModalOpen(true)} // 1. 정의된 함수 이름으로 수정
+        onClose={() => {
+          setIsDoneOpen(false);
+          setIsModalOpen(true); 
+        }} 
+        onLoginClick={() => {
+          setIsDoneOpen(false);
+          setIsModalOpen(true);
+        }}
       />
         
-      <BrowserRouter>
-        <Routes>
-          <Route element={<MainLayout />}>
-            <Route 
-              path="/" 
-              element={<NotLoggedIn onOpenLogin={() => setIsModalOpen(true)} />} 
-            />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/report" element={<Report />} />
-            <Route path="/review-note" element={<ReviewNote />} />
-            <Route path="/ai-chat" element={<AiChat />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <Routes>
+        <Route 
+          element={<MainLayout isLoggedIn={isLoggedIn} onOpenLogin={() => setIsModalOpen(true)} />}
+        >
+          {/* '/'로 접근하면 기본적으로 '/dashboard'로 리다이렉트 */}
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/report" element={<Report />} />
+          <Route path="/review-note" element={<ReviewNote />} />
+          <Route path="/ai-chat" element={<AiChat />} />
+        </Route>
+      </Routes>
     </>
+  );
+}
+
+// 💡 BrowserRouter가 AppContent를 감싸안도록 감싸주는 껍데기 App 역할
+function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
   );
 }
 

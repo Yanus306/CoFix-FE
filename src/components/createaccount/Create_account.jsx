@@ -27,8 +27,20 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete}) {
     onClose1();  // 창 닫기
   };
 
+  // 💡 1. 계정 생성 유효성 검사 (입력창들이 비어있거나, 비밀번호가 불일치하면 false)
+  const isFormValid = 
+    username.trim() !== '' &&
+    name.trim() !== '' &&
+    emailPrefix.trim() !== '' &&
+    password.length > 0 &&
+    confirmPassword.length > 0 &&
+    password === confirmPassword;
+
   // 최종 계정 생성용 핸들러
   const handleSignUpSubmit = () => {
+    // 💡 2. 방어 코드: 폼이 유효하지 않으면 함수 실행을 강제로 막음
+    if (!isFormValid) return;
+
     onSignUpComplete(); // 완료 창 띄우고
     resetForm();        // 값 비우기
   };
@@ -154,7 +166,12 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete}) {
         <div className="flex justify-end px-10 mt-10">
           <button 
             onClick={handleSignUpSubmit} 
-            className="bg-gray800-50 w-[8vw] max-w-[150px] h-[7.5vh] max-h-[70px] rounded-4xl border border-white-5 text-purple400 font-bold text-[25px] hover:bg-gray-600/50 transition-all focus:outline-none focus:ring-2 focus:ring-purple500"
+            disabled={!isFormValid} // 💡 3. 버튼 자체를 비활성화 시키는 비장의 무기
+            className={`w-[8vw] max-w-[150px] h-[7.5vh] max-h-[70px] rounded-4xl border border-white-5 font-bold text-[25px] transition-all focus:outline-none focus:ring-2 focus:ring-purple500 ${
+              isFormValid 
+                ? 'bg-gray800-50 text-purple400 cursor-pointer hover:bg-gray-600/50' 
+                : 'bg-gray800/20 text-purple400/30 cursor-not-allowed opacity-60' // 💡 4. 비활성화 시 스타일
+            }`}
           >
             계정생성
           </button>
