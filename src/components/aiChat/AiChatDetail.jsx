@@ -67,7 +67,7 @@ export default function AiChatDetail({ initialMessages = [], isNewChat, onCreate
       });
       
       setIsAiTyping(false);
-    }, 1500);
+    }, 4000);
   };
 
   const handleKeyDown = (e) => {
