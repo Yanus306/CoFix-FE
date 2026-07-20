@@ -63,7 +63,7 @@ function Login({ isOpen, onClose, onSignUpClick }) {
           <span>계정이 없으신가요? </span>
           <button
             onClick={onSignUpClick} 
-            className="text-purple400 text-[13px] underline cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple500 hover:text-purple400"
+            className="text-purple400 text-[13px] underline cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple500"
           >
             회원가입
           </button>
