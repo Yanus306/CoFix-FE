@@ -3,13 +3,18 @@ import SendIcon from "./SendIcon";
 import ChatBubble from "./ChatBubble";
 import TypingIndicator from "./TypingIndicator";
 
-export default function AiChatDetail() {
-  const [messages, setMessages] = useState([]);
+export default function AiChatDetail({ initialMessages = [] }) {
+  const [messages, setMessages] = useState(initialMessages);
   const [inputValue, setInputValue] = useState("");
   const [isAiTyping, setIsAiTyping] = useState(false); 
 
   const textareaRef = useRef(null);
   const messagesEndRef = useRef(null); 
+
+  // 리스트 항목 클릭 시 화면 전환 
+  useEffect(() => {
+    setMessages(initialMessages);
+  }, [initialMessages]);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -17,7 +22,6 @@ export default function AiChatDetail() {
     }
   }, [messages, isAiTyping]);
 
-  // 입력창 높이 자동 조절
   const handleResizeHeight = (e) => {
     setInputValue(e.target.value); 
     if (textareaRef.current) {
@@ -27,7 +31,6 @@ export default function AiChatDetail() {
     }
   };
 
-  // 메시지 전송 로직
   const handleSendMessage = () => {
     if (!inputValue.trim() || isAiTyping) return; 
 
@@ -45,7 +48,6 @@ export default function AiChatDetail() {
 
     setIsAiTyping(true);
 
-    // 가짜 API 통신 지연
     setTimeout(() => {
       const newAiMessage = {
         id: Date.now() + 1,
@@ -71,7 +73,6 @@ export default function AiChatDetail() {
         <div className="w-full h-[0.09vh] mb-[2.22vh] bg-gray400" />
       </div>
 
-      {/* 채팅 영역 */}
       <div className="flex flex-col w-full h-full overflow-y-auto pr-[1vw]">
         {messages.map((chat) => (
           <ChatBubble key={chat.id} role={chat.role} message={chat.message} />
@@ -84,7 +85,6 @@ export default function AiChatDetail() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* 입력창 */}
       <div className="flex w-full shrink-0 min-h-[7.13vh] mt-[1.5vh] mb-[2vh] bg-gray800-50 rounded-[1.04vw]">
         <textarea
           ref={textareaRef}

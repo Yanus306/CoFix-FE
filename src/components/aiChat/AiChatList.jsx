@@ -2,7 +2,7 @@ import { useState } from "react";
 import Pagination from "../Pagination";
 import { chatSessions } from "../../mocks/chatData";
 
-export default function AiChatList({ leftContent, rightContent }) {
+export default function AiChatList({ onNewChat, onSessionClick }) {
   const [currentPage, setCurrentPage] = useState(1);
   
   const itemsPerPage = 7;
@@ -18,7 +18,10 @@ export default function AiChatList({ leftContent, rightContent }) {
           <div className="text-[2.22vh] font-bold text-white">
             이전 채팅 세션
           </div>
-          <div className="flex justify-center items-center w-[4.17vw] h-[2.22vh] gap-[0.78vw] text-[1.11vh] text-gray400 bg-gray800-50 border-[0.09vh] border-white-5 rounded-[0.74vh] cursor-pointer">
+          <div 
+            onClick={onNewChat}
+            className="flex justify-center items-center w-[4.17vw] h-[2.22vh] gap-[0.78vw] text-[1.11vh] text-gray400 bg-gray800-50 border-[0.09vh] border-white-5 rounded-[0.74vh] cursor-pointer"
+          >
             <p> 새 채팅</p>
             <p> +</p>
           </div>
@@ -28,6 +31,7 @@ export default function AiChatList({ leftContent, rightContent }) {
           {currentSessions.map((session) => (
             <div
               key={session.id}
+              onClick={() => onSessionClick(session.id)}
               className="flex flex-col w-full h-[8.70vh] justify-center items-start px-[1.20vw] gap-[0.56vh] border-[0.09vh] border-white-5 rounded-[1.04vw] cursor-pointer hover:bg-white-5"
             >
               <div className="text-gray400 text-[1.85vh]">{session.title}</div>
