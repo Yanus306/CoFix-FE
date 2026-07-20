@@ -1,15 +1,14 @@
 import { useState } from "react";
 import Pagination from "../Pagination";
-import { chatSessions } from "../../mocks/chatData";
 
-export default function AiChatList({ onNewChat, onSessionClick }) {
+export default function AiChatList({ sessions, onNewChat, onSessionClick }) {
   const [currentPage, setCurrentPage] = useState(1);
   
   const itemsPerPage = 7;
-  const totalDataCount = chatSessions.length; 
+  const totalDataCount = sessions.length; 
   
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentSessions = chatSessions.slice(startIndex, startIndex + itemsPerPage);
+  const currentSessions = sessions.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <div className="flex flex-col justify-between w-full h-full">

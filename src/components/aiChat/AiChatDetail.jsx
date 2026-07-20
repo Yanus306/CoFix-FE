@@ -3,7 +3,7 @@ import SendIcon from "./SendIcon";
 import ChatBubble from "./ChatBubble";
 import TypingIndicator from "./TypingIndicator";
 
-export default function AiChatDetail({ initialMessages = [] }) {
+export default function AiChatDetail({ initialMessages = [], isNewChat, onCreateSession }) {
   const [messages, setMessages] = useState(initialMessages);
   const [inputValue, setInputValue] = useState("");
   const [isAiTyping, setIsAiTyping] = useState(false); 
@@ -11,7 +11,6 @@ export default function AiChatDetail({ initialMessages = [] }) {
   const textareaRef = useRef(null);
   const messagesEndRef = useRef(null); 
 
-  // 리스트 항목 클릭 시 화면 전환 
   useEffect(() => {
     setMessages(initialMessages);
   }, [initialMessages]);
@@ -26,8 +25,7 @@ export default function AiChatDetail({ initialMessages = [] }) {
     setInputValue(e.target.value); 
     if (textareaRef.current) {
       textareaRef.current.style.height = "0px";
-      textareaRef.current.style.height =
-        textareaRef.current.scrollHeight + "px";
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
     }
   };
 
@@ -40,23 +38,36 @@ export default function AiChatDetail({ initialMessages = [] }) {
       message: inputValue,
     };
     setMessages((prev) => [...prev, newUserMessage]);
-
     setInputValue("");
+    
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto"; 
     }
-
+    
     setIsAiTyping(true);
 
+    // AI 답변 도착 시뮬레이션
     setTimeout(() => {
       const newAiMessage = {
         id: Date.now() + 1,
         role: "ai",
         message: "백엔드에서 받아온 가짜 목업 데이터 응답입니다! 나중에는 이 부분을 실제 API 응답 값으로 교체하시면 됩니다.",
       };
-      setMessages((prev) => [...prev, newAiMessage]);
+      
+      setMessages((prev) => {
+        const updatedMessages = [...prev, newAiMessage];
+        
+        // 새 채팅에서 AI의 첫 응답이 온 순간, 부모에게 새 리스트 항목을 만들라고 알림
+        if (isNewChat && onCreateSession) {
+          // 나중에 진짜 API를 붙이면 "AI가 요약한 새 제목✨" 부분을 백엔드에서 받아온 제목으로 바꿔주시면 됩니다.
+          onCreateSession("백에서 받아온 제목", updatedMessages);
+        }
+        
+        return updatedMessages;
+      });
+      
       setIsAiTyping(false);
-    }, 4000);
+    }, 1500);
   };
 
   const handleKeyDown = (e) => {
