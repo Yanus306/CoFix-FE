@@ -1,31 +1,56 @@
-// 임시 세부내용 컴포넌트
 export default function ReviewDetail({ review }) {
-  // 선택된 리스트가 없을 때는 빈 투명 박스로 자리만 차지하게 만듦 (리스트 밀림 방지!)
-  if (!review) {
-    return (
-      <div className="w-[30vw] h-[60vh]" />
-    );
-  }
+  if (!review) return null;
 
-  // 리스트를 클릭했을 때 그 고정된 자리 안에서 내용만 스르륵 나타남
   return (
-    <div className="w-[30vw] h-[60vh] border border-purple500/20 rounded-3xl p-[2vw] flex flex-col gap-[2vh] text-white animate-fade-in duration-300">
-      <div className="flex justify-between items-center border-b border-purple500/10 pb-[1.5vh]">
-        <span className="font-bold text-[2.5vh] text-purple300">{review.badge}</span>
-        <span className="text-gray500 text-[1.3vh]">{review.date}</span>
+    <div 
+      key={review.id}
+      className="w-[183%] h-[79vh] border border-purple500/20 rounded-3xl p-[2.5vw] flex flex-col gap-[1.5vh] text-white animate-fade-in duration-300"
+    >
+      <div className="flex flex-col gap-[1vh] border-b border-purple500/10 pb-[1.5vh]">
+        <div className="font-bold text-[2.6vh] text-white tracking-tight leading-snug">
+          {review.content}
+        </div>
+        
+        <div className="flex justify-start items-center gap-[1vw] text-gray400 text-[1.55vh] w-full">
+          <div className="py-[0.3vh] text-gray400">
+            프로젝트: 2026_알고리즘_과제
+          </div>
+          
+          <div className="text-gray600 text-[1.4vh]">|</div>
+          
+          <div>
+            <span className="text-gray400 mr-[0.3vw]">발생일:</span>{review.date}
+          </div>
+        </div>
       </div>
       
-      <div className="flex flex-col gap-[1vh]">
-        <div className="text-gray400 text-[1.4vh] font-semibold">실수 요약</div>
-        <div className="text-[1.85vh] py-[0.5vh] text-gray200">{review.content}</div>
+      <div className="flex flex-col gap-[0.6vh]">
+        <div className="text-gray400 text-[1.55vh]">문제코드</div>
+        {/* 임시 코드 공백 */}
+        <div className="w-full h-[26vh] border border-dashed border-gray700 rounded-2xl flex items-center justify-center text-gray600 text-[1.5vh]">
+          (코드 영역 스킵)
+        </div>
       </div>
 
-      {/* 피드백 영역 */}
-      <div className="flex flex-col gap-[1vh] mt-auto">
-        <div className="text-gray400 text-[1.4vh]">💡 피드백 노트</div>
-        <p className="text-[1.48vh] text-gray500 leading-relaxed">
-          이 실수가 왜 발생했는지, 어떻게 해결했는지 상세 코드를 여기에 연동해봐! (ID: {review.id})
-        </p>
+      <div className="flex flex-col gap-[1.2vh] mt-[0.2vh]">
+        <div className="flex justify-between items-center w-full">
+          <div className="text-gray200 text-[2.35vh] font-semibold">
+            개념 요약 및 가이드
+          </div>
+          {/* 임시 가이드 공백 */}
+          <div className="flex items-center gap-[0.6vw]">
+            <button className="px-[0.9vw] py-[0.5vh] rounded-xl bg-red500-10 text-red400 text-[1.4vh] transition-all border border-solid border-red-500/20 cursor-pointer">
+              취소
+            </button>
+            <button className="px-[0.9vw] py-[0.5vh] rounded-xl bg-purple500/10 text-purple400 text-[1.4vh] transition-all border border-solid border-purple500/20 cursor-pointer">
+              저장
+            </button>
+          </div>
+        </div>
+        
+        <div className="w-full h-[19vh] border border-dashed border-gray700 rounded-2xl flex items-center justify-center text-gray600 text-[1.5vh]">
+          (가이드 영역 스킵)
+        </div>
       </div>
     </div>
   );

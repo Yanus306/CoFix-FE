@@ -44,7 +44,7 @@ export default function ReviewList() {
   const currentSelectedReview = reviews.find(item => item.id === selectedReviewId);
 
   return (
-    <div className="relative flex justify-center w-full max-w-[70vw] mx-auto select-none text-white">
+    <div className="relative flex justify-center w-full max-w-[85vw] mx-auto select-none text-white min-h-[65vh]">
       
       <div className="flex flex-col gap-[1.85vh] items-center flex-shrink-0">
         <div className="flex justify-between items-center w-[17.92vw]">        
@@ -58,18 +58,15 @@ export default function ReviewList() {
           </div>
         </div>
         
-        <div 
-          key={isLatestSort ? "latest" : "oldest"} 
-          className="flex flex-col gap-[1.85vh] animate-fade-in duration-300 transition-opacity ease-in-out"
-        >
+        <div className="flex flex-col gap-[1.85vh] min-h-[61.5vh]">
           {currentItems.map((item) => {
             const isSelected = item.id === selectedReviewId;
             return (
               <div 
                 key={item.id}
                 onClick={() => setSelectedReviewId(item.id)}
-                className={`border w-[17.92vw] h-[8.70vh] rounded-3xl px-[1.25vw] flex flex-col justify-center gap-[0.74vh] cursor-pointer transition-all duration-200
-                  ${isSelected ? "border-purple500" : "border-purple500/20"}`}
+                className={`border border-solid w-[17.92vw] h-[8.70vh] rounded-3xl px-[1.25vw] flex flex-col justify-center gap-[0.74vh] cursor-pointer transition-all duration-200 hover:bg-white-5
+                  ${isSelected ? "border-purple500 bg-purple-5" : "border-purple500/20"}`}
               >
                 <div className="flex justify-between items-center w-full">
                   <span className={`border text-[1.11vh] px-[0.78vw] py-[0.18vh] rounded-2xl ${badgeColors[item.badgeType] || "bg-gray-500/10 border-gray-500/20 text-gray-400"}`}>
@@ -88,7 +85,7 @@ export default function ReviewList() {
           })}
         </div>
 
-        <div className="mt-[2vh]">
+        <div className="mt-[0.5vh]">
           <Pagination
             currentPage={currentPage}
             totalItems={totalDataCount}
@@ -98,7 +95,12 @@ export default function ReviewList() {
         </div>
       </div>
 
-      <div className="absolute left-[calc(50%+11vw)] top-0">
+      <div 
+        className={`absolute top-0 transition-all duration-300 flex-shrink-0 ${
+          selectedReviewId ? "w-[30vw] opacity-100 visible" : "w-0 opacity-0 invisible overflow-hidden"
+        }`}
+        style={{ left: "calc(50% + 11vw)" }}
+      >
         <ReviewDetail review={currentSelectedReview} />
       </div>
 
