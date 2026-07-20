@@ -37,7 +37,8 @@ export default function AiChat() {
     <ListDetailLayout 
       leftContent={
         <AiChatList 
-          sessions={sessions} 
+          sessions={sessions}
+          currentSessionId={currentSessionId} 
           onNewChat={handleNewChat} 
           onSessionClick={handleSessionClick} 
         />

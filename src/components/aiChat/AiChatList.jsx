@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Pagination from "../Pagination";
 
-export default function AiChatList({ sessions, onNewChat, onSessionClick }) {
+export default function AiChatList({ sessions, currentSessionId, onNewChat, onSessionClick }) {
   const [currentPage, setCurrentPage] = useState(1);
   
   const itemsPerPage = 7;
@@ -27,16 +27,22 @@ export default function AiChatList({ sessions, onNewChat, onSessionClick }) {
         </div>
 
         <div className="flex flex-col w-full h-full gap-[1.4vh]">
-          {currentSessions.map((session) => (
-            <div
-              key={session.id}
-              onClick={() => onSessionClick(session.id)}
-              className="flex flex-col w-full h-[8.70vh] justify-center items-start px-[1.20vw] gap-[0.56vh] border-[0.09vh] border-white-5 rounded-[1.04vw] cursor-pointer hover:bg-white-5"
-            >
-              <div className="text-gray400 text-[1.85vh]">{session.title}</div>
-              <div className="text-gray700 text-[1.11vh]">{session.date}</div>
-            </div>
-          ))}
+          {currentSessions.map((session) => {
+            const isActive = session.id === currentSessionId;
+            
+            return (
+              <div
+                key={session.id}
+                onClick={() => onSessionClick(session.id)}
+                className={`flex flex-col w-full h-[8.70vh] justify-center items-start px-[1.20vw] gap-[0.56vh] border-[0.09vh] border-white-5 rounded-[1.04vw] cursor-pointer transition-colors
+                  ${isActive ? "bg-white-5" : "hover:bg-white-5"}
+                `}
+              >
+                <div className="text-gray400 text-[1.85vh]">{session.title}</div>
+                <div className="text-gray700 text-[1.11vh]">{session.date}</div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
