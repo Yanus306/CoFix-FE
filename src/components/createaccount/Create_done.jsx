@@ -3,7 +3,7 @@ function Create_done({ isOpen, onClose, onLoginClick }) {
     <div 
       onClick={onClose}
       className={`fixed inset-0 bg-black/50 z-50 flex items-center justify-center transition-all duration-500 ${
-        isOpen ? 'opacity-100 visible backdrop-blur-[5px]' : 'opacity-0 invisible backdrop-blur-none'
+        isOpen ? 'opacity-100 visible backdrop-blur-[0.46vh]' : 'opacity-0 invisible backdrop-blur-none'
       }`}
     >
 
@@ -13,17 +13,16 @@ function Create_done({ isOpen, onClose, onLoginClick }) {
           isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}
       >
-        <div className="font-bold text-[28px] md:text-[35px] text-gray200 text-center px-4">
+        <div className="font-bold text-[3.24vh] text-gray200 text-center px-[0.83vw]">
           계정 생성이 완료되었습니다.
         </div>
         
-      
         <button 
           onClick={() => {
             onClose();      
             onLoginClick(); 
           }}
-          className="font-bold text-[18px] md:text-[20px] text-purple-400 mt-6 underline cursor-pointer transition-all focus:outline-none"
+          className="font-bold text-[1.85vh] text-purple-400 mt-[2.22vh] underline cursor-pointer transition-all focus:outline-none"
         >
           로그인 하러가기
         </button>
