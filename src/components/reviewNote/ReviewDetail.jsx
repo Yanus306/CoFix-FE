@@ -34,9 +34,15 @@ export default function ReviewDetail({ review }) {
 
       <div className="flex flex-col gap-[1.2vh] mt-[0.2vh]">
         <div className="flex justify-between items-center w-full">
-          <div className="text-gray200 text-[2.35vh] font-semibold">
-            개념 요약 및 가이드
+          <div className="flex flex-col gap-[0.4vh]">
+            <div className="text-gray200 text-[2.35vh] font-semibold">
+              개념 요약 및 가이드
+            </div>
+            <div className="text-gray500 text-[1.3vh] text-gray400">
+             Ai가 분석한 실수의 개념 요약입니다. 내용을 확인하고 수정하며, 나만의 정리본을 만들어 보세요.
+            </div>
           </div>
+          
           {/* 임시 가이드 공백 */}
           <div className="flex items-center gap-[0.6vw]">
             <button className="px-[0.9vw] py-[0.5vh] rounded-xl bg-red500-10 text-red400 text-[1.4vh] transition-all border border-solid border-red-500/20 cursor-pointer">
