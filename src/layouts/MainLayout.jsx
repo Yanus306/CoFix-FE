@@ -7,7 +7,7 @@ import NotLoggedIn from '../components/NotLoggedIn';
 
 // 💡 1. 부모(App.jsx)로부터 isLoggedIn뿐만 아니라 모달을 열어주는 onOpenLogin도 함께 받아옵니다!
 export default function MainLayout({ isLoggedIn, onOpenLogin }) {
-  const [isConnected, setIsConnected] = useState(true); 
+  const [isConnected, setIsConnected] = useState(false); 
 
   return (
     <div className="flex justify-between w-[95.6vw] h-[92.6vh] my-[3.7vh] mx-[2.1vw]">
