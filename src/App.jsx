@@ -66,7 +66,6 @@ function AppContent() {
         <Route 
           element={<MainLayout isLoggedIn={isLoggedIn} onOpenLogin={() => setIsModalOpen(true)} />}
         >
-          {/* '/'로 접근하면 기본적으로 '/dashboard'로 리다이렉트 */}
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           
           <Route path="/dashboard" element={<Dashboard />} />
@@ -79,7 +78,6 @@ function AppContent() {
   );
 }
 
-// 💡 BrowserRouter가 AppContent를 감싸안도록 감싸주는 껍데기 App 역할
 function App() {
   return (
     <BrowserRouter>
