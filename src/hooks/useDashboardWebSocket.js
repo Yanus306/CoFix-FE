@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
-export function useDashboardWebSocket(token) {
+// export function useDashboardWebSocket(token) {
+export function useDashboardWebSocket() {
   const [dashboardData, setDashboardData] = useState({
     filePath: undefined,
     lastCodingTime: undefined,
@@ -11,7 +12,7 @@ export function useDashboardWebSocket(token) {
   const ws = useRef(null);
 
   useEffect(() => {
-    if (!token) return; // 토큰이 없으면 연결하지 않음
+    // if (!token) return; // 토큰이 없으면 연결하지 않음
 
     // 서버 웹소켓 URL
     const WS_URL = "wss://cofix.jongyeol.kr/ws/dashboard/live";
@@ -19,7 +20,7 @@ export function useDashboardWebSocket(token) {
 
     // 연결 성공 시
     ws.current.onopen = () => {
-      ws.current.send(JSON.stringify({ type: 0, parameter: token }));
+      // ws.current.send(JSON.stringify({ type: 0, parameter: token }));
     };
 
     // 메시지 수신 시 데이터 업데이트
@@ -54,7 +55,8 @@ export function useDashboardWebSocket(token) {
         }
       }
     };
-  }, [token]);
+  // }, [token]);
+  }, []);
 
   return dashboardData;
 }

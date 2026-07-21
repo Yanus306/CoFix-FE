@@ -6,10 +6,11 @@ import { useDashboardWebSocket } from '../hooks/useDashboardWebSocket';
 
 function Dashboard() {
     // 토큰 가져오는 로직
-    const token = localStorage.getItem('accessToken'); 
+    // const token = localStorage.getItem('accessToken'); 
     
     // 커스텀 훅으로 실시간 데이터 구독
-    const dashboardData = useDashboardWebSocket(token);
+    // const dashboardData = useDashboardWebSocket(token);
+    const dashboardData = useDashboardWebSocket(); // 토큰 없이 호출
 
     // 취약점 배열 안전하게 추출
     const vulnerabilities = dashboardData.dashboardVulnerabilities;
