@@ -94,6 +94,10 @@
   html, body {
     @apply flex w-screen h-screen bg-background text-gray400;
   }
+
+  textarea {
+    @apply appearance-none bg-transparent border-none p-0 m-0 outline-none focus:outline-none focus:ring-0;
+  }
 }
 
 @layer components {
