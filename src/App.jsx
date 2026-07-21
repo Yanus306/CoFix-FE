@@ -1,5 +1,5 @@
-import { useState } from 'react'; 
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'; // 💡 useNavigate 추가
+import { useState, useEffect } from 'react'; 
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import NotLoggedIn from './components/NotLoggedIn';
 import MainLayout from './layouts/MainLayout';
 import Dashboard from './pages/Dashboard';
@@ -13,10 +13,22 @@ import Create_done from './components/createaccount/Create_done';
 function AppContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);   
   const [isModalOpen1, setIsModalOpen1] = useState(false); 
-  const [isDoneOpen, setIsDoneOpen] = useState(false);    
+  const [isDoneOpen, setIsDoneOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);  
-  
+  const [isConnected, setIsConnected] = useState(false);
+
+  // 회원가입 후 IDE 연결을 기다리는 상태인지 기억하는 변수
+  const [isWaitingForIde, setIsWaitingForIde] = useState(false);
+
   const navigate = useNavigate(); 
+
+  // 백엔드 신호(isConnected) 변경 감지 로직
+  useEffect(() => {
+    if (isWaitingForIde && isConnected) {
+      setIsWaitingForIde(false); // 대기 상태 끝
+      setIsDoneOpen(true);  // 완료 모달 띄우기
+    }
+  }, [isConnected, isWaitingForIde]);
 
   const handleSwitchToSignUp = () => {
     setIsModalOpen(false);
@@ -24,13 +36,19 @@ function AppContent() {
   };
 
   const handleSignUpComplete = () => {
-    setIsModalOpen1(false);
-    setIsDoneOpen(true);  
+    setIsModalOpen1(false);   // 가입 창 닫기
+    setIsConnected(false);  // IDE 연결 안 됨 화면 띄우기
+    setIsWaitingForIde(true); // 백엔드 연결 신호 대기
+
+    // Mock API 5초 뒤 연동 됐다는 가정
+    setTimeout(() => {
+      setIsConnected(true);
+    }, 5000);
   };
 
-  // 💡 로그인 성공 핸들러 보강
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);  
+    setIsConnected(true);
     setIsModalOpen(false);
     navigate('/dashboard');
   };
@@ -47,14 +65,14 @@ function AppContent() {
       <Create_account 
         isOpen1={isModalOpen1} 
         onClose1={() => setIsModalOpen1(false)} 
-        onSignUpComplete={handleSignUpComplete}
+        onSignUpComplete={handleSignUpComplete} 
       />
 
       <Create_done 
         isOpen={isDoneOpen} 
         onClose={() => {
           setIsDoneOpen(false);
-          setIsModalOpen(true); 
+          setIsModalOpen(true); // 완료 모달 닫으면 로그인 창 띄우기
         }} 
         onLoginClick={() => {
           setIsDoneOpen(false);
@@ -64,11 +82,16 @@ function AppContent() {
         
       <Routes>
         <Route 
-          element={<MainLayout isLoggedIn={isLoggedIn} onOpenLogin={() => setIsModalOpen(true)} />}
+          element={
+            <MainLayout 
+              isLoggedIn={isLoggedIn} 
+              isConnected={isConnected} 
+              isWaitingForIde={isWaitingForIde}
+              onOpenLogin={() => setIsModalOpen(true)} 
+            />
+          }
         >
-          {/* '/'로 접근하면 기본적으로 '/dashboard'로 리다이렉트 */}
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/report" element={<Report />} />
           <Route path="/review-note" element={<ReviewNote />} />
@@ -79,7 +102,6 @@ function AppContent() {
   );
 }
 
-// 💡 BrowserRouter가 AppContent를 감싸안도록 감싸주는 껍데기 App 역할
 function App() {
   return (
     <BrowserRouter>

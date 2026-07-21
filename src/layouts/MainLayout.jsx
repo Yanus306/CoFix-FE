@@ -1,12 +1,10 @@
 import { Outlet } from 'react-router-dom';
-import { useState } from 'react';
 import SideNav from '../components/SideNav/SideNav';
 import IdeStatus from '../components/IdeStatus';
 import IdeDisconnected from '../components/IdeDisconnected';
 import NotLoggedIn from '../components/NotLoggedIn';
 
-export default function MainLayout({ isLoggedIn, onOpenLogin }) {
-  const [isConnected, setIsConnected] = useState(true); 
+export default function MainLayout({ isLoggedIn, isConnected, isWaitingForIde, onOpenLogin }) {
 
   return (
     <div className="flex justify-between w-[95.6vw] h-[92.6vh] my-[3.7vh] mx-[2.1vw]">
@@ -16,7 +14,7 @@ export default function MainLayout({ isLoggedIn, onOpenLogin }) {
         <IdeStatus isConnected={isConnected} />
 
         <div className="flex w-[77.3vw] h-[83.33vh]">
-          {!isConnected ? (
+          {isWaitingForIde ? (
             <IdeDisconnected />
           ) : !isLoggedIn ? (
             <NotLoggedIn onOpenLogin={onOpenLogin} /> 
