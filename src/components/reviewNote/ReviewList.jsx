@@ -82,8 +82,8 @@ export default function ReviewList() {
               <div
                 key={item.id}
                 onClick={() => setSelectedReviewId(item.id)}
-                /* 💡 선택 상태 시 나타나던 보라색 외곽선(border-purple500) 제거 완료 */
-                className="border border-solid border-purple500/20 w-[17.92vw] h-[8.70vh] rounded-3xl px-[1.25vw] flex flex-col justify-center gap-[0.74vh] cursor-pointer transition-all duration-200 hover:bg-white-5"
+                /* 💡 라운드 값을 rounded-[0.74vh]로 변경 */
+                className="border border-solid border-white/5 w-[17.92vw] h-[8.70vh] rounded-[0.74vh] px-[1.25vw] flex flex-col justify-center gap-[0.74vh] cursor-pointer transition-all duration-200 hover:bg-white-5"
               >
                 <div className="flex justify-between items-center w-full">
                   <span
