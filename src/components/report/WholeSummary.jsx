@@ -1,7 +1,7 @@
 function WholeSummary() {
     return (
         <div className="panel-base justify-center w-full h-[14.63vh] gap-[2.04vh]">
-            <div className="panel-title">실시간 코딩 요약</div>
+            <div className="panel-title">누적 코딩 수치 요약</div>
 
             <div className="flex gap-[2.5vw] text-[2.2vh]">
                 <div className="flex gap-[1.25vw]">
