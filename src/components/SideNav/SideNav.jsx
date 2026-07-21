@@ -5,7 +5,7 @@ import UserModal from "./UserModal";
 
 function SideNav() {
     const menuItems = [
-        { name: 'DASHBOARD', path: '/dashboard' },
+        { name: 'DASHBOARD', path: '/' },
         { name: 'REPORT', path: '/report' },
         { name: 'REVIEW NOTE', path: '/review-note' },
         { name: 'AI CHAT', path: '/ai-chat' }
