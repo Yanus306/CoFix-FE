@@ -3,13 +3,17 @@ import SendIcon from "./SendIcon";
 import ChatBubble from "./ChatBubble";
 import TypingIndicator from "./TypingIndicator";
 
-export default function AiChatDetail({ initialMessages = [], isNewChat, onCreateSession }) {
+export default function AiChatDetail({
+  initialMessages = [],
+  isNewChat,
+  onCreateSession,
+}) {
   const [messages, setMessages] = useState(initialMessages);
   const [inputValue, setInputValue] = useState("");
-  const [isAiTyping, setIsAiTyping] = useState(false); 
+  const [isAiTyping, setIsAiTyping] = useState(false);
 
   const textareaRef = useRef(null);
-  const messagesEndRef = useRef(null); 
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     setMessages(initialMessages);
@@ -22,15 +26,16 @@ export default function AiChatDetail({ initialMessages = [], isNewChat, onCreate
   }, [messages, isAiTyping]);
 
   const handleResizeHeight = (e) => {
-    setInputValue(e.target.value); 
+    setInputValue(e.target.value);
     if (textareaRef.current) {
       textareaRef.current.style.height = "0px";
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+      textareaRef.current.style.height =
+        textareaRef.current.scrollHeight + "px";
     }
   };
 
   const handleSendMessage = () => {
-    if (!inputValue.trim() || isAiTyping) return; 
+    if (!inputValue.trim() || isAiTyping) return;
 
     const newUserMessage = {
       id: Date.now(),
@@ -39,11 +44,11 @@ export default function AiChatDetail({ initialMessages = [], isNewChat, onCreate
     };
     setMessages((prev) => [...prev, newUserMessage]);
     setInputValue("");
-    
+
     if (textareaRef.current) {
-      textareaRef.current.style.height = "auto"; 
+      textareaRef.current.style.height = "auto";
     }
-    
+
     setIsAiTyping(true);
 
     // AI 답변 도착 시뮬레이션
@@ -51,21 +56,22 @@ export default function AiChatDetail({ initialMessages = [], isNewChat, onCreate
       const newAiMessage = {
         id: Date.now() + 1,
         role: "ai",
-        message: "백엔드에서 받아온 가짜 목업 데이터 응답입니다! 나중에는 이 부분을 실제 API 응답 값으로 교체하시면 됩니다.",
+        message:
+          "백엔드에서 받아온 가짜 목업 데이터 응답입니다! 나중에는 이 부분을 실제 API 응답 값으로 교체하시면 됩니다.",
       };
-      
+
       setMessages((prev) => {
         const updatedMessages = [...prev, newAiMessage];
-        
-        // 새 채팅에서 AI의 첫 응답이 온 순간, 부모에게 새 리스트 항목을 만들라고 알림
+
         if (isNewChat && onCreateSession) {
-          // 나중에 진짜 API를 붙이면 "AI가 요약한 새 제목✨" 부분을 백엔드에서 받아온 제목으로 바꿔주시면 됩니다.
-          onCreateSession("백에서 받아온 제목", updatedMessages);
+          setTimeout(() => {
+            onCreateSession("백에서 받아온 제목", updatedMessages);
+          }, 0);
         }
-        
+
         return updatedMessages;
       });
-      
+
       setIsAiTyping(false);
     }, 4000);
   };
@@ -89,10 +95,8 @@ export default function AiChatDetail({ initialMessages = [], isNewChat, onCreate
           <ChatBubble key={chat.id} role={chat.role} message={chat.message} />
         ))}
 
-        {isAiTyping && (
-          <ChatBubble role="ai" message={<TypingIndicator />} />
-        )}
-        
+        {isAiTyping && <ChatBubble role="ai" message={<TypingIndicator />} />}
+
         <div ref={messagesEndRef} />
       </div>
 
