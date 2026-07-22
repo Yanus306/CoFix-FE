@@ -19,7 +19,7 @@ export default function ReviewList() {
     setCurrentPage(1);
   };
 
-  // 💡 최적화: useMemo + 문자열 직렬 비교
+  // 최적화: useMemo + 문자열 직렬 비교
   const sortedReviews = useMemo(() => {
     return [...reviews].sort((a, b) => {
       if (a.date === b.date) return 0;
@@ -39,7 +39,7 @@ export default function ReviewList() {
     return reviews.find((item) => item.id === selectedReviewId);
   }, [reviews, selectedReviewId]);
 
-  // 💡 마우스 휠 이동 핸들러
+  // 마우스 휠 이동 핸들러
   const handleWheel = (e) => {
     if (wheelTimeoutRef.current) return;
 
@@ -72,7 +72,7 @@ export default function ReviewList() {
           </div>
         </div>
 
-        {/* 💡 휠 스크롤 감지 영역 & 높이 고정 */}
+        {/* 휠 스크롤 감지 영역 & 높이 고정 */}
         <div
           onWheel={handleWheel}
           className="flex flex-col gap-[1.85vh] h-[61.5vh] justify-start cursor-ns-resize"
@@ -82,13 +82,12 @@ export default function ReviewList() {
               <div
                 key={item.id}
                 onClick={() => setSelectedReviewId(item.id)}
-                /* 💡 외곽선을 border-white/5 로 변경 */
-                className="border border-solid border-white/5 w-[17.92vw] h-[8.70vh] rounded-3xl px-[1.25vw] flex flex-col justify-center gap-[0.74vh] cursor-pointer transition-all duration-200 hover:bg-white-5"
+                className="border border-solid border-white-5 w-[17.92vw] h-[8.70vh] rounded-3xl px-[1.25vw] flex flex-col justify-center gap-[0.74vh] cursor-pointer transition-all duration-200 hover:bg-white-5"
               >
                 <div className="flex justify-between items-center w-full">
                   <span
                     className={`border text-[1.11vh] px-[0.78vw] py-[0.18vh] rounded-2xl ${
-                      BADGE_COLORS[item.badgeType] || "bg-gray-500/10 border-gray-500/20 text-gray-400"
+                      BADGE_COLORS[item.badgeType] || "bg-gray700 border-white-5 text-gray400"
                     }`}
                   >
                     {item.badge}

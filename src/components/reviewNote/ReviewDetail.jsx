@@ -48,7 +48,7 @@ export default function ReviewDetail({ review }) {
       className="w-[183%] h-[79vh] rounded-3xl p-[2.5vw] flex flex-col gap-[1.5vh] text-white animate-fade-in duration-300 mt-[-3vh]"
     >
       {/* 상단 헤더 영역 */}
-      <div className="flex flex-col gap-[1vh] border-b border-purple500/10 pb-[1.5vh]">
+      <div className="flex flex-col gap-[1vh] border-b border-purple500-10 pb-[1.5vh]">
         <div className="font-bold text-[2.6vh] text-white tracking-tight leading-snug">
           {review.content}
         </div>
@@ -57,7 +57,7 @@ export default function ReviewDetail({ review }) {
           <div className="py-[0.3vh] text-gray400">
             프로젝트: 2026_알고리즘_과제
           </div>
-          <div className="text-gray600 text-[1.4vh]">|</div>
+          <div className="text-gray700 text-[1.4vh]">|</div>
           <div>
             <span className="text-gray400 mr-[0.3vw]">발생일:</span>
             {review.date}
@@ -68,7 +68,7 @@ export default function ReviewDetail({ review }) {
       {/* 문제 코드 영역 */}
       <div className="flex flex-col gap-[0.6vh]">
         <div className="text-gray400 text-[1.55vh]">문제코드</div>
-        <div className="w-full h-[26vh] border border-dashed border-gray700 rounded-2xl p-[1.2vw] text-gray300 text-[1.4vh] overflow-y-auto leading-relaxed font-mono bg-black/20">
+        <div className="w-full h-[26vh] border border-dashed border-gray700 rounded-2xl p-[1.2vw] text-gray300 text-[1.4vh] overflow-y-auto leading-relaxed font-mono bg-white-3">
           {codeContent ? (
             <ReactMarkdown>{codeContent}</ReactMarkdown>
           ) : (
@@ -94,7 +94,7 @@ export default function ReviewDetail({ review }) {
             {!isEditing ? (
               <button
                 onClick={handleEditClick}
-                className="px-[0.9vw] py-[0.5vh] rounded-xl bg-purple500/10 text-purple400 text-[1.4vh] transition-all border border-solid border-purple500/20 cursor-pointer hover:bg-purple500/20"
+                className="px-[0.9vw] py-[0.5vh] rounded-xl bg-purple500-10 text-purple400 text-[1.4vh] transition-all border border-solid border-purple500-20 cursor-pointer hover:bg-purple500-20"
               >
                 편집
               </button>
@@ -108,7 +108,7 @@ export default function ReviewDetail({ review }) {
                 </button>
                 <button
                   onClick={handleSaveClick}
-                  className="px-[0.9vw] py-[0.5vh] rounded-xl bg-purple500-10 text-purple400 text-[1.4vh] transition-all border border-solid border-purple500/20 cursor-pointer hover:bg-purple500-20"
+                  className="px-[0.9vw] py-[0.5vh] rounded-xl bg-purple500-10 text-purple400 text-[1.4vh] transition-all border border-solid border-purple500-20 cursor-pointer hover:bg-purple500-20"
                 >
                   저장
                 </button>
@@ -123,7 +123,7 @@ export default function ReviewDetail({ review }) {
             value={guideText}
             onChange={(e) => setGuideText(e.target.value)}
             placeholder="개념 요약 및 가이드를 작성해 보세요."
-            className="w-full h-[21vh] border border-solid border-white/10 bg-black/30 rounded-2xl p-[1.2vw] text-gray200 text-[1.5vh] resize-none leading-relaxed outline-none focus:outline-none focus:ring-0 focus:border-white/10 font-mono"
+            className="w-full h-[21vh] border border-solid border-white-5 bg-white-3 rounded-2xl p-[1.2vw] text-gray200 text-[1.5vh] resize-none leading-relaxed outline-none focus:outline-none focus:ring-0 focus:border-white-5 font-mono"
           />
         ) : (
           <div className="w-full h-[21vh] border border-dashed border-gray700 rounded-2xl p-[1.2vw] text-gray300 text-[1.5vh] overflow-y-auto leading-relaxed">
