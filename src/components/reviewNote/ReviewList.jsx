@@ -33,9 +33,8 @@ export default function ReviewList() {
   // 페이지네이션 연산
   const totalDataCount = sortedReviews.length;
   const totalPages = Math.ceil(totalDataCount / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = sortedReviews.slice(indexOfFirstItem, indexOfLastItem);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentItems = sortedReviews.slice(startIndex, startIndex + itemsPerPage);
 
   // 선택된 리뷰 객체 추출
   const currentSelectedReview = useMemo(() => {
@@ -63,64 +62,71 @@ export default function ReviewList() {
 
   return (
     <div className="relative flex justify-center w-full max-w-[85vw] mx-auto select-none text-white min-h-[65vh]">
-      {/* 실수 리스트 메인 패널 */}
-      <div className="flex flex-col gap-[1.85vh] items-center flex-shrink-0">
-        {/* 리스트 헤더 영역 */}
-        <div className="flex justify-between items-center w-[17.92vw]">
-          <div className="font-bold text-[2.22vh]">나의 실수 리스트</div>
+      {/* 실수 리스트 메인 패널 (AiChatList와 높이/배치 구조 통일) */}
+      <div className="flex flex-col justify-between w-[17.92vw] h-full flex-shrink-0">
+        <div className="flex flex-col w-full h-[75.37vh]">
+          {/* 헤더 영역 (AiChatList 규격에 맞춘 텍스트 및 정렬 버튼) */}
+          <div className="flex justify-between items-center w-full h-[2.69vh] mb-[2.6vh]">
+            <div className="text-[2.22vh] font-bold text-white">
+              나의 실수 리스트
+            </div>
 
+            <div
+              onClick={toggleSort}
+              className="flex justify-center items-center px-[0.78vw] h-[2.22vh] text-[1.11vh] text-gray400 bg-gray800-50 border-[0.09vh] border-white-5 rounded-[0.74vh] cursor-pointer hover:text-white transition-colors gap-[0.26vw]"
+            >
+              <span>{isLatestSort ? "최신순" : "오래된순"}</span>
+              <span>▼</span>
+            </div>
+          </div>
+
+          {/* 목록 영역 (AiChatList 규격 및 border, rounded-vw 단위 통일) */}
           <div
-            onClick={toggleSort}
-            className="text-[1.11vh] text-gray400 cursor-pointer flex items-center gap-[0.26vw] px-[0.78vw] py-[0.37vh] hover:text-white transition-colors"
+            onWheel={handleWheel}
+            className="flex flex-col w-full h-full gap-[1.4vh] cursor-ns-resize"
           >
-            {isLatestSort ? "최신순" : "오래된순"} <span>▼</span>
+            {currentItems.map((item) => {
+              const isActive = item.id === selectedReviewId;
+
+              return (
+                <div
+                  key={item.id}
+                  onClick={() => setSelectedReviewId(item.id)}
+                  className={`flex flex-col w-full h-[8.70vh] justify-center items-start px-[1.20vw] gap-[0.56vh] border-[0.09vh] border-white-5 rounded-[1.04vw] cursor-pointer transition-colors ${
+                    isActive ? "bg-white-5" : "hover:bg-white-5"
+                  }`}
+                >
+                  {/* 뱃지 및 날짜 */}
+                  <div className="flex justify-between items-center w-full">
+                    <span
+                      className={`border text-[1.11vh] px-[0.78vw] py-[0.18vh] rounded-2xl ${
+                        BADGE_COLORS[item.badgeType] || "bg-gray700 border-white-5 text-gray400"
+                      }`}
+                    >
+                      {item.badge}
+                    </span>
+                    <span className="text-gray700 text-[1.11vh]">
+                      {item.date}
+                    </span>
+                  </div>
+
+                  {/* 실수 내용 요약 */}
+                  <div className="text-[1.85vh] text-left tracking-tight truncate text-gray400 w-full">
+                    {item.content}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* 리뷰 아이템 목록 및 휠 스크롤 영역 */}
-        <div
-          onWheel={handleWheel}
-          className="flex flex-col gap-[1.85vh] h-[61.5vh] justify-start cursor-ns-resize"
-        >
-          {currentItems.map((item) => {
-            return (
-              <div
-                key={item.id}
-                onClick={() => setSelectedReviewId(item.id)}
-                className="border border-solid border-white-5 w-[17.92vw] h-[8.70vh] rounded-3xl px-[1.25vw] flex flex-col justify-center gap-[0.74vh] cursor-pointer transition-all duration-200 hover:bg-white-5"
-              >
-                {/* 뱃지 및 날짜 */}
-                <div className="flex justify-between items-center w-full">
-                  <span
-                    className={`border text-[1.11vh] px-[0.78vw] py-[0.18vh] rounded-2xl ${
-                      BADGE_COLORS[item.badgeType] || "bg-gray700 border-white-5 text-gray400"
-                    }`}
-                  >
-                    {item.badge}
-                  </span>
-                  <span className="text-gray700 text-[1.11vh]">
-                    {item.date}
-                  </span>
-                </div>
-
-                {/* 실수 내용 요약 */}
-                <div className="text-[1.85vh] text-left tracking-tight truncate text-gray400">
-                  {item.content}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* 페이지네이션 영역 */}
-        <div className="mt-[0.5vh]">
-          <Pagination
-            currentPage={currentPage}
-            totalItems={totalDataCount}
-            itemsPerPage={itemsPerPage}
-            onPageChange={setCurrentPage}
-          />
-        </div>
+        {/* 페이지네이션 영역 (하단 레이아웃 완전 통일) */}
+        <Pagination
+          currentPage={currentPage}
+          totalItems={totalDataCount}
+          itemsPerPage={itemsPerPage}
+          onPageChange={setCurrentPage}
+        />
       </div>
 
       {/* 우측 상세 보기 컴포넌트 패널 */}
