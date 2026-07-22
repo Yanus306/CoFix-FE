@@ -52,25 +52,25 @@ export default function ReviewList({ selectedReviewId, onSelectReview }) {
   return (
     <div className="flex flex-col justify-between w-full h-full">
       <div className="flex flex-col w-full h-[75.37vh]">
-        {/* 헤더 영역 (AiChatList와 높이/마진 수치 통일) */}
+        {/* 헤더 영역 */}
         <div className="flex justify-between items-center w-full h-[2.69vh] mb-[2.6vh]">
-          <div className="text-[2.22vh] font-bold text-white">
+          <div className="text-[2.22vh] font-bold text-gray200">
             나의 실수 리스트
           </div>
 
           <div
             onClick={toggleSort}
-            className="flex justify-center items-center px-[0.8vw] h-[2.22vh] text-[1.11vh] text-gray400 bg-gray800-50 border-[0.09vh] border-white-5 rounded-[0.74vh] cursor-pointer hover:text-white transition-colors gap-[0.3vw]"
+            className="flex justify-center items-center px-[0.8vw] h-[2.22vh] text-[1.11vh] text-gray400 bg-gray800-50 border-[0.09vh] border-white-5 rounded-[0.74vh] cursor-pointer hover:text-gray200 transition-colors gap-[0.3vw]"
           >
             <span>{isLatestSort ? "최신순" : "오래된순"}</span>
             <span>▼</span>
           </div>
         </div>
 
-        {/* 목록 영역 (AiChatList와 고정 높이 및 컨테이너 틀 통일) */}
+        {/* 목록 영역 */}
         <div
           onWheel={handleWheel}
-          className="flex flex-col w-full h-full gap-[1.4vh] cursor-ns-resize overflow-hidden"
+          className="flex flex-col w-full h-full gap-[1.4vh] overflow-hidden"
         >
           {currentItems.map((item) => {
             const isActive = item.id === selectedReviewId;
@@ -79,8 +79,10 @@ export default function ReviewList({ selectedReviewId, onSelectReview }) {
               <div
                 key={item.id}
                 onClick={() => onSelectReview(item.id)}
-                className={`flex flex-col w-full h-[8.70vh] justify-center items-start px-[1.20vw] gap-[0.56vh] border-[0.09vh] border-white-5 rounded-[1.04vw] cursor-pointer transition-colors ${
-                  isActive ? "bg-white-10 border-purple-500/50" : "hover:bg-white-5"
+                className={`flex flex-col w-full h-[8.70vh] justify-center items-start px-[1.20vw] gap-[0.56vh] border-[0.09vh] rounded-[1.04vw] cursor-pointer transition-colors ${
+                  isActive
+                    ? "bg-white-5 border-purple500-20"
+                    : "border-white-5 hover:bg-white-5"
                 }`}
               >
                 {/* 뱃지 및 날짜 */}
@@ -97,8 +99,12 @@ export default function ReviewList({ selectedReviewId, onSelectReview }) {
                   </span>
                 </div>
 
-                {/* 실수 내용 요약 */}
-                <div className="text-[1.85vh] text-left tracking-tight truncate text-gray400 w-full">
+                {/* 실수 내용 요약 (isActive 여부에 따라 글자색 전환) */}
+                <div
+                  className={`text-[1.85vh] text-left tracking-tight truncate w-full transition-colors ${
+                    isActive ? "text-gray200" : "text-gray400"
+                  }`}
+                >
                   {item.content}
                 </div>
               </div>

@@ -1,77 +1,76 @@
-import { useState } from 'react'; 
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'; // 💡 useNavigate 추가
-import NotLoggedIn from './components/NotLoggedIn';
-import MainLayout from './layouts/MainLayout';
-import Dashboard from './pages/Dashboard';
-import Report from './pages/Report';
-import ReviewNote from './pages/ReviewNote';
-import AiChat from './pages/AiChat';
-import Login from './components/login/Login';
-import Create_account from './components/createaccount/Create_account';
-import Create_done from './components/createaccount/Create_done'; 
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import useAuthFlow from "./hooks/useAuthFlow";
+import MainLayout from "./layouts/MainLayout";
+import Dashboard from "./pages/Dashboard";
+import Report from "./pages/Report";
+import ReviewNote from "./pages/ReviewNote";
+import AiChat from "./pages/AiChat";
+import IdeCode from "./pages/IdeCode";
+import Login from "./components/login/Login";
+import Create_account from "./components/createaccount/Create_account";
+import Create_done from "./components/createaccount/Create_done";
 
 function AppContent() {
-  const [isModalOpen, setIsModalOpen] = useState(false);   
-  const [isModalOpen1, setIsModalOpen1] = useState(false); 
-  const [isDoneOpen, setIsDoneOpen] = useState(false);    
-  const [isLoggedIn, setIsLoggedIn] = useState(false);  
-  
-  const navigate = useNavigate(); 
-
-  const handleSwitchToSignUp = () => {
-    setIsModalOpen(false);
-    setIsModalOpen1(true);
-  };
-
-  const handleSignUpComplete = () => {
-    setIsModalOpen1(false);
-    setIsDoneOpen(true);  
-  };
-
-  // 💡 로그인 성공 핸들러 보강
-  const handleLoginSuccess = () => {
-    setIsLoggedIn(true);  
-    setIsModalOpen(false);
-    navigate('/dashboard');
-  };
+  const {
+    isModalOpen,
+    setIsModalOpen,
+    isModalOpen1,
+    setIsModalOpen1,
+    isDoneOpen,
+    setIsDoneOpen,
+    isLoggedIn,
+    isConnected,
+    isWaitingForIde,
+    handleSwitchToSignUp,
+    handleSignUpComplete,
+    handleLoginSuccess,
+  } = useAuthFlow();
 
   return (
     <>
-      <Login 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        onSignUpClick={handleSwitchToSignUp} 
+      <Login
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSignUpClick={handleSwitchToSignUp}
         onLoginSuccess={handleLoginSuccess}
       />
 
-      <Create_account 
-        isOpen1={isModalOpen1} 
-        onClose1={() => setIsModalOpen1(false)} 
+      <Create_account
+        isOpen1={isModalOpen1}
         onSignUpComplete={handleSignUpComplete}
+        onClose1={() => setIsModalOpen1(false)}
       />
 
-      <Create_done 
-        isOpen={isDoneOpen} 
+      <Create_done
+        isOpen={isDoneOpen}
         onClose={() => {
           setIsDoneOpen(false);
-          setIsModalOpen(true); 
-        }} 
+          setIsModalOpen(true);
+        }}
         onLoginClick={() => {
           setIsDoneOpen(false);
           setIsModalOpen(true);
         }}
       />
-        
+
       <Routes>
-        <Route 
-          element={<MainLayout isLoggedIn={isLoggedIn} onOpenLogin={() => setIsModalOpen(true)} />}
+        <Route
+          element={
+            <MainLayout
+              isLoggedIn={isLoggedIn}
+              isConnected={isConnected}
+              isWaitingForIde={isWaitingForIde}
+              onOpenLogin={() => setIsModalOpen(true)}
+            />
+          }
         >
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/report" element={<Report />} />
           <Route path="/review-note" element={<ReviewNote />} />
           <Route path="/ai-chat" element={<AiChat />} />
+          
+          <Route path="/ide-code" element={<IdeCode />} />
         </Route>
       </Routes>
     </>
