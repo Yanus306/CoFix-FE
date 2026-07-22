@@ -17,14 +17,6 @@ export default function MainLayout({
   const publicPaths = ["/ide-code"];
   const isPublicPath = publicPaths.includes(location.pathname);
 
-  useEffect(() => {
-    if (!isLoggedIn && !isPublicPath) {
-      if (onOpenLogin) {
-        onOpenLogin();
-      }
-    }
-  }, [isLoggedIn, isPublicPath, onOpenLogin]);
-  
   return (
     <div className="flex justify-between w-[95.6vw] h-[92.6vh] my-[3.7vh] mx-[2.1vw]">
       <SideNav />
