@@ -1,12 +1,17 @@
 import { useState } from "react";
 import Pagination from "../Pagination";
 
-export default function AiChatList({ sessions, currentSessionId, onNewChat, onSessionClick }) {
+export default function AiChatList({
+  sessions,
+  currentSessionId,
+  onNewChat,
+  onSessionClick,
+}) {
   const [currentPage, setCurrentPage] = useState(1);
-  
+
   const itemsPerPage = 7;
-  const totalDataCount = sessions.length; 
-  
+  const totalDataCount = sessions.length;
+
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentSessions = sessions.slice(startIndex, startIndex + itemsPerPage);
 
@@ -17,7 +22,7 @@ export default function AiChatList({ sessions, currentSessionId, onNewChat, onSe
           <div className="text-[2.22vh] font-bold text-white">
             이전 채팅 세션
           </div>
-          <div 
+          <div
             onClick={onNewChat}
             className="flex justify-center items-center w-[4.17vw] h-[2.22vh] gap-[0.78vw] text-[1.11vh] text-gray400 bg-gray800-50 border-[0.09vh] border-white-5 rounded-[0.74vh] cursor-pointer"
           >
@@ -29,7 +34,7 @@ export default function AiChatList({ sessions, currentSessionId, onNewChat, onSe
         <div className="flex flex-col w-full h-full gap-[1.4vh]">
           {currentSessions.map((session) => {
             const isActive = session.id === currentSessionId;
-            
+
             return (
               <div
                 key={session.id}
@@ -38,8 +43,30 @@ export default function AiChatList({ sessions, currentSessionId, onNewChat, onSe
                   ${isActive ? "bg-white-5" : "hover:bg-white-5"}
                 `}
               >
-                <div className="text-gray400 text-[1.85vh]">{session.title}</div>
-                <div className="text-gray700 text-[1.11vh]">{session.date}</div>
+                <div className="flex w-full justify-between items-center">
+                  <div className=" text-gray400 text-[1.11vh]">
+                    {session.date}
+                  </div>
+                  <div className="text-gray400 hover:text-white cursor-pointer transition-colors p-[0.5vh]">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2}
+                      stroke="currentColor"
+                      className="w-[1.5vh] h-[1.5vh] mr-[-0.5vw]"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div className="text-gray400 text-[1.85vh]">
+                  {session.title}
+                </div>
               </div>
             );
           })}
