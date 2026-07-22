@@ -66,7 +66,7 @@ export default function ReviewDetail({ review }) {
         </div>
       </div>
 
-      {/* 2. 문제 코드 영역 (SyntaxHighlighter 적용) */}
+      {/* 2. 문제 코드 영역 */}
       <div className="flex flex-col flex-1 min-h-0">
         <div className="bg-gray800-50 px-[2.5vw] py-[0.8vh] shrink-0">
           <div className="text-gray400 text-[1.55vh]">문제코드</div>
@@ -93,7 +93,8 @@ export default function ReviewDetail({ review }) {
         </div>
       </div>
 
-      <div className="flex flex-col flex-1 min-h-0 px-[2.5vw] pt-[1.5vh] ">
+      {/* 3. 개념 요약 및 가이드 영역 */}
+      <div className="flex flex-col flex-1 min-h-0 px-[2.5vw] pt-[1.5vh] pb-[2vh]">
         <div className="flex justify-between items-center mb-[1vh] shrink-0">
           <div className="flex flex-col gap-[0.4vh]">
             <div className="text-gray200 text-[2.2vh] font-semibold">
@@ -137,10 +138,10 @@ export default function ReviewDetail({ review }) {
             value={guideText}
             onChange={(e) => setGuideText(e.target.value)}
             placeholder="개념 요약 및 가이드를 작성해 보세요."
-            className="w-full flex-1 border border-white-5 focus:border-white-5 rounded-2xl px-[1.5vw] py-[1.2vh] text-gray200 text-[1.5vh] resize-none leading-relaxed bg-transparent outline-none focus:outline-none focus:ring-0"
+            className="w-full flex-1 border border-white-5 focus:border-white-5 rounded-2xl px-[1.5vw] py-[1.2vh] text-gray200 text-[1.65vh] resize-none leading-relaxed bg-transparent outline-none focus:outline-none focus:ring-0"
           />
         ) : (
-          <div className="w-full flex-1 border border-white-5 rounded-2xl px-[1.5vw] py-[1.2vh] text-gray200 text-[1.5vh] overflow-y-auto leading-relaxed">
+          <div className="w-full flex-1 border border-white-5 rounded-2xl px-[1.5vw] py-[1.2vh] text-gray400 text-[1.65vh] overflow-y-auto leading-relaxed">
             {guideText ? (
               <ReactMarkdown>{guideText}</ReactMarkdown>
             ) : (
