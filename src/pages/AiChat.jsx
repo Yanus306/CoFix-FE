@@ -33,6 +33,25 @@ export default function AiChat() {
     setCurrentSessionId(newSessionId); 
   };
 
+  // 채팅 이름 변경
+  const handleRenameSession = (id, newTitle) => {
+    setSessions((prevSessions) =>
+      prevSessions.map((session) =>
+        session.id === id ? { ...session, title: newTitle } : session
+      )
+    );
+  };
+
+  // 채팅 삭제
+  const handleDeleteSession = (id) => {
+    setSessions((prevSessions) => prevSessions.filter((session) => session.id !== id));
+    
+    // 화면을 새 채팅 상태로 초기화
+    if (id === currentSessionId) {
+      handleNewChat();
+    }
+  };
+
   return (
     <ListDetailLayout 
       leftContent={
@@ -40,7 +59,9 @@ export default function AiChat() {
           sessions={sessions}
           currentSessionId={currentSessionId} 
           onNewChat={handleNewChat} 
-          onSessionClick={handleSessionClick} 
+          onSessionClick={handleSessionClick}
+          onRenameSession={handleRenameSession}
+          onDeleteSession={handleDeleteSession}
         />
       } 
       rightContent={
@@ -51,5 +72,5 @@ export default function AiChat() {
         />
       } 
     />
-  );
+  );D
 }

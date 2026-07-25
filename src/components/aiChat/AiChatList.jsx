@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Pagination from "../Pagination";
 
 export default function AiChatList({
@@ -6,9 +6,15 @@ export default function AiChatList({
   currentSessionId,
   onNewChat,
   onSessionClick,
+  onRenameSession,
+  onDeleteSession,
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [openMenuId, setOpenMenuId] = useState(null);
+
+  const [editingId, setEditingId] = useState(null);
+  const [editValue, setEditValue] = useState("");
+  const inputRef = useRef(null);
 
   const itemsPerPage = 7;
   const totalDataCount = sessions.length;
@@ -19,6 +25,45 @@ export default function AiChatList({
   const handleMenuClick = (e, id) => {
     e.stopPropagation();
     setOpenMenuId(openMenuId === id ? null : id);
+  };
+
+  // 이름 변경 핸들러
+  const handleEditStart = (e, session) => {
+    e.stopPropagation();
+    setEditingId(session.id);
+    setEditValue(session.title);
+    setOpenMenuId(null);
+  };
+
+  const handleEditSubmit = () => {
+    if (editValue.trim() !== "" && onRenameSession) {
+      onRenameSession(editingId, editValue);
+    }
+    setEditingId(null);
+  };
+
+  const handleEditKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleEditSubmit();
+    } else if (e.key === "Escape") {
+      setEditingId(null);
+    }
+  };
+
+  // 수정 모드 진입 시 input에 자동 포커스
+  useEffect(() => {
+    if (editingId && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [editingId]);
+
+  // 삭제 핸들러
+  const handleDelete = (e, id) => {
+    e.stopPropagation();
+    if (onDeleteSession) {
+      onDeleteSession(id);
+    }
+    setOpenMenuId(null); // 메뉴 닫기
   };
 
   return (
@@ -40,11 +85,12 @@ export default function AiChatList({
         <div className="flex flex-col w-full h-full gap-[1.4vh]">
           {currentSessions.map((session) => {
             const isActive = session.id === currentSessionId;
+            const isEditing = session.id === editingId;
 
             return (
               <div
                 key={session.id}
-                onClick={() => onSessionClick(session.id)}
+                onClick={() => !isEditing && onSessionClick(session.id)}
                 className={`flex flex-col w-full h-[8.70vh] justify-center items-start px-[1.20vw] gap-[0.56vh] border-[0.09vh] border-white-5 rounded-[1.04vw] cursor-pointer transition-colors
                   ${isActive ? "bg-white-5" : "hover:bg-white-5"}
                 `}
@@ -77,24 +123,61 @@ export default function AiChatList({
 
                     {openMenuId === session.id && (
                       <div
-                        onClick={(e) => e.stopPropagation()} 
+                        onClick={(e) => e.stopPropagation()}
                         className="absolute top-0 right-[-7vw] z-50 flex flex-col justify-between w-[6vw] h-[9vh] px-[1vw] py-[1.4vh] mt-[1vh] bg-gray700 rounded-[1.04vw] rounded-tl-none overflow-hidden"
                       >
-                        <button className="w-full px-[0.5vw] py-[0.4vh] text-left text-[1.28vh] text-gray400 hover:bg-white-5 transition-colors cursor-pointer">
+                        <button
+                          onClick={(e) => handleEditStart(e, session)}
+                          className="w-full px-[0.5vw] py-[0.4vh] text-left text-[1.28vh] text-gray400 hover:bg-white-5 transition-colors cursor-pointer"
+                        >
                           이름 변경
                         </button>
-                        <button className="w-full px-[0.5vw] py-[0.4vh] text-left text-[1.28vh] text-red400 hover:bg-white-5 transition-colors cursor-pointer">
+                        <button
+                          onClick={(e) => handleDelete(e, session.id)}
+                          className="w-full px-[0.5vw] py-[0.4vh] text-left text-[1.28vh] text-red400 hover:bg-white-5 transition-colors cursor-pointer"
+                        >
                           삭제
                         </button>
                       </div>
                     )}
                   </div>
                 </div>
-                
+
+                {/* 드롭다운 */}
                 <div className="w-full truncate text-gray400 text-[1.85vh]">
-                  {session.title}
+                  {isEditing ? (
+                    <input
+                      ref={inputRef}
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      onBlur={() => {
+                        // 포커스를 잃었을 때 저장
+                        if (editValue.trim() !== "" && onRenameSession) {
+                          onRenameSession(session.id, editValue);
+                        }
+                        setEditingId(null);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          // 엔터키 눌렸을 때 중복 실행 방지
+                          if (e.nativeEvent.isComposing) return;
+
+                          if (editValue.trim() !== "" && onRenameSession) {
+                            onRenameSession(session.id, editValue);
+                          }
+                          setEditingId(null);
+                        } else if (e.key === "Escape") {
+                          setEditingId(null);
+                        }
+                      }}
+                      onClick={(e) => e.stopPropagation()} // 클릭 시 세션 이동 방지
+                      className="w-full bg-transparent outline-none border-b border-gray400 text-white"
+                    />
+                  ) : (
+                    session.title
+                  )}
                 </div>
-              </div> 
+              </div>
             );
           })}
         </div>
