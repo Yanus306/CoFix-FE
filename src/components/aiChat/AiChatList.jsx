@@ -64,7 +64,7 @@ export default function AiChatList({
                     </svg>
                   </div>
                 </div>
-                <div className="text-gray400 text-[1.85vh]">
+                <div className="w-full truncate text-gray400 text-[1.85vh]">
                   {session.title}
                 </div>
               </div>
