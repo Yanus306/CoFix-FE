@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import ListDetailLayout from '../layouts/ListDetailLayout';
 import AiChatList from '../components/aiChat/AiChatList';
-import AiChatDetail from '../components/aiChat/AiChatDetail'; 
-import { chatSessions as initialSessions } from '../mocks/chatData'; 
+import AiChatDetail from '../components/aiChat/AiChatDetail';
+import { chatSessions as initialSessions } from '../mocks/chatData';
 
 export default function AiChat() {
   const [sessions, setSessions] = useState(initialSessions);
@@ -24,13 +24,13 @@ export default function AiChat() {
     const newSessionId = Date.now();
     const newSession = {
       id: newSessionId,
-      title: newTitle, 
+      title: newTitle,
       date: new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/-/g, '.'),
       messages: newMessages,
     };
 
-    setSessions([newSession, ...sessions]); 
-    setCurrentSessionId(newSessionId); 
+    setSessions([newSession, ...sessions]);
+    setCurrentSessionId(newSessionId);
   };
 
   // 채팅 이름 변경
@@ -45,7 +45,7 @@ export default function AiChat() {
   // 채팅 삭제
   const handleDeleteSession = (id) => {
     setSessions((prevSessions) => prevSessions.filter((session) => session.id !== id));
-    
+
     // 화면을 새 채팅 상태로 초기화
     if (id === currentSessionId) {
       handleNewChat();
@@ -53,24 +53,25 @@ export default function AiChat() {
   };
 
   return (
-    <ListDetailLayout 
+    <ListDetailLayout
       leftContent={
-        <AiChatList 
+        <AiChatList
           sessions={sessions}
-          currentSessionId={currentSessionId} 
-          onNewChat={handleNewChat} 
+          currentSessionId={currentSessionId}
+          onNewChat={handleNewChat}
           onSessionClick={handleSessionClick}
           onRenameSession={handleRenameSession}
           onDeleteSession={handleDeleteSession}
         />
-      } 
+      }
       rightContent={
-        <AiChatDetail 
-          initialMessages={currentMessages} 
-          isNewChat={currentSessionId === null} 
+        <AiChatDetail
+          sessionId={currentSessionId}
+          initialMessages={currentMessages}
+          isNewChat={currentSessionId === null}
           onCreateSession={handleCreateNewSession}
         />
-      } 
+      }
     />
   );
 }
