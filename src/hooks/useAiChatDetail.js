@@ -22,7 +22,7 @@ export function useAiChatDetail(sessionId, initialMessages, isNewChat, onCreateS
     // textarea 높이 초기화
     if (textareaRef?.current) textareaRef.current.style.height = "auto";
 
-    // 낙관적 업데이트 (유저 메시지 먼저 띄우기)
+    // 유저 메시지 먼저 띄우기
     const newUserMessage = { id: Date.now(), role: "user", message: userText };
     setMessages((prev) => [...prev, newUserMessage]);
     setIsAiTyping(true);

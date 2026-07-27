@@ -9,7 +9,7 @@ export function useAiChat() {
 
   const getToken = () => localStorage.getItem("accessToken");
 
-  // 1. 방 목록 불러오기
+  // 방 목록 불러오기
   const fetchSessions = async () => {
     try {
       const response = await fetch(`${BASE_URL}/chat`, {
@@ -44,7 +44,7 @@ export function useAiChat() {
     setCurrentMessages([]);
   };
 
-  // 2. 특정 방 클릭 시 이전 메시지 불러오기
+  // 특정 방 클릭 시 이전 메시지 불러오기
   const handleSessionClick = async (sessionId) => {
     setCurrentSessionId(sessionId);
     try {
@@ -65,13 +65,13 @@ export function useAiChat() {
     }
   };
 
-  // 3. 새 채팅방 생성 콜백
+  // 새 채팅방 생성 콜백
   const handleCreateNewSession = (newSessionId) => {
     setCurrentSessionId(newSessionId);
     fetchSessions();
   };
 
-  // 4. 채팅 이름 변경 (UI 업데이트용)
+  // 채팅 이름 변경
   const handleRenameSession = (id, newTitle) => {
     setSessions((prevSessions) =>
       prevSessions.map((session) =>
@@ -80,7 +80,7 @@ export function useAiChat() {
     );
   };
 
-  // 5. 채팅방 삭제
+  // 채팅방 삭제
   const handleDeleteSession = async (id) => {
     try {
       const response = await fetch(`${BASE_URL}/chat/${id}`, {
