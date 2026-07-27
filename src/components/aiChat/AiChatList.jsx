@@ -1,14 +1,70 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Pagination from "../Pagination";
 
-export default function AiChatList({ sessions, currentSessionId, onNewChat, onSessionClick }) {
+export default function AiChatList({
+  sessions,
+  currentSessionId,
+  onNewChat,
+  onSessionClick,
+  onRenameSession,
+  onDeleteSession,
+}) {
   const [currentPage, setCurrentPage] = useState(1);
-  
+  const [openMenuId, setOpenMenuId] = useState(null);
+
+  const [editingId, setEditingId] = useState(null);
+  const [editValue, setEditValue] = useState("");
+  const inputRef = useRef(null);
+
   const itemsPerPage = 7;
-  const totalDataCount = sessions.length; 
-  
+  const totalDataCount = sessions.length;
+
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentSessions = sessions.slice(startIndex, startIndex + itemsPerPage);
+
+  const handleMenuClick = (e, id) => {
+    e.stopPropagation();
+    setOpenMenuId(openMenuId === id ? null : id);
+  };
+
+  // 이름 변경 핸들러
+  const handleEditStart = (e, session) => {
+    e.stopPropagation();
+    setEditingId(session.id);
+    setEditValue(session.title);
+    setOpenMenuId(null);
+  };
+
+  const handleEditSubmit = () => {
+    if (editValue.trim() !== "" && onRenameSession) {
+      onRenameSession(editingId, editValue);
+    }
+    setEditingId(null);
+  };
+
+  const handleEditKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleEditSubmit();
+    } else if (e.key === "Escape") {
+      setEditingId(null);
+    }
+  };
+
+  // 수정 모드 진입 시 input에 자동 포커스
+  useEffect(() => {
+    if (editingId && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [editingId]);
+
+  // 삭제 핸들러
+  const handleDelete = (e, id) => {
+    e.stopPropagation();
+    if (onDeleteSession) {
+      onDeleteSession(id);
+    }
+    setOpenMenuId(null); // 메뉴 닫기
+  };
 
   return (
     <div className="flex flex-col justify-between w-full h-full">
@@ -17,7 +73,7 @@ export default function AiChatList({ sessions, currentSessionId, onNewChat, onSe
           <div className="text-[2.22vh] font-bold text-white">
             이전 채팅 세션
           </div>
-          <div 
+          <div
             onClick={onNewChat}
             className="flex justify-center items-center w-[4.17vw] h-[2.22vh] gap-[0.78vw] text-[1.11vh] text-gray400 bg-gray800-50 border-[0.09vh] border-white-5 rounded-[0.74vh] cursor-pointer"
           >
@@ -29,17 +85,98 @@ export default function AiChatList({ sessions, currentSessionId, onNewChat, onSe
         <div className="flex flex-col w-full h-full gap-[1.4vh]">
           {currentSessions.map((session) => {
             const isActive = session.id === currentSessionId;
-            
+            const isEditing = session.id === editingId;
+
             return (
               <div
                 key={session.id}
-                onClick={() => onSessionClick(session.id)}
+                onClick={() => !isEditing && onSessionClick(session.id)}
                 className={`flex flex-col w-full h-[8.70vh] justify-center items-start px-[1.20vw] gap-[0.56vh] border-[0.09vh] border-white-5 rounded-[1.04vw] cursor-pointer transition-colors
                   ${isActive ? "bg-white-5" : "hover:bg-white-5"}
                 `}
               >
-                <div className="text-gray400 text-[1.85vh]">{session.title}</div>
-                <div className="text-gray700 text-[1.11vh]">{session.date}</div>
+                <div className="flex w-full justify-between items-center">
+                  <div className=" text-gray400 text-[1.11vh]">
+                    {session.date}
+                  </div>
+
+                  <div className="relative">
+                    <div
+                      onClick={(e) => handleMenuClick(e, session.id)}
+                      className="text-gray400 hover:text-white cursor-pointer transition-colors p-[0.5vh]"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={2}
+                        stroke="currentColor"
+                        className="w-[1.5vh] h-[1.5vh] mr-[-0.5vw]"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
+                        />
+                      </svg>
+                    </div>
+
+                    {openMenuId === session.id && (
+                      <div
+                        onClick={(e) => e.stopPropagation()}
+                        className="absolute top-0 right-[-7vw] z-50 flex flex-col justify-between w-[6vw] h-[9vh] px-[1vw] py-[1.4vh] mt-[1vh] bg-gray700 rounded-[1.04vw] rounded-tl-none overflow-hidden"
+                      >
+                        <button
+                          onClick={(e) => handleEditStart(e, session)}
+                          className="w-full px-[0.5vw] py-[0.4vh] text-left text-[1.28vh] text-gray400 hover:bg-white-5 transition-colors cursor-pointer"
+                        >
+                          이름 변경
+                        </button>
+                        <button
+                          onClick={(e) => handleDelete(e, session.id)}
+                          className="w-full px-[0.5vw] py-[0.4vh] text-left text-[1.28vh] text-red400 hover:bg-white-5 transition-colors cursor-pointer"
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* 드롭다운 */}
+                <div className="w-full truncate text-gray400 text-[1.85vh]">
+                  {isEditing ? (
+                    <input
+                      ref={inputRef}
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      onBlur={() => {
+                        // 포커스를 잃었을 때 저장
+                        if (editValue.trim() !== "" && onRenameSession) {
+                          onRenameSession(session.id, editValue);
+                        }
+                        setEditingId(null);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          // 엔터키 눌렸을 때 중복 실행 방지
+                          if (e.nativeEvent.isComposing) return;
+
+                          if (editValue.trim() !== "" && onRenameSession) {
+                            onRenameSession(session.id, editValue);
+                          }
+                          setEditingId(null);
+                        } else if (e.key === "Escape") {
+                          setEditingId(null);
+                        }
+                      }}
+                      onClick={(e) => e.stopPropagation()} // 클릭 시 세션 이동 방지
+                      className="w-full bg-transparent outline-none border-b border-gray400 text-white"
+                    />
+                  ) : (
+                    session.title
+                  )}
+                </div>
               </div>
             );
           })}
