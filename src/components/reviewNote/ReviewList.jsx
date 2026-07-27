@@ -32,7 +32,10 @@ export default function ReviewList({ selectedReviewId, onSelectReview }) {
   const totalDataCount = sortedReviews.length;
   const totalPages = Math.ceil(totalDataCount / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentItems = sortedReviews.slice(startIndex, startIndex + itemsPerPage);
+  const currentItems = sortedReviews.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
 
   // 마우스 휠 페이지 이동 핸들러
   const handleWheel = (e) => {
@@ -87,15 +90,16 @@ export default function ReviewList({ selectedReviewId, onSelectReview }) {
               >
                 {/* 뱃지 및 날짜 */}
                 <div className="flex justify-between items-center w-full">
+                  <span className="text-gray400 text-[1.11vh]">
+                    {item.date}
+                  </span>
                   <span
                     className={`border text-[1.11vh] px-[0.8vw] py-[0.2vh] rounded-2xl ${
-                      BADGE_COLORS[item.badgeType] || "bg-gray700 border-white-5 text-gray400"
+                      BADGE_COLORS[item.badgeType] ||
+                      "bg-gray700 border-white-5 text-gray400"
                     }`}
                   >
                     {item.badge}
-                  </span>
-                  <span className="text-gray400 text-[1.11vh]">
-                    {item.date}
                   </span>
                 </div>
 
