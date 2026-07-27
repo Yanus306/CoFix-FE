@@ -72,12 +72,29 @@ export function useAiChat() {
   };
 
   // 채팅 이름 변경
-  const handleRenameSession = (id, newTitle) => {
-    setSessions((prevSessions) =>
-      prevSessions.map((session) =>
-        session.id === id ? { ...session, title: newTitle } : session
-      )
-    );
+  const handleRenameSession = async (id, newTitle) => {
+    try {
+      const response = await fetch(`${BASE_URL}/chat/${id}/name`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getToken()}`,
+        },
+        body: JSON.stringify({ name: newTitle }),
+      });
+
+      if (response.ok) {
+        setSessions((prevSessions) =>
+          prevSessions.map((session) =>
+            session.id === id ? { ...session, title: newTitle } : session,
+          ),
+        );
+      } else {
+        console.error("이름 변경 처리에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("이름 변경 API 통신 오류:", error);
+    }
   };
 
   // 채팅방 삭제
@@ -90,7 +107,7 @@ export function useAiChat() {
 
       if (response.ok) {
         setSessions((prevSessions) =>
-          prevSessions.filter((session) => session.id !== id)
+          prevSessions.filter((session) => session.id !== id),
         );
         if (id === currentSessionId) handleNewChat();
       }
