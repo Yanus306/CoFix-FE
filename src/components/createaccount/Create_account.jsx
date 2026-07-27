@@ -2,12 +2,12 @@ import { useState } from 'react';
 import gitlogo from '../../assets/gitlogo.png';
 import googlelogo from '../../assets/googlelogo.png';
 import { useRegisterApi } from '../../hooks/RegisterApi';
+import { checkIsMockRegister } from '../../mocks/RegiMock';
 
 function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
   const [username, setUsername] = useState('');
   const [name, setName] = useState('');
   const [emailPrefix, setEmailPrefix] = useState('');
-  // 초기값을 빈 문자열로 설정하여 "주소를 선택해주세요"가 먼저 보이도록 설정
   const [emailDomain, setEmailDomain] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -45,7 +45,6 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
     confirmPassword.length > 0 &&
     password !== confirmPassword;
 
-  // 이메일 도메인이 선택되어야만 폼 제출이 가능하도록 조건 추가
   const isFormValid =
     username.trim() !== '' &&
     name.trim() !== '' &&
@@ -59,6 +58,21 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
     if (!isFormValid || isLoading) return;
 
     resetErrors();
+
+    const isMockData = checkIsMockRegister({
+      username,
+      name,
+      emailPrefix,
+      password,
+      confirmPassword,
+    });
+
+    if (isMockData) {
+      console.log('🧪 목데이터 회원가입 감지: 백엔드 통신 없이 다음 창으로 넘어갑니다.');
+      onSignUpComplete();
+      resetForm();
+      return;
+    }
 
     const fullEmail = `${emailPrefix.trim()}@${emailDomain}`;
 
@@ -129,7 +143,7 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
         </div>
 
         {/* 아이디 & 이름 입력창 */}
-        <span className="w-full flex justify-between px-[2.08vw] mt-[1.11vh] gap-[0.83vw]">
+        <div className="w-full flex justify-between px-[2.08vw] mt-[1.11vh] gap-[0.83vw]">
           <input
             name="username"
             type="text"
@@ -139,7 +153,7 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
               if (usernameError) setUsernameError('');
               if (generalError) setGeneralError('');
             }}
-            className={`bg-gray800-50 w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] cursor-pointer rounded-lg border text-white px-[0.83vw] focus:outline-none transition-all hover:bg-gray600/50 text-[1.48vh] ${
+            className={`bg-gray800-50 w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-lg border text-white px-[0.83vw] focus:outline-none transition-all hover:bg-gray600/50 text-[1.48vh] ${
               usernameError ? 'border-red400' : 'border-white-5'
             }`}
           />
@@ -148,9 +162,9 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="bg-gray800-50 w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] cursor-pointer rounded-lg border border-white-5 text-white px-[0.83vw] focus:outline-none transition-all hover:bg-gray600/50 text-[1.48vh]"
+            className="bg-gray800-50 w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-lg border border-white-5 text-white px-[0.83vw] focus:outline-none transition-all hover:bg-gray600/50 text-[1.48vh]"
           />
-        </span>
+        </div>
 
         {/* 이메일 라벨 및 중복 에러 */}
         <div className="text-gray200 text-left font-bold text-[1.85vh] mt-[1.85vh] flex items-center w-full px-[1.66vw] gap-[0.5vw]">
@@ -163,17 +177,17 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
         </div>
 
         {/* 이메일 입력 + @ + 도메인 선택 */}
-        <span className="w-full flex justify-between items-center px-[2.08vw] mt-[1.11vh] gap-[0.83vw]">
+        <div className="w-full flex justify-between items-center px-[2.08vw] mt-[1.11vh] gap-[0.83vw]">
           <input
             name="emailPrefix"
-            type="email"
+            type="text"
             value={emailPrefix}
             onChange={(e) => {
               setEmailPrefix(e.target.value);
               if (emailError) setEmailError('');
               if (generalError) setGeneralError('');
             }}
-            className={`bg-gray800-50 w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] cursor-pointer rounded-lg border text-white px-[0.83vw] focus:outline-none hover:bg-gray600/50 transition-all text-[1.48vh] ${
+            className={`bg-gray800-50 w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-lg border text-white px-[0.83vw] focus:outline-none hover:bg-gray600/50 transition-all text-[1.48vh] ${
               emailError ? 'border-red400' : 'border-white-5'
             }`}
           />
@@ -191,7 +205,7 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
             <option value="naver.com">naver.com</option>
             <option value="daum.net">daum.net</option>
           </select>
-        </span>
+        </div>
 
         {/* 비밀번호 라벨 */}
         <div className="flex justify-between items-center w-full px-[1.66vw] mt-[1.85vh] font-bold text-[1.85vh] text-gray200">
@@ -227,27 +241,40 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
         />
 
         {/* 구분선 */}
-        <span className="flex justify-between items-center px-[2.08vw] mt-[3.7vh]">
+        <div className="flex justify-between items-center px-[2.08vw] mt-[3.7vh]">
           <hr className="w-[16vw] max-w-[15.62vw] border-gray400"/>
           <div className="flex justify-center font-bold text-gray200 text-[1.85vh]">또는</div>
           <hr className="w-[16vw] max-w-[15.62vw] border-gray400"/>
-        </span>
+        </div>
 
-        {/* 소셜 로그인 버튼 */}
-        <span className="flex justify-between items-center px-[2.08vw] mt-[2.96vh] gap-[0.83vw]">
-          <button className="cursor-pointer border border-white-5 bg-white w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-full font-bold text-[1.29vh] text-black flex justify-center items-center gap-[1.04vw] hover:bg-gray200 transition-all shadow-md focus:outline-none">
+        {/* 소셜 로그인 버튼 (Google / GitHub 링크 연결) */}
+        <div className="flex justify-between items-center px-[2.08vw] mt-[2.96vh] gap-[0.83vw]">
+          <button
+            type="button"
+            onClick={() => {
+              window.location.href = 'http://cofix.jongyeol.kr/oauth2/authorization/google';
+            }}
+            className="cursor-pointer border border-white-5 bg-white w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-full font-bold text-[1.29vh] text-black flex justify-center items-center gap-[1.04vw] hover:bg-gray200 transition-all shadow-md focus:outline-none"
+          >
             <img src={googlelogo} alt="구글 로고" className="w-[1.66vw] h-[2.96vh] object-contain" />
             <span className="truncate">구글 계정으로 계정생성</span>
           </button>
-          <button className="cursor-pointer border border-white-5 bg-white w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-full font-bold text-[1.29vh] text-black flex justify-center items-center gap-[1.04vw] hover:bg-gray200 transition-all shadow-md focus:outline-none">
+          <button
+            type="button"
+            onClick={() => {
+              window.location.href = 'http://cofix.jongyeol.kr/oauth2/authorization/github';
+            }}
+            className="cursor-pointer border border-white-5 bg-white w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-full font-bold text-[1.29vh] text-black flex justify-center items-center gap-[1.04vw] hover:bg-gray200 transition-all shadow-md focus:outline-none"
+          >
             <img src={gitlogo} alt="깃허브 로고" className="w-[1.66vw] h-[2.96vh] object-contain" />
             <span className="truncate">깃허브 계정으로 계정생성</span>
           </button>
-        </span>
+        </div>
 
         {/* 계정생성 버튼 */}
         <div className="flex justify-end px-[2.08vw] mt-[3.7vh]">
           <button
+            type="button"
             onClick={handleSignUpSubmit}
             disabled={!isFormValid || isLoading}
             className={`w-[8vw] max-w-[7.81vw] h-[7.5vh] max-h-[6.48vh] rounded-4xl border border-white-5 font-bold text-[2.31vh] transition-all focus:outline-none ${
