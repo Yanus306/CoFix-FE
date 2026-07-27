@@ -1,16 +1,72 @@
+import { useState } from 'react';
 import logo from '../../assets/logo.png';
+import { useLoginApi } from '../../hooks/LoginApi'; // 💡 LoginApi 경로에 맞게 확인해 주세요!
 
 function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
-  
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+
+  const { loginUser, isLoading } = useLoginApi();
+
+  const resetForm = () => {
+    setUsername('');
+    setPassword('');
+    setLoginError('');
+  };
+
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
+
+  // 로그인 처리 함수 (백엔드 API 연동)
+  const handleLoginSubmit = async () => {
+    setLoginError('');
+
+    if (!username.trim() || !password) {
+      setLoginError('아이디와 비밀번호를 모두 입력해 주세요.');
+      return;
+    }
+
+    if (isLoading) return;
+
+    const result = await loginUser({
+      username: username,
+      password: password,
+    });
+
+    if (result.success) {
+      // 필요 시 백엔드에서 전달해준 토큰 및 유저 정보 저장
+      if (result.data?.accessToken || result.data?.token) {
+        localStorage.setItem('token', result.data.accessToken || result.data.token);
+      }
+      if (result.data?.user) {
+        localStorage.setItem('userInfo', JSON.stringify(result.data.user));
+      }
+
+      // 로그인 성공 처리 콜백 호출
+      if (onLoginSuccess) {
+        onLoginSuccess(result.data);
+      }
+
+      resetForm();
+      onClose();
+    } else {
+      // 서버에서 내려온 에러 메시지 표기
+      setLoginError(result.message || '아이디 또는 비밀번호가 올바르지 않습니다.');
+    }
+  };
+
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      onLoginSuccess();
+      handleLoginSubmit();
     }
   };
 
   return (
     <div 
-      onClick={onClose}
+      onClick={handleClose}
       className={`fixed inset-0 bg-black/50 z-50 flex items-center justify-center transition-all duration-500 ${
         isOpen ? 'opacity-100 visible backdrop-blur-[2px]' : 'opacity-0 invisible backdrop-blur-none'
       }`}
@@ -25,7 +81,7 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
       >
         
         <button 
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute top-[2.22vh] right-[1.66vw] text-gray400 hover:text-white text-[2.77vh] font-semibold cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple500 transition-all"
         >
           &times;
@@ -39,28 +95,52 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
           />
         </div>
         
-        <div className="text-gray200 w-full text-left px-[4.16vw] mt-[1.85vh] font-bold text-[1.85vh]">아이디</div>
+        {/* 아이디 라벨 및 에러 메시지 */}
+        <div className="text-gray200 w-full text-left px-[4.16vw] mt-[1.85vh] font-bold text-[1.85vh] flex justify-between items-center">
+          <span>아이디</span>
+          {loginError && (
+            <span className="text-red400 text-[1.29vh] font-semibold">
+              {loginError}
+            </span>
+          )}
+        </div>
         <input 
           type="text" 
+          value={username}
+          onChange={(e) => {
+            setUsername(e.target.value);
+            if (loginError) setLoginError('');
+          }}
           onKeyDown={handleKeyDown}
-          className="hover:bg-gray-600/50 w-[30vw] max-w-[570px] h-[5vh] max-h-[50px] bg-gray800-50 border-white-5 border rounded-lg cursor-pointer pl-[0.83vw] text-white focus:outline-none focus:ring-2 focus:ring-purple500 transition-all text-[1.66vh]"
+          className={`hover:bg-gray-600/50 w-[30vw] max-w-[570px] h-[5vh] max-h-[50px] bg-gray800-50 border rounded-lg cursor-pointer pl-[0.83vw] text-white focus:outline-none focus:ring-2 focus:ring-purple500 transition-all text-[1.66vh] ${
+            loginError ? 'border-red-500' : 'border-white-5'
+          }`}
         />
 
+        {/* 비밀번호 라벨 */}
         <div className="text-gray200 w-full text-left px-[4.16vw] mt-[1.85vh] font-bold text-[1.85vh]">비밀번호</div>
         <input 
           type="password" 
+          value={password}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            if (loginError) setLoginError('');
+          }}
           onKeyDown={handleKeyDown}
-          className="hover:bg-gray-600/50 w-[30vw] max-w-[570px] h-[5vh] max-h-[50px] bg-gray800-50 border-white/5 border rounded-lg cursor-pointer pl-[0.83vw] text-white focus:outline-none focus:ring-2 focus:ring-purple500 transition-all text-[1.66vh]"
+          className={`hover:bg-gray-600/50 w-[30vw] max-w-[570px] h-[5vh] max-h-[50px] bg-gray800-50 border rounded-lg cursor-pointer pl-[0.83vw] text-white focus:outline-none focus:ring-2 focus:ring-purple500 transition-all text-[1.66vh] ${
+            loginError ? 'border-red400' : 'border-white-5'
+          }`}
         />
 
         <button 
-          onClick={onLoginSuccess}
-          className="w-[15vw] max-w-[290px] h-[8vh] max-h-[80px] bg-gray800-50 border-white-5 border rounded-4xl cursor-pointer text-purple400 flex justify-center items-center text-[3.24vh] mt-[3.7vh] font-bold hover:bg-gray-600/50 transition-all focus:outline-none focus:ring-2 focus:ring-purple500"
+          onClick={handleLoginSubmit}
+          disabled={isLoading}
+          className="w-[15vw] max-w-[290px] h-[8vh] max-h-[80px] bg-gray800-50 border-white-5 border rounded-4xl cursor-pointer text-purple400 flex justify-center items-center text-[3.24vh] mt-[3.7vh] font-bold hover:bg-gray-600/50 transition-all focus:outline-none focus:ring-2 focus:ring-purple500 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          로그인
+          {isLoading ? '로그인 중...' : '로그인'}
         </button>
 
-        <div className="text-gray-200 w-fit text-center mt-[1.85vh] text-[1.2vh]">
+        <div className="text-gray200 w-fit text-center mt-[1.85vh] text-[1.2vh]">
           <span>계정이 없으신가요? </span>
           <button
             onClick={onSignUpClick} 
