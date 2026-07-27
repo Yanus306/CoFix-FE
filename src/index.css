@@ -130,3 +130,20 @@
     @apply bg-blue-500/10 border-blue-500/20 text-blue-400;
   }
 }
+
+@layer utilities {
+  @keyframes slideFadeInLeft {
+    0% {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .animate-slide-fade-in-left {
+    animation: slideFadeInLeft 0.4s ease-out forwards;
+  }
+}

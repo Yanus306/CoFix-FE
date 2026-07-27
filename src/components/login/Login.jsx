@@ -27,7 +27,7 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
         <button 
           onClick={onClose}
           className="absolute top-[2.22vh] right-[1.66vw] text-gray400 hover:text-white text-[2.77vh] font-semibold cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple500 transition-all"
-        >s
+        >
           &times;
         </button>
         

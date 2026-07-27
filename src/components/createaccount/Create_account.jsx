@@ -1,14 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import gitlogo from '../../assets/gitlogo.png';
 import googlelogo from '../../assets/googlelogo.png';
+import { useRegisterApi } from '../../hooks/RegisterApi';
 
-function Create_account({ isOpen1, onClose1, onSignUpComplete}) {
+function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
   const [username, setUsername] = useState('');
   const [name, setName] = useState('');
   const [emailPrefix, setEmailPrefix] = useState('');
   const [emailDomain, setEmailDomain] = useState('gmail.com');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  const [serverError, setServerError] = useState('');
+
+  const { registerUser, isLoading } = useRegisterApi();
 
   const resetForm = () => {
     setUsername('');
@@ -17,6 +22,7 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete}) {
     setEmailDomain('gmail.com');
     setPassword('');
     setConfirmPassword('');
+    setServerError('');
   };
 
   const handleClose = () => {
@@ -24,7 +30,7 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete}) {
     onClose1();
   };
 
-  const isFormValid = 
+  const isFormValid =
     username.trim() !== '' &&
     name.trim() !== '' &&
     emailPrefix.trim() !== '' &&
@@ -32,33 +38,59 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete}) {
     confirmPassword.length > 0 &&
     password === confirmPassword;
 
-  const handleSignUpSubmit = () => {
-    if (!isFormValid) return;
+  const handleSignUpSubmit = async () => {
+    if (!isFormValid || isLoading) return;
 
-    onSignUpComplete();
-    resetForm();
+    setServerError('');
+
+    const fullEmail = `${emailPrefix.trim()}@${emailDomain}`;
+
+    const result = await registerUser({
+      username: username,
+      password: password,
+      nickname: name,
+      email: fullEmail,
+    });
+
+    if (result.success) {
+      // 💡 성공 alert 제거
+      onSignUpComplete();
+      resetForm();
+    } else {
+      const errorMsg = result.message || '';
+
+      // 백엔드 에러 응답 문구에 따라 분기 처리
+      if (errorMsg.includes('username') || errorMsg.includes('아이디')) {
+        alert('❌ 이미 존재하는 아이디입니다.');
+      } else if (errorMsg.includes('email') || errorMsg.includes('이메일')) {
+        alert('❌ 이미 존재하는 이메일입니다.');
+      } else {
+        alert(`❌ 회원가입 실패: ${errorMsg || '입력 정보를 확인해 주세요.'}`);
+      }
+
+      setServerError(errorMsg);
+    }
   };
 
-  const isPasswordMismatched = 
-    password.length > 0 && 
-    confirmPassword.length > 0 && 
+  const isPasswordMismatched =
+    password.length > 0 &&
+    confirmPassword.length > 0 &&
     password !== confirmPassword;
 
   return (
-    <div 
+    <div
       onClick={handleClose}
       className={`fixed inset-0 bg-black/50 z-50 flex items-center justify-center transition-all duration-500 ${
         isOpen1 ? 'opacity-100 visible backdrop-blur-[0.46vh]' : 'opacity-0 invisible backdrop-blur-none'
       }`}
     >
-      <div 
+      <div
         onClick={(e) => e.stopPropagation()}
         className={`relative w-[43vw] min-w-[320px] max-w-[820px] h-[92vh] min-h-[600px] max-h-[900px] bg-gray700 border-white-5 border-2 rounded-md p-[2.22vh] shadow-2xl select-none transition-all duration-500 ease-out overflow-y-auto ${
           isOpen1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}
       >
-        
-        <button 
+        <button
           onClick={handleClose}
           className="absolute top-[2.22vh] right-[1.66vw] text-gray-400 hover:text-white text-[2.77vh] font-semibold cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple500 transition-all"
         >
@@ -67,36 +99,49 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete}) {
 
         <div className="text-white font-bold text-[3.24vh] text-center mt-[1.85vh]">회원가입</div>
 
+        {serverError && (
+          <div className="text-red-400 text-center font-semibold text-[1.48vh] mt-[1vh]">
+            {serverError}
+          </div>
+        )}
+
         <div className="flex justify-between items-center w-full px-[1.66vw] mt-[1.11vh] font-bold text-[1.85vh] text-gray-200">
           <span className="text-left">아이디</span>
           <span className="text-right pr-[14.79vw]">이름</span>
         </div>
-        
+
         <span className="w-full flex justify-between px-[2.08vw] mt-[1.11vh] gap-[0.83vw]">
-          <input 
-            type="text" 
+          <input
+            name="username"
+            type="text"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="bg-gray800-50 w-[16vw] max-w-[300px] h-[5.5vh] max-h-[50px] cursor-pointer rounded-lg border border-white-5 text-white px-[0.83vw] focus:outline-none focus:ring-2 focus:ring-purple500 transition-all hover:bg-gray-600/50 text-[1.48vh]" 
+            onChange={(e) => {
+              setUsername(e.target.value);
+              if (serverError) setServerError('');
+            }}
+            className="bg-gray800-50 w-[16vw] max-w-[300px] h-[5.5vh] max-h-[50px] cursor-pointer rounded-lg border border-white-5 text-white px-[0.83vw] focus:outline-none focus:ring-2 focus:ring-purple500 transition-all hover:bg-gray-600/50 text-[1.48vh]"
           />
-          <input 
-            type="text" 
+          <input
+            name="nickname"
+            type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="bg-gray800-50 w-[16vw] max-w-[300px] h-[5.5vh] max-h-[50px] cursor-pointer rounded-lg border border-white-5 text-white px-[0.83vw] focus:outline-none focus:ring-2 focus:ring-purple500 transition-all hover:bg-gray-600/50 text-[1.48vh]" 
+            className="bg-gray800-50 w-[16vw] max-w-[300px] h-[5.5vh] max-h-[50px] cursor-pointer rounded-lg border border-white-5 text-white px-[0.83vw] focus:outline-none focus:ring-2 focus:ring-purple500 transition-all hover:bg-gray-600/50 text-[1.48vh]"
           />
         </span>
 
         <div className="text-gray-200 text-left font-bold text-[1.85vh] mt-[1.85vh] flex justify-between items-center w-full px-[1.66vw]">이메일</div>
         <span className="w-full flex justify-between items-center px-[2.08vw] mt-[1.11vh] gap-[0.83vw]">
-          <input 
+          <input
+            name="emailPrefix"
             type="email"
             value={emailPrefix}
             onChange={(e) => setEmailPrefix(e.target.value)}
-            className="bg-gray800-50 w-[16vw] max-w-[300px] h-[5.5vh] max-h-[50px] cursor-pointer rounded-lg border border-white-5 text-white px-[0.83vw] focus:outline-none focus:ring-2 hover:bg-gray-600/50 focus:ring-purple500 transition-all text-[1.48vh]" 
+            className="bg-gray800-50 w-[16vw] max-w-[300px] h-[5.5vh] max-h-[50px] cursor-pointer rounded-lg border border-white-5 text-white px-[0.83vw] focus:outline-none focus:ring-2 hover:bg-gray-600/50 focus:ring-purple500 transition-all text-[1.48vh]"
           />
           <div className="text-gray-200 font-bold text-[2.77vh]">@</div>
-          <select 
+          <select
+            name="emailDomain"
             value={emailDomain}
             onChange={(e) => setEmailDomain(e.target.value)}
             className="w-[16vw] max-w-[300px] h-[5.5vh] max-h-[50px] bg-gray800-50 border-white-5 border-2 rounded-md text-white px-[0.83vw] py-[0.74vh] cursor-pointer focus:outline-none focus:ring-2 hover:bg-gray-600/50 focus:ring-purple500 transition-all text-[1.48vh]"
@@ -108,13 +153,14 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete}) {
         </span>
 
         <div className="flex justify-between items-center w-full px-[1.66vw] mt-[1.85vh] font-bold text-[1.85vh] text-gray-200">비밀번호</div>
-        <input 
-          type="password" 
+        <input
+          name="password"
+          type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="px-[0.83vw] ml-[2.08vw] mt-[1.11vh] w-[37vw] max-w-[710px] h-[5.5vh] max-h-[50px] bg-gray800-50 border border-white-5 rounded-lg focus:outline-none focus:ring-2 hover:bg-gray-600/50 focus:ring-purple500 transition-all text-white text-[1.48vh]" 
+          className="px-[0.83vw] ml-[2.08vw] mt-[1.11vh] w-[37vw] max-w-[710px] h-[5.5vh] max-h-[50px] bg-gray800-50 border border-white-5 rounded-lg focus:outline-none focus:ring-2 hover:bg-gray-600/50 focus:ring-purple500 transition-all text-white text-[1.48vh]"
         />
-        
+
         <div className="flex justify-between items-center w-full px-[1.66vw] mt-[1.85vh] font-bold text-[1.85vh] text-gray-200">
           <span>비밀번호 확인</span>
           {isPasswordMismatched && (
@@ -123,11 +169,12 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete}) {
             </span>
           )}
         </div>
-        <input 
-          type="password" 
+        <input
+          name="confirmPassword"
+          type="password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className="px-[0.83vw] ml-[2.08vw] mt-[1.11vh] w-[37vw] max-w-[710px] h-[5.5vh] max-h-[50px] bg-gray800-50 border border-white-5 rounded-lg focus:outline-none focus:ring-2 hover:bg-gray-600/50 focus:ring-purple500 transition-all text-white text-[1.48vh]" 
+          className="px-[0.83vw] ml-[2.08vw] mt-[1.11vh] w-[37vw] max-w-[710px] h-[5.5vh] max-h-[50px] bg-gray800-50 border border-white-5 rounded-lg focus:outline-none focus:ring-2 hover:bg-gray-600/50 focus:ring-purple500 transition-all text-white text-[1.48vh]"
         />
 
         <span className="flex justify-between items-center px-[2.08vw] mt-[3.7vh]">
@@ -148,16 +195,16 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete}) {
         </span>
 
         <div className="flex justify-end px-[2.08vw] mt-[3.7vh]">
-          <button 
-            onClick={handleSignUpSubmit} 
-            disabled={!isFormValid}
+          <button
+            onClick={handleSignUpSubmit}
+            disabled={!isFormValid || isLoading}
             className={`w-[8vw] max-w-[150px] h-[7.5vh] max-h-[70px] rounded-4xl border border-white-5 font-bold text-[2.31vh] transition-all focus:outline-none focus:ring-2 focus:ring-purple500 ${
-              isFormValid 
-                ? 'bg-gray800-50 text-purple400 cursor-pointer hover:bg-gray-600/50' 
+              isFormValid && !isLoading
+                ? 'bg-gray800-50 text-purple400 cursor-pointer hover:bg-gray-600/50'
                 : 'bg-gray800/20 text-purple400/30 cursor-not-allowed opacity-60'
             }`}
           >
-            계정생성
+            {isLoading ? '생성 중...' : '계정생성'}
           </button>
         </div>
 

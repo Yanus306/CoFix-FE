@@ -2,8 +2,10 @@ import { useState, useRef, useEffect } from "react";
 import SendIcon from "./SendIcon";
 import ChatBubble from "./ChatBubble";
 import TypingIndicator from "./TypingIndicator";
+import SlideFadeIn from "../../shared/SlideFadeIn";
 
 export default function AiChatDetail({
+  sessionId,
   initialMessages = [],
   isNewChat,
   onCreateSession,
@@ -90,15 +92,17 @@ export default function AiChatDetail({
         <div className="w-full h-[0.09vh] mb-[2.22vh] bg-gray400" />
       </div>
 
-      <div className="flex flex-col w-full h-full overflow-y-auto pr-[1vw]">
-        {messages.map((chat) => (
-          <ChatBubble key={chat.id} role={chat.role} message={chat.message} />
-        ))}
+      <SlideFadeIn animationKey={sessionId === null ? "new-chat" : "active-chat"}>
+        <div className="flex flex-col w-full h-full overflow-y-auto pr-[1vw]">
+          {messages.map((chat) => (
+            <ChatBubble key={chat.id} role={chat.role} message={chat.message} />
+          ))}
 
-        {isAiTyping && <ChatBubble role="ai" message={<TypingIndicator />} />}
+          {isAiTyping && <ChatBubble role="ai" message={<TypingIndicator />} />}
 
-        <div ref={messagesEndRef} />
-      </div>
+          <div ref={messagesEndRef} />
+        </div>
+      </SlideFadeIn>
 
       <div className="flex w-full shrink-0 min-h-[7.13vh] mt-[1.5vh] mb-[2vh] bg-gray800-50 rounded-[1.04vw]">
         <textarea
