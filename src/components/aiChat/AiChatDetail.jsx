@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import SendIcon from "./SendIcon";
 import ChatBubble from "./ChatBubble";
 import TypingIndicator from "./TypingIndicator";
 import SlideFadeIn from "../../shared/SlideFadeIn";
+import { useAiChatDetail } from "../../hooks/useAiChatDetail";
 
 export default function AiChatDetail({
   sessionId,
@@ -10,78 +11,37 @@ export default function AiChatDetail({
   isNewChat,
   onCreateSession,
 }) {
-  const [messages, setMessages] = useState(initialMessages);
-  const [inputValue, setInputValue] = useState("");
-  const [isAiTyping, setIsAiTyping] = useState(false);
+  const {
+    messages,
+    inputValue,
+    setInputValue,
+    isAiTyping,
+    handleSendMessage,
+  } = useAiChatDetail(sessionId, initialMessages, isNewChat, onCreateSession);
 
   const textareaRef = useRef(null);
   const messagesEndRef = useRef(null);
 
-  useEffect(() => {
-    setMessages(initialMessages);
-  }, [initialMessages]);
-
+  // 자동 스크롤 로직
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, isAiTyping]);
 
+  // textarea 높이 조절 로직
   const handleResizeHeight = (e) => {
     setInputValue(e.target.value);
     if (textareaRef.current) {
       textareaRef.current.style.height = "0px";
-      textareaRef.current.style.height =
-        textareaRef.current.scrollHeight + "px";
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
     }
-  };
-
-  const handleSendMessage = () => {
-    if (!inputValue.trim() || isAiTyping) return;
-
-    const newUserMessage = {
-      id: Date.now(),
-      role: "user",
-      message: inputValue,
-    };
-    setMessages((prev) => [...prev, newUserMessage]);
-    setInputValue("");
-
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-    }
-
-    setIsAiTyping(true);
-
-    // AI 답변 도착 시뮬레이션
-    setTimeout(() => {
-      const newAiMessage = {
-        id: Date.now() + 1,
-        role: "ai",
-        message:
-          "백엔드에서 받아온 가짜 목업 데이터 응답입니다! 나중에는 이 부분을 실제 API 응답 값으로 교체하시면 됩니다.",
-      };
-
-      setMessages((prev) => {
-        const updatedMessages = [...prev, newAiMessage];
-
-        if (isNewChat && onCreateSession) {
-          setTimeout(() => {
-            onCreateSession("백에서 받아온 제목", updatedMessages);
-          }, 0);
-        }
-
-        return updatedMessages;
-      });
-
-      setIsAiTyping(false);
-    }, 4000);
   };
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSendMessage();
+      handleSendMessage(textareaRef); 
     }
   };
 
@@ -115,7 +75,7 @@ export default function AiChatDetail({
           placeholder="메시지를 입력하세요..."
         />
         <button
-          onClick={handleSendMessage}
+          onClick={() => handleSendMessage(textareaRef)} 
           className="flex justify-center items-end w-[6vw] pb-[2.2vh] bg-transparent text-gray400 hover:text-purple400 transition-colors"
         >
           <SendIcon className="w-[3.5vh] h-[3.5vh] text-purple400 rotate-320 cursor-pointer" />
