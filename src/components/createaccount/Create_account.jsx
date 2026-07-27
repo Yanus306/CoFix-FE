@@ -7,22 +7,32 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
   const [username, setUsername] = useState('');
   const [name, setName] = useState('');
   const [emailPrefix, setEmailPrefix] = useState('');
-  const [emailDomain, setEmailDomain] = useState('gmail.com');
+  // 초기값을 빈 문자열로 설정하여 "주소를 선택해주세요"가 먼저 보이도록 설정
+  const [emailDomain, setEmailDomain] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const [serverError, setServerError] = useState('');
+  // 에러 상태 분리
+  const [usernameError, setUsernameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [generalError, setGeneralError] = useState('');
 
   const { registerUser, isLoading } = useRegisterApi();
+
+  const resetErrors = () => {
+    setUsernameError('');
+    setEmailError('');
+    setGeneralError('');
+  };
 
   const resetForm = () => {
     setUsername('');
     setName('');
     setEmailPrefix('');
-    setEmailDomain('gmail.com');
+    setEmailDomain('');
     setPassword('');
     setConfirmPassword('');
-    setServerError('');
+    resetErrors();
   };
 
   const handleClose = () => {
@@ -30,18 +40,25 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
     onClose1();
   };
 
+  const isPasswordMismatched =
+    password.length > 0 &&
+    confirmPassword.length > 0 &&
+    password !== confirmPassword;
+
+  // 이메일 도메인이 선택되어야만 폼 제출이 가능하도록 조건 추가
   const isFormValid =
     username.trim() !== '' &&
     name.trim() !== '' &&
     emailPrefix.trim() !== '' &&
+    emailDomain !== '' &&
     password.length > 0 &&
     confirmPassword.length > 0 &&
-    password === confirmPassword;
+    !isPasswordMismatched;
 
   const handleSignUpSubmit = async () => {
     if (!isFormValid || isLoading) return;
 
-    setServerError('');
+    resetErrors();
 
     const fullEmail = `${emailPrefix.trim()}@${emailDomain}`;
 
@@ -53,29 +70,20 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
     });
 
     if (result.success) {
-      // 💡 성공 alert 제거
       onSignUpComplete();
       resetForm();
     } else {
       const errorMsg = result.message || '';
 
-      // 백엔드 에러 응답 문구에 따라 분기 처리
       if (errorMsg.includes('username') || errorMsg.includes('아이디')) {
-        alert('❌ 이미 존재하는 아이디입니다.');
+        setUsernameError('이미 존재하는 아이디입니다.');
       } else if (errorMsg.includes('email') || errorMsg.includes('이메일')) {
-        alert('❌ 이미 존재하는 이메일입니다.');
+        setEmailError('이미 존재하는 이메일입니다.');
       } else {
-        alert(`❌ 회원가입 실패: ${errorMsg || '입력 정보를 확인해 주세요.'}`);
+        setGeneralError(errorMsg || '회원가입 처리 중 오류가 발생했습니다.');
       }
-
-      setServerError(errorMsg);
     }
   };
-
-  const isPasswordMismatched =
-    password.length > 0 &&
-    confirmPassword.length > 0 &&
-    password !== confirmPassword;
 
   return (
     <div
@@ -86,30 +94,41 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`relative w-[43vw] min-w-[320px] max-w-[820px] h-[92vh] min-h-[600px] max-h-[900px] bg-gray700 border-white-5 border-2 rounded-md p-[2.22vh] shadow-2xl select-none transition-all duration-500 ease-out overflow-y-auto ${
+        className={`relative w-[43vw] min-w-[16.66vw] max-w-[42.7vw] h-[92vh] min-h-[55.5vh] max-h-[83.3vh] bg-gray700 border-white-5 border-2 rounded-md p-[2.22vh] shadow-2xl select-none transition-all duration-500 ease-out overflow-y-auto ${
           isOpen1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}
       >
         <button
           onClick={handleClose}
-          className="absolute top-[2.22vh] right-[1.66vw] text-gray-400 hover:text-white text-[2.77vh] font-semibold cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple500 transition-all"
+          className="absolute top-[2.22vh] right-[1.66vw] text-gray400 hover:text-white text-[2.77vh] font-semibold cursor-pointer focus:outline-none transition-all"
         >
           &times;
         </button>
 
+        {/* 헤더 */}
         <div className="text-white font-bold text-[3.24vh] text-center mt-[1.85vh]">회원가입</div>
 
-        {serverError && (
-          <div className="text-red-400 text-center font-semibold text-[1.48vh] mt-[1vh]">
-            {serverError}
+        {/* 기타/서버 오류 에러 문구 */}
+        {generalError && (
+          <div className="text-red400 text-center font-semibold text-[1.48vh] mt-[1vh]">
+            {generalError}
           </div>
         )}
 
-        <div className="flex justify-between items-center w-full px-[1.66vw] mt-[1.11vh] font-bold text-[1.85vh] text-gray-200">
-          <span className="text-left">아이디</span>
+        {/* 아이디 & 이름 라벨 */}
+        <div className="flex justify-between items-center w-full px-[1.66vw] mt-[1.11vh] font-bold text-[1.85vh] text-gray200">
+          <div className="flex items-center gap-[0.5vw]">
+            <span>아이디</span>
+            {usernameError && (
+              <span className="text-red400 text-[1.29vh] font-semibold">
+                {usernameError}
+              </span>
+            )}
+          </div>
           <span className="text-right pr-[14.79vw]">이름</span>
         </div>
 
+        {/* 아이디 & 이름 입력창 */}
         <span className="w-full flex justify-between px-[2.08vw] mt-[1.11vh] gap-[0.83vw]">
           <input
             name="username"
@@ -117,90 +136,123 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
             value={username}
             onChange={(e) => {
               setUsername(e.target.value);
-              if (serverError) setServerError('');
+              if (usernameError) setUsernameError('');
+              if (generalError) setGeneralError('');
             }}
-            className="bg-gray800-50 w-[16vw] max-w-[300px] h-[5.5vh] max-h-[50px] cursor-pointer rounded-lg border border-white-5 text-white px-[0.83vw] focus:outline-none focus:ring-2 focus:ring-purple500 transition-all hover:bg-gray-600/50 text-[1.48vh]"
+            className={`bg-gray800-50 w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] cursor-pointer rounded-lg border text-white px-[0.83vw] focus:outline-none transition-all hover:bg-gray600/50 text-[1.48vh] ${
+              usernameError ? 'border-red400' : 'border-white-5'
+            }`}
           />
           <input
             name="nickname"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="bg-gray800-50 w-[16vw] max-w-[300px] h-[5.5vh] max-h-[50px] cursor-pointer rounded-lg border border-white-5 text-white px-[0.83vw] focus:outline-none focus:ring-2 focus:ring-purple500 transition-all hover:bg-gray-600/50 text-[1.48vh]"
+            className="bg-gray800-50 w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] cursor-pointer rounded-lg border border-white-5 text-white px-[0.83vw] focus:outline-none transition-all hover:bg-gray600/50 text-[1.48vh]"
           />
         </span>
 
-        <div className="text-gray-200 text-left font-bold text-[1.85vh] mt-[1.85vh] flex justify-between items-center w-full px-[1.66vw]">이메일</div>
+        {/* 이메일 라벨 및 중복 에러 */}
+        <div className="text-gray200 text-left font-bold text-[1.85vh] mt-[1.85vh] flex items-center w-full px-[1.66vw] gap-[0.5vw]">
+          <span>이메일</span>
+          {emailError && (
+            <span className="text-red400 text-[1.29vh] font-semibold">
+              {emailError}
+            </span>
+          )}
+        </div>
+
+        {/* 이메일 입력 + @ + 도메인 선택 */}
         <span className="w-full flex justify-between items-center px-[2.08vw] mt-[1.11vh] gap-[0.83vw]">
           <input
             name="emailPrefix"
             type="email"
             value={emailPrefix}
-            onChange={(e) => setEmailPrefix(e.target.value)}
-            className="bg-gray800-50 w-[16vw] max-w-[300px] h-[5.5vh] max-h-[50px] cursor-pointer rounded-lg border border-white-5 text-white px-[0.83vw] focus:outline-none focus:ring-2 hover:bg-gray-600/50 focus:ring-purple500 transition-all text-[1.48vh]"
+            onChange={(e) => {
+              setEmailPrefix(e.target.value);
+              if (emailError) setEmailError('');
+              if (generalError) setGeneralError('');
+            }}
+            className={`bg-gray800-50 w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] cursor-pointer rounded-lg border text-white px-[0.83vw] focus:outline-none hover:bg-gray600/50 transition-all text-[1.48vh] ${
+              emailError ? 'border-red400' : 'border-white-5'
+            }`}
           />
-          <div className="text-gray-200 font-bold text-[2.77vh]">@</div>
+          <div className="text-gray200 font-bold text-[2.77vh]">@</div>
           <select
             name="emailDomain"
             value={emailDomain}
             onChange={(e) => setEmailDomain(e.target.value)}
-            className="w-[16vw] max-w-[300px] h-[5.5vh] max-h-[50px] bg-gray800-50 border-white-5 border-2 rounded-md text-white px-[0.83vw] py-[0.74vh] cursor-pointer focus:outline-none focus:ring-2 hover:bg-gray-600/50 focus:ring-purple500 transition-all text-[1.48vh]"
+            className="w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] bg-gray800-50 border-white-5 border-2 rounded-md text-white px-[0.83vw] py-[0.74vh] cursor-pointer focus:outline-none hover:bg-gray600/50 transition-all text-[1.48vh]"
           >
+            <option value="" disabled>
+              주소를 선택해주세요
+            </option>
             <option value="gmail.com">gmail.com</option>
             <option value="naver.com">naver.com</option>
             <option value="daum.net">daum.net</option>
           </select>
         </span>
 
-        <div className="flex justify-between items-center w-full px-[1.66vw] mt-[1.85vh] font-bold text-[1.85vh] text-gray-200">비밀번호</div>
+        {/* 비밀번호 라벨 */}
+        <div className="flex justify-between items-center w-full px-[1.66vw] mt-[1.85vh] font-bold text-[1.85vh] text-gray200">
+          비밀번호
+        </div>
         <input
           name="password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="px-[0.83vw] ml-[2.08vw] mt-[1.11vh] w-[37vw] max-w-[710px] h-[5.5vh] max-h-[50px] bg-gray800-50 border border-white-5 rounded-lg focus:outline-none focus:ring-2 hover:bg-gray-600/50 focus:ring-purple500 transition-all text-white text-[1.48vh]"
+          className="px-[0.83vw] ml-[2.08vw] mt-[1.11vh] w-[37vw] max-w-[36.98vw] h-[5.5vh] max-h-[4.63vh] bg-gray800-50 border border-white-5 rounded-lg focus:outline-none hover:bg-gray600/50 transition-all text-white text-[1.48vh]"
         />
 
-        <div className="flex justify-between items-center w-full px-[1.66vw] mt-[1.85vh] font-bold text-[1.85vh] text-gray-200">
-          <span>비밀번호 확인</span>
-          {isPasswordMismatched && (
-            <span className="text-red-400 text-[1.29vh] font-semibold ml-[0.83vw]">
-              비밀번호가 일치하지 않습니다.
-            </span>
-          )}
+        {/* 비밀번호 확인 라벨 & 불일치 에러 */}
+        <div className="flex justify-between items-center w-full px-[1.66vw] mt-[1.85vh] font-bold text-[1.85vh] text-gray200">
+          <div className="flex items-center gap-[0.5vw]">
+            <span>비밀번호 확인</span>
+            {isPasswordMismatched && (
+              <span className="text-red400 text-[1.29vh] font-semibold ml-[0.83vw]">
+                비밀번호가 일치하지 않습니다.
+              </span>
+            )}
+          </div>
         </div>
         <input
           name="confirmPassword"
           type="password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className="px-[0.83vw] ml-[2.08vw] mt-[1.11vh] w-[37vw] max-w-[710px] h-[5.5vh] max-h-[50px] bg-gray800-50 border border-white-5 rounded-lg focus:outline-none focus:ring-2 hover:bg-gray-600/50 focus:ring-purple500 transition-all text-white text-[1.48vh]"
+          className={`px-[0.83vw] ml-[2.08vw] mt-[1.11vh] w-[37vw] max-w-[36.98vw] h-[5.5vh] max-h-[4.63vh] bg-gray800-50 border rounded-lg focus:outline-none hover:bg-gray600/50 transition-all text-white text-[1.48vh] ${
+            isPasswordMismatched ? 'border-red400' : 'border-white-5'
+          }`}
         />
 
+        {/* 구분선 */}
         <span className="flex justify-between items-center px-[2.08vw] mt-[3.7vh]">
-          <hr className="w-[16vw] max-w-[300px] border-gray400"/>
-          <div className="flex justify-center font-bold text-gray-200 text-[1.85vh]">또는</div>
-          <hr className="w-[16vw] max-w-[300px] border-gray400"/>
+          <hr className="w-[16vw] max-w-[15.62vw] border-gray400"/>
+          <div className="flex justify-center font-bold text-gray200 text-[1.85vh]">또는</div>
+          <hr className="w-[16vw] max-w-[15.62vw] border-gray400"/>
         </span>
 
+        {/* 소셜 로그인 버튼 */}
         <span className="flex justify-between items-center px-[2.08vw] mt-[2.96vh] gap-[0.83vw]">
-          <button className="cursor-pointer border border-white-5 bg-white w-[16vw] max-w-[300px] h-[5.5vh] max-h-[50px] rounded-full font-bold text-[1.29vh] text-black flex justify-center items-center gap-[1.04vw] hover:bg-gray-200 transition-all shadow-md focus:outline-none focus:ring-2 focus:ring-purple500">
+          <button className="cursor-pointer border border-white-5 bg-white w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-full font-bold text-[1.29vh] text-black flex justify-center items-center gap-[1.04vw] hover:bg-gray200 transition-all shadow-md focus:outline-none">
             <img src={googlelogo} alt="구글 로고" className="w-[1.66vw] h-[2.96vh] object-contain" />
             <span className="truncate">구글 계정으로 계정생성</span>
           </button>
-          <button className="cursor-pointer border border-white-5 bg-white w-[16vw] max-w-[300px] h-[5.5vh] max-h-[50px] rounded-full font-bold text-[1.29vh] text-black flex justify-center items-center gap-[1.04vw] hover:bg-gray-200 transition-all shadow-md focus:outline-none focus:ring-2 focus:ring-purple500">
+          <button className="cursor-pointer border border-white-5 bg-white w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-full font-bold text-[1.29vh] text-black flex justify-center items-center gap-[1.04vw] hover:bg-gray200 transition-all shadow-md focus:outline-none">
             <img src={gitlogo} alt="깃허브 로고" className="w-[1.66vw] h-[2.96vh] object-contain" />
             <span className="truncate">깃허브 계정으로 계정생성</span>
           </button>
         </span>
 
+        {/* 계정생성 버튼 */}
         <div className="flex justify-end px-[2.08vw] mt-[3.7vh]">
           <button
             onClick={handleSignUpSubmit}
             disabled={!isFormValid || isLoading}
-            className={`w-[8vw] max-w-[150px] h-[7.5vh] max-h-[70px] rounded-4xl border border-white-5 font-bold text-[2.31vh] transition-all focus:outline-none focus:ring-2 focus:ring-purple500 ${
+            className={`w-[8vw] max-w-[7.81vw] h-[7.5vh] max-h-[6.48vh] rounded-4xl border border-white-5 font-bold text-[2.31vh] transition-all focus:outline-none ${
               isFormValid && !isLoading
-                ? 'bg-gray800-50 text-purple400 cursor-pointer hover:bg-gray-600/50'
+                ? 'bg-gray800-50 text-purple400 cursor-pointer hover:bg-gray600/50'
                 : 'bg-gray800/20 text-purple400/30 cursor-not-allowed opacity-60'
             }`}
           >

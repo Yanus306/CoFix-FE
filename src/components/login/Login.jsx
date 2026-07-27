@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import logo from '../../assets/logo.png';
-import { useLoginApi } from '../../hooks/LoginApi'; // 💡 LoginApi 경로에 맞게 확인해 주세요!
+import { useLoginApi } from '../../hooks/LoginApi';
 
 function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
   const [username, setUsername] = useState('');
@@ -37,7 +37,6 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
     });
 
     if (result.success) {
-      // 필요 시 백엔드에서 전달해준 토큰 및 유저 정보 저장
       if (result.data?.accessToken || result.data?.token) {
         localStorage.setItem('token', result.data.accessToken || result.data.token);
       }
@@ -45,7 +44,6 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
         localStorage.setItem('userInfo', JSON.stringify(result.data.user));
       }
 
-      // 로그인 성공 처리 콜백 호출
       if (onLoginSuccess) {
         onLoginSuccess(result.data);
       }
@@ -53,7 +51,6 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
       resetForm();
       onClose();
     } else {
-      // 서버에서 내려온 에러 메시지 표기
       setLoginError(result.message || '아이디 또는 비밀번호가 올바르지 않습니다.');
     }
   };
@@ -68,21 +65,20 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
     <div 
       onClick={handleClose}
       className={`fixed inset-0 bg-black/50 z-50 flex items-center justify-center transition-all duration-500 ${
-        isOpen ? 'opacity-100 visible backdrop-blur-[2px]' : 'opacity-0 invisible backdrop-blur-none'
+        isOpen ? 'opacity-100 visible backdrop-blur-[0.18vh]' : 'opacity-0 invisible backdrop-blur-none'
       }`}
     >
       <div 
         onClick={(e) => e.stopPropagation()}
-        className={`relative w-[39vw] min-w-[320px] max-w-[750px] h-[80vh] min-h-[500px] max-h-[780px] bg-gray700 border-white-5 border-2 rounded-md flex justify-center items-center flex-col gap-[1.48vh] bg-center shadow-2xl select-none transition-all duration-500 ease-out ${
+        className={`relative w-[39vw] min-w-[16.66vw] max-w-[39.06vw] h-[80vh] min-h-[46.3vh] max-h-[72.22vh] bg-gray700 border-white-5 border-2 rounded-md flex justify-center items-center flex-col gap-[1.48vh] bg-center shadow-2xl select-none transition-all duration-500 ease-out ${
           isOpen 
             ? 'opacity-100 translate-y-0' 
             : 'opacity-0 translate-y-4'
         }`}
       >
-        
         <button 
           onClick={handleClose}
-          className="absolute top-[2.22vh] right-[1.66vw] text-gray400 hover:text-white text-[2.77vh] font-semibold cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple500 transition-all"
+          className="absolute top-[2.22vh] right-[1.66vw] text-gray400 hover:text-white text-[2.77vh] font-semibold cursor-pointer focus:outline-none transition-all"
         >
           &times;
         </button>
@@ -91,7 +87,7 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
           <img 
             src={logo} 
             alt="로고" 
-            className="w-full h-[18vh] max-h-[180px] object-cover rounded-full shadow-lg flex justify-center items-center"
+            className="w-full h-[18vh] max-h-[16.66vh] object-cover rounded-full shadow-lg flex justify-center items-center"
           />
         </div>
         
@@ -112,8 +108,8 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
             if (loginError) setLoginError('');
           }}
           onKeyDown={handleKeyDown}
-          className={`hover:bg-gray-600/50 w-[30vw] max-w-[570px] h-[5vh] max-h-[50px] bg-gray800-50 border rounded-lg cursor-pointer pl-[0.83vw] text-white focus:outline-none focus:ring-2 focus:ring-purple500 transition-all text-[1.66vh] ${
-            loginError ? 'border-red-500' : 'border-white-5'
+          className={`hover:bg-gray600/50 w-[30vw] max-w-[29.68vw] h-[5vh] max-h-[4.63vh] bg-gray800-50 border rounded-lg cursor-pointer pl-[0.83vw] text-white focus:outline-none transition-all text-[1.66vh] ${
+            loginError ? 'border-red400' : 'border-white-5'
           }`}
         />
 
@@ -127,7 +123,7 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
             if (loginError) setLoginError('');
           }}
           onKeyDown={handleKeyDown}
-          className={`hover:bg-gray-600/50 w-[30vw] max-w-[570px] h-[5vh] max-h-[50px] bg-gray800-50 border rounded-lg cursor-pointer pl-[0.83vw] text-white focus:outline-none focus:ring-2 focus:ring-purple500 transition-all text-[1.66vh] ${
+          className={`hover:bg-gray600/50 w-[30vw] max-w-[29.68vw] h-[5vh] max-h-[4.63vh] bg-gray800-50 border rounded-lg cursor-pointer pl-[0.83vw] text-white focus:outline-none transition-all text-[1.66vh] ${
             loginError ? 'border-red400' : 'border-white-5'
           }`}
         />
@@ -135,7 +131,7 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
         <button 
           onClick={handleLoginSubmit}
           disabled={isLoading}
-          className="w-[15vw] max-w-[290px] h-[8vh] max-h-[80px] bg-gray800-50 border-white-5 border rounded-4xl cursor-pointer text-purple400 flex justify-center items-center text-[3.24vh] mt-[3.7vh] font-bold hover:bg-gray-600/50 transition-all focus:outline-none focus:ring-2 focus:ring-purple500 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-[15vw] max-w-[15.1vw] h-[8vh] max-h-[7.4vh] bg-gray800-50 border-white-5 border rounded-4xl cursor-pointer text-purple400 flex justify-center items-center text-[3.24vh] mt-[3.7vh] font-bold hover:bg-gray600/50 transition-all focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? '로그인 중...' : '로그인'}
         </button>
@@ -144,7 +140,7 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
           <span>계정이 없으신가요? </span>
           <button
             onClick={onSignUpClick} 
-            className="text-purple400 text-[1.2vh] underline cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple500"
+            className="text-purple400 text-[1.2vh] underline cursor-pointer focus:outline-none"
           >
             회원가입
           </button>
