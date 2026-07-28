@@ -7,7 +7,7 @@ export function useAiChatDetail(sessionId, initialMessages, isNewChat, onCreateS
   const [inputValue, setInputValue] = useState("");
   const [isAiTyping, setIsAiTyping] = useState(false);
 
-  const getToken = () => localStorage.getItem("accessToken");
+  const getToken = () => localStorage.getItem("token");
 
   useEffect(() => {
     setMessages(initialMessages);

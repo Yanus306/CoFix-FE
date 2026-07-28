@@ -7,7 +7,7 @@ export function useAiChat() {
   const [currentMessages, setCurrentMessages] = useState([]);
   const [currentSessionId, setCurrentSessionId] = useState(null);
 
-  const getToken = () => localStorage.getItem("accessToken");
+  const getToken = () => localStorage.getItem("token");
 
   // 방 목록 불러오기
   const fetchSessions = async () => {
