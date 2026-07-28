@@ -2,7 +2,6 @@ import { useState } from 'react';
 import gitlogo from '../../assets/gitlogo.png';
 import googlelogo from '../../assets/googlelogo.png';
 import { useRegisterApi } from '../../hooks/RegisterApi';
-import { checkIsMockRegister } from '../../mocks/RegiMock';
 
 function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
   const [username, setUsername] = useState('');
@@ -59,23 +58,9 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
 
     resetErrors();
 
-    const isMockData = checkIsMockRegister({
-      username,
-      name,
-      emailPrefix,
-      password,
-      confirmPassword,
-    });
-
-    if (isMockData) {
-      console.log('🧪 목데이터 회원가입 감지: 백엔드 통신 없이 다음 창으로 넘어갑니다.');
-      onSignUpComplete();
-      resetForm();
-      return;
-    }
-
     const fullEmail = `${emailPrefix.trim()}@${emailDomain}`;
 
+    // 💡 실제 백엔드 API 호출 (목 데이터 로직 제거 완료)
     const result = await registerUser({
       username: username,
       password: password,

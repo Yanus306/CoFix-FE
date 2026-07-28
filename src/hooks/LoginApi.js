@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const BASE_URL = ''; // Vite dev 서버 프록시 사용
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 export const useLoginApi = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -16,13 +16,10 @@ export const useLoginApi = () => {
     setIsLoading(true);
     setError(null);
 
-    // 로그인 시도 시간 생성 (예: 2026-06-07 14:30:25)
-    const now = new Date();
-    const attemptTime = now.toISOString().replace('T', ' ').substring(0, 19);
     const trimmedUsername = username.trim();
 
     try {
-      const response = await fetch(`${BASE_URL}/auth/login`, {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -34,13 +31,7 @@ export const useLoginApi = () => {
       });
 
       const data = await response.json().catch(() => ({}));
-
       const isSuccess = response.ok;
-
-      // 💡 로그인 시도 시에는 입력한 아이디(username)를 출력하도록 수정
-      console.log(`시도 시간: ${attemptTime}`);
-      console.log(`아이디: ${trimmedUsername}`);
-      console.log(`로그인 여부: ${isSuccess ? '성공' : '실패'}`);
 
       if (isSuccess) {
         return {
@@ -55,11 +46,7 @@ export const useLoginApi = () => {
         message: data.message || '아이디 또는 비밀번호가 올바르지 않습니다.',
       };
     } catch (err) {
-      console.log(`시도 시간: ${attemptTime}`);
-      console.log(`아이디: ${trimmedUsername}`);
-      console.log(`로그인 여부: 실패 (네트워크 에러)`);
-      console.error('🚨 Login API Network Error:', err);
-      
+      setError('서버와 연결할 수 없습니다.');
       return {
         success: false,
         message: '서버와 연결할 수 없습니다. 네트워크 상태를 확인해 주세요.',
