@@ -30,6 +30,7 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
 
     if (isLoading) return;
 
+    // 1단계: 로그인 API 호출하여 토큰 획득
     const result = await loginUser({
       username: username,
       password: password,
@@ -38,15 +39,12 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
     if (result.success) {
       const token = result.data?.accessToken || result.data?.token;
 
-      if (token) {
-        localStorage.setItem('token', token);
+      if (!token) {
+        setLoginError('토큰을 받아오지 못했습니다.');
+        return;
       }
 
-      // 💡 [설계 방향] 로그인 성공 콘솔이 뜨면 유저 정보 API 발동
-      console.log('--- 사용자 정보 조회 요청 ---');
-      console.log(`시도 시간: ${new Date().toISOString().replace('T', ' ').substring(0, 19)}`);
-      console.log('-----------------------------');
-
+      // 💡 2단계: 획득한 토큰으로 즉시 사용자 정보(/auth/info) 조회 API 요청
       try {
         const response = await fetch('https://cofix.jongyeol.kr/auth/info', {
           method: 'GET',
@@ -57,34 +55,34 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
         });
 
         const data = await response.json().catch(() => ({}));
-        const isSuccess = response.ok;
 
-        console.log('--- 사용자 정보 조회 결과 ---');
-        console.log(`조회 여부: ${isSuccess ? '성공' : '실패'}`);
-        if (isSuccess) {
-          console.log('유저 데이터:', data);
-          // 💡 가져온 닉네임을 저장하여 사이드바와 모달에서 쓰게 함
-          if (data.nickname) {
-            localStorage.setItem('nickname', data.nickname);
-            window.dispatchEvent(new Event('login-success'));
+        // 💡 3단계: 사용자 정보 조회가 '성공'했을 때만 토큰과 닉네임을 저장!
+        if (response.ok && data.nickname) {
+          localStorage.setItem('token', token);
+          localStorage.setItem('nickname', data.nickname);
+          
+          if (data.user) {
+            localStorage.setItem('userInfo', JSON.stringify(data.user));
           }
+
+          // 사이드바에 닉네임 변경 신호 발송
+          window.dispatchEvent(new Event('login-success'));
+
+          // 성공적으로 메인 화면으로 이동 (부모 컴포넌트의 성공 함수 호출)
+          if (onLoginSuccess) {
+            onLoginSuccess(result.data);
+          }
+
+          resetForm();
+          onClose();
         } else {
-          console.log(`오류 내용: ${data.message || '정보를 불러오지 못했습니다.'}`);
+          // 정보 조회 실패 시
+          setLoginError(data.message || '사용자 정보를 불러오는 데 실패했습니다.');
         }
-        console.log('-----------------------------');
       } catch (err) {
-        console.log('--- 사용자 정보 조회 결과 ---');
-        console.log('조회 여부: 실패 (네트워크 에러)');
-        console.log('-----------------------------');
-        console.error('🚨 Info API Network Error:', err);
+        console.error('Info API Network Error:', err);
+        setLoginError('네트워크 오류가 발생했습니다.');
       }
-
-      if (onLoginSuccess) {
-        onLoginSuccess(result.data);
-      }
-
-      resetForm();
-      onClose();
     } else {
       setLoginError(result.message || '아이디 또는 비밀번호가 올바르지 않습니다.');
     }
