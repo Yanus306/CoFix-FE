@@ -1,29 +1,29 @@
 import { useState } from 'react';
-import { useOutletContext } from 'react-router-dom'; // 1. 추가
-import { useLogoutApi } from '../../hooks/LogoutApi'; // 경로에 맞게 확인
+import { useOutletContext } from 'react-router-dom'; 
+import { useLogoutApi } from '../../hooks/LogoutApi'; 
 
 function UserModal() {
     const [isDarkMode, setIsDarkMode] = useState(true);
     const { logoutUser, isLoading } = useLogoutApi();
     
-    // 2. MainLayout의 Outlet context에서 onLogoutSuccess 받아오기
+    // 💡 로그인 시 저장된 닉네임을 로컬 스토리지에서 바로 가져옴 (모달 열릴 때 API 요청 없음)
+    const nickname = localStorage.getItem('nickname') || '사용자';
+    
     const { onLogoutSuccess } = useOutletContext() || {};
 
     const handleLogoutClick = async () => {
         if (isLoading) return;
-
-        // API를 호출하되, 성공/실패 여부와 관계없이 강제로 로그아웃 처리 수행
+      
         await logoutUser();
-
-        // 로컬에 저장된 토큰이나 유저 정보 삭제 (필요한 경우)
+      
+        // 로그아웃 시 저장했던 정보들 깔끔하게 비우기
         localStorage.removeItem('token');
         localStorage.removeItem('userInfo');
+        localStorage.removeItem('nickname');
 
-        // 무조건 부모의 상태를 false로 만들어 NotLoggedIn으로 전환
         if (onLogoutSuccess) {
             onLogoutSuccess();
         } else {
-            // 혹시 context가 안 넘어온다면 새로고침으로 비로그인 처리
             window.location.reload();
         }
     };
@@ -32,7 +32,11 @@ function UserModal() {
         <div className="flex flex-col justify-center items-center w-[10.73vw] h-[18vh] bg-gray800-50 border-[0.09vh] border-white-5 rounded-[1.04vw] text-gray400">
             <div className="flex flex-col items-center mb-[0.7vh]">
                 <div className="w-[4.17vh] h-[4.17vh] mb-[0.3vh] bg-gray200 rounded-[50%]"></div>
-                <div className="font-bold text-[2vh]">사용자</div>
+                
+                {/* 💡 로컬 스토리지의 닉네임 출력 */}
+                <div className="font-bold text-[2vh]">
+                    {nickname}
+                </div>
             </div>
 
             <div 

@@ -20,7 +20,6 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
     onClose();
   };
 
-  // 로그인 처리 함수 (백엔드 API 연동)
   const handleLoginSubmit = async () => {
     setLoginError('');
 
@@ -37,11 +36,46 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
     });
 
     if (result.success) {
-      if (result.data?.accessToken || result.data?.token) {
-        localStorage.setItem('token', result.data.accessToken || result.data.token);
+      const token = result.data?.accessToken || result.data?.token;
+
+      if (token) {
+        localStorage.setItem('token', token);
       }
-      if (result.data?.user) {
-        localStorage.setItem('userInfo', JSON.stringify(result.data.user));
+
+      // 💡 [설계 방향] 로그인 성공 콘솔이 뜨면 유저 정보 API 발동
+      console.log('--- 사용자 정보 조회 요청 ---');
+      console.log(`시도 시간: ${new Date().toISOString().replace('T', ' ').substring(0, 19)}`);
+      console.log('-----------------------------');
+
+      try {
+        const response = await fetch('https://cofix.jongyeol.kr/auth/info', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        const data = await response.json().catch(() => ({}));
+        const isSuccess = response.ok;
+
+        console.log('--- 사용자 정보 조회 결과 ---');
+        console.log(`조회 여부: ${isSuccess ? '성공' : '실패'}`);
+        if (isSuccess) {
+          console.log('유저 데이터:', data);
+          // 💡 가져온 닉네임을 저장하여 사이드바와 모달에서 쓰게 함
+          if (data.nickname) {
+            localStorage.setItem('nickname', data.nickname);
+          }
+        } else {
+          console.log(`오류 내용: ${data.message || '정보를 불러오지 못했습니다.'}`);
+        }
+        console.log('-----------------------------');
+      } catch (err) {
+        console.log('--- 사용자 정보 조회 결과 ---');
+        console.log('조회 여부: 실패 (네트워크 에러)');
+        console.log('-----------------------------');
+        console.error('🚨 Info API Network Error:', err);
       }
 
       if (onLoginSuccess) {
@@ -91,7 +125,6 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
           />
         </div>
         
-        {/* 아이디 라벨 및 에러 메시지 */}
         <div className="text-gray200 w-full text-left px-[4.16vw] mt-[1.85vh] font-bold text-[1.85vh] flex justify-between items-center">
           <span>아이디</span>
           {loginError && (
@@ -113,7 +146,6 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
           }`}
         />
 
-        {/* 비밀번호 라벨 */}
         <div className="text-gray200 w-full text-left px-[4.16vw] mt-[1.85vh] font-bold text-[1.85vh]">비밀번호</div>
         <input 
           type="password" 
