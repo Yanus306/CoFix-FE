@@ -108,7 +108,7 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
             if (loginError) setLoginError('');
           }}
           onKeyDown={handleKeyDown}
-          className={`hover:bg-gray600/50 w-[30vw] max-w-[29.68vw] h-[5vh] max-h-[4.63vh] bg-gray800-50 border rounded-lg cursor-pointer pl-[0.83vw] text-white focus:outline-none transition-all text-[1.66vh] ${
+          className={`hover:bg-gray700 w-[30vw] max-w-[29.68vw] h-[5vh] max-h-[4.63vh] bg-gray800-50 border rounded-lg cursor-pointer pl-[0.83vw] text-white focus:outline-none transition-all text-[1.66vh] ${
             loginError ? 'border-red400' : 'border-white-5'
           }`}
         />
@@ -123,7 +123,7 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
             if (loginError) setLoginError('');
           }}
           onKeyDown={handleKeyDown}
-          className={`hover:bg-gray600/50 w-[30vw] max-w-[29.68vw] h-[5vh] max-h-[4.63vh] bg-gray800-50 border rounded-lg cursor-pointer pl-[0.83vw] text-white focus:outline-none transition-all text-[1.66vh] ${
+          className={`hover:bg-gray700 w-[30vw] max-w-[29.68vw] h-[5vh] max-h-[4.63vh] bg-gray800-50 border rounded-lg cursor-pointer pl-[0.83vw] text-white focus:outline-none transition-all text-[1.66vh] ${
             loginError ? 'border-red400' : 'border-white-5'
           }`}
         />
@@ -131,7 +131,7 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
         <button 
           onClick={handleLoginSubmit}
           disabled={isLoading}
-          className="w-[15vw] max-w-[15.1vw] h-[8vh] max-h-[7.4vh] bg-gray800-50 border-white-5 border rounded-4xl cursor-pointer text-purple400 flex justify-center items-center text-[3.24vh] mt-[3.7vh] font-bold hover:bg-gray600/50 transition-all focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-[15vw] max-w-[15.1vw] h-[8vh] max-h-[7.4vh] bg-gray800-50 border-white-5 border rounded-4xl cursor-pointer text-purple400 flex justify-center items-center text-[3.24vh] mt-[3.7vh] font-bold hover:bg-gray700 transition-all focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? '로그인 중...' : '로그인'}
         </button>

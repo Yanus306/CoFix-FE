@@ -99,6 +99,14 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
     }
   };
 
+  // 엔터키 입력 시 회원가입 제출 함수
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSignUpSubmit();
+    }
+  };
+
   return (
     <div
       onClick={handleClose}
@@ -108,6 +116,7 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
+        onKeyDown={handleKeyDown}
         className={`relative w-[43vw] min-w-[16.66vw] max-w-[42.7vw] h-[92vh] min-h-[55.5vh] max-h-[83.3vh] bg-gray700 border-white-5 border-2 rounded-md p-[2.22vh] shadow-2xl select-none transition-all duration-500 ease-out overflow-y-auto ${
           isOpen1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}
@@ -153,7 +162,7 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
               if (usernameError) setUsernameError('');
               if (generalError) setGeneralError('');
             }}
-            className={`bg-gray800-50 w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-lg border text-white px-[0.83vw] focus:outline-none transition-all hover:bg-gray600/50 text-[1.48vh] ${
+            className={`bg-gray800-50 w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-lg border text-white px-[0.83vw] focus:outline-none transition-all hover:bg-gray700 text-[1.48vh] ${
               usernameError ? 'border-red400' : 'border-white-5'
             }`}
           />
@@ -162,7 +171,7 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="bg-gray800-50 w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-lg border border-white-5 text-white px-[0.83vw] focus:outline-none transition-all hover:bg-gray600/50 text-[1.48vh]"
+            className="bg-gray800-50 w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-lg border border-white-5 text-white px-[0.83vw] focus:outline-none transition-all hover:bg-gray700 text-[1.48vh]"
           />
         </div>
 
@@ -187,7 +196,7 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
               if (emailError) setEmailError('');
               if (generalError) setGeneralError('');
             }}
-            className={`bg-gray800-50 w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-lg border text-white px-[0.83vw] focus:outline-none hover:bg-gray600/50 transition-all text-[1.48vh] ${
+            className={`bg-gray800-50 w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-lg border text-white px-[0.83vw] focus:outline-none hover:bg-gray700 transition-all text-[1.48vh] ${
               emailError ? 'border-red400' : 'border-white-5'
             }`}
           />
@@ -196,7 +205,7 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
             name="emailDomain"
             value={emailDomain}
             onChange={(e) => setEmailDomain(e.target.value)}
-            className="w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] bg-gray800-50 border-white-5 border-2 rounded-md text-white px-[0.83vw] py-[0.74vh] cursor-pointer focus:outline-none hover:bg-gray600/50 transition-all text-[1.48vh]"
+            className="w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] bg-gray800-50 border-white-5 border-2 rounded-md text-white px-[0.83vw] py-[0.74vh] cursor-pointer focus:outline-none hover:bg-gray700 transition-all text-[1.48vh]"
           >
             <option value="" disabled>
               주소를 선택해주세요
@@ -216,7 +225,7 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="px-[0.83vw] ml-[2.08vw] mt-[1.11vh] w-[37vw] max-w-[36.98vw] h-[5.5vh] max-h-[4.63vh] bg-gray800-50 border border-white-5 rounded-lg focus:outline-none hover:bg-gray600/50 transition-all text-white text-[1.48vh]"
+          className="px-[0.83vw] ml-[2.08vw] mt-[1.11vh] w-[37vw] max-w-[36.98vw] h-[5.5vh] max-h-[4.63vh] bg-gray800-50 border border-white-5 rounded-lg focus:outline-none hover:bg-gray700 transition-all text-white text-[1.48vh]"
         />
 
         {/* 비밀번호 확인 라벨 & 불일치 에러 */}
@@ -235,7 +244,7 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
           type="password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className={`px-[0.83vw] ml-[2.08vw] mt-[1.11vh] w-[37vw] max-w-[36.98vw] h-[5.5vh] max-h-[4.63vh] bg-gray800-50 border rounded-lg focus:outline-none hover:bg-gray600/50 transition-all text-white text-[1.48vh] ${
+          className={`px-[0.83vw] ml-[2.08vw] mt-[1.11vh] w-[37vw] max-w-[36.98vw] h-[5.5vh] max-h-[4.63vh] bg-gray800-50 border rounded-lg focus:outline-none hover:bg-gray700 transition-all text-white text-[1.48vh] ${
             isPasswordMismatched ? 'border-red400' : 'border-white-5'
           }`}
         />
@@ -247,12 +256,14 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
           <hr className="w-[16vw] max-w-[15.62vw] border-gray400"/>
         </div>
 
-        {/* 소셜 로그인 버튼 (Google / GitHub 링크 연결) */}
+        {/* 소셜 로그인 버튼 (알림창 추가) */}
         <div className="flex justify-between items-center px-[2.08vw] mt-[2.96vh] gap-[0.83vw]">
           <button
             type="button"
             onClick={() => {
-              window.location.href = 'http://cofix.jongyeol.kr/oauth2/authorization/google';
+              if (window.confirm('외부 페이지로 이동하시겠습니까?')) {
+                window.location.href = 'http://cofix.jongyeol.kr/oauth2/authorization/google';
+              }
             }}
             className="cursor-pointer border border-white-5 bg-white w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-full font-bold text-[1.29vh] text-black flex justify-center items-center gap-[1.04vw] hover:bg-gray200 transition-all shadow-md focus:outline-none"
           >
@@ -262,7 +273,9 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
           <button
             type="button"
             onClick={() => {
-              window.location.href = 'http://cofix.jongyeol.kr/oauth2/authorization/github';
+              if (window.confirm('외부 페이지로 이동하시겠습니까?')) {
+                window.location.href = 'http://cofix.jongyeol.kr/oauth2/authorization/github';
+              }
             }}
             className="cursor-pointer border border-white-5 bg-white w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-full font-bold text-[1.29vh] text-black flex justify-center items-center gap-[1.04vw] hover:bg-gray200 transition-all shadow-md focus:outline-none"
           >
@@ -279,8 +292,8 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
             disabled={!isFormValid || isLoading}
             className={`w-[8vw] max-w-[7.81vw] h-[7.5vh] max-h-[6.48vh] rounded-4xl border border-white-5 font-bold text-[2.31vh] transition-all focus:outline-none ${
               isFormValid && !isLoading
-                ? 'bg-gray800-50 text-purple400 cursor-pointer hover:bg-gray600/50'
-                : 'bg-gray800/20 text-purple400/30 cursor-not-allowed opacity-60'
+                ? 'bg-gray800-50 text-purple400 cursor-pointer hover:bg-gray700'
+                : 'bg-gray800-50 text-purple400 cursor-not-allowed opacity-60'
             }`}
           >
             {isLoading ? '생성 중...' : '계정생성'}
