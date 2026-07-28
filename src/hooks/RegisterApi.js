@@ -18,13 +18,13 @@ export const useRegisterApi = () => {
     setIsLoading(true);
     setError(null);
 
-    // 💡 F12 콘솔창에서 확인할 데이터 (이메일 추가)
-    console.log(' 보내는 회원가입 데이터:', {
-      username: username.trim(),
-      password: password,
-      nickname: nickname.trim(),
-      email: email ? email.trim() : '',
-    });
+    // 회원가입 시도 시간 생성 (예: 2026-07-28 11:04:04)
+    const now = new Date();
+    const attemptTime = now.toISOString().replace('T', ' ').substring(0, 19);
+
+    const trimmedUsername = username.trim();
+    const trimmedNickname = nickname.trim();
+    const trimmedEmail = email ? email.trim() : '';
 
     try {
       const response = await fetch(`${BASE_URL}/auth/register`, {
@@ -33,16 +33,32 @@ export const useRegisterApi = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          username: username.trim(),
+          username: trimmedUsername,
           password: password,
-          nickname: nickname.trim(),
-          email: email ? email.trim() : '', // 👈 백엔드로 이메일 함께 전송
+          nickname: trimmedNickname,
+          email: trimmedEmail,
         }),
       });
 
       const data = await response.json().catch(() => ({}));
+      const isSuccess = response.ok;
 
-      if (response.ok) {
+      // 💡 콘솔에 회원가입 일시, 입력 정보, 성공/실패 여부 출력
+      console.log(`--- 회원가입 시도 결과 ---`);
+      console.log(`시도 시간: ${attemptTime}`);
+      console.log(`회원가입 정보:`, {
+        username: trimmedUsername,
+        nickname: trimmedNickname,
+        email: trimmedEmail,
+        password: '********', // 보안상 비밀번호는 마스킹 처리하여 출력
+      });
+      console.log(`회원가입 여부: ${isSuccess ? '성공' : '실패'}`);
+      if (!isSuccess) {
+        console.log(`오류 내용: ${data.message || '중복된 아이디 또는 입력값 오류'}`);
+      }
+      console.log(`--------------------------`);
+
+      if (isSuccess) {
         return { 
           success: true, 
           data 
@@ -55,7 +71,18 @@ export const useRegisterApi = () => {
         message: data.message || '회원가입에 실패했습니다.',
       };
     } catch (err) {
+      console.log(`--- 회원가입 시도 결과 ---`);
+      console.log(`시도 시간: ${attemptTime}`);
+      console.log(`회원가입 정보:`, {
+        username: trimmedUsername,
+        nickname: trimmedNickname,
+        email: trimmedEmail,
+        password: '********',
+      });
+      console.log(`회원가입 여부: 실패 (네트워크 에러)`);
+      console.log(`--------------------------`);
       console.error('🚨 Register API Network Error:', err);
+      
       return {
         success: false,
         message: '서버와 연결할 수 없습니다. 네트워크 상태를 확인해 주세요.',
