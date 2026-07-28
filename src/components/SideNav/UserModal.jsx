@@ -1,13 +1,42 @@
 import { useState } from 'react';
+import { useOutletContext } from 'react-router-dom'; 
+import { useLogoutApi } from '../../hooks/LogoutApi'; 
 
 function UserModal() {
     const [isDarkMode, setIsDarkMode] = useState(true);
+    const { logoutUser, isLoading } = useLogoutApi();
+    
+    // 💡 로그인 시 저장된 닉네임을 로컬 스토리지에서 바로 가져옴 (모달 열릴 때 API 요청 없음)
+    const nickname = localStorage.getItem('nickname') || '사용자';
+    
+    const { onLogoutSuccess } = useOutletContext() || {};
+
+    const handleLogoutClick = async () => {
+        if (isLoading) return;
+      
+        await logoutUser();
+      
+        // 로그아웃 시 저장했던 정보들 깔끔하게 비우기
+        localStorage.removeItem('token');
+        localStorage.removeItem('userInfo');
+        localStorage.removeItem('nickname');
+
+        if (onLogoutSuccess) {
+            onLogoutSuccess();
+        } else {
+            window.location.reload();
+        }
+    };
 
     return (
         <div className="flex flex-col justify-center items-center w-[10.73vw] h-[18vh] bg-gray800-50 border-[0.09vh] border-white-5 rounded-[1.04vw] text-gray400">
             <div className="flex flex-col items-center mb-[0.7vh]">
                 <div className="w-[4.17vh] h-[4.17vh] mb-[0.3vh] bg-gray200 rounded-[50%]"></div>
-                <div className="font-bold text-[2vh]">사용자</div>
+                
+                {/* 💡 로컬 스토리지의 닉네임 출력 */}
+                <div className="font-bold text-[2vh]">
+                    {nickname}
+                </div>
             </div>
 
             <div 
@@ -25,7 +54,7 @@ function UserModal() {
                         xmlns="http://www.w3.org/2000/svg" 
                         viewBox="0 0 24 24" 
                         fill="currentColor" 
-                        className="w-[1.4vh] h-[1.4vh] text-gray-800" 
+                        className="w-[1.4vh] h-[1.4vh] text-gray900" 
                     >
                         <path fillRule="evenodd" d="M9.528 1.718a.75.75 0 0 1 .162.819A8.97 8.97 0 0 0 9 6a9 9 0 0 0 9 9 8.97 8.97 0 0 0 3.463-.69.75.75 0 0 1 .981.98 10.503 10.503 0 0 1-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 0 1 .818.162Z" clipRule="evenodd" />
                     </svg>
@@ -35,7 +64,12 @@ function UserModal() {
             <div className="flex gap-[0.47vw] text-[1.4vh]">
                 <div className="cursor-pointer hover:text-white transition-colors">계정관리</div>
                 <p>|</p>
-                <div className="cursor-pointer hover:text-white transition-colors">로그아웃</div>
+                <div 
+                    onClick={handleLogoutClick}
+                    className="cursor-pointer hover:text-white transition-colors"
+                >
+                    {isLoading ? '로그아웃 중...' : '로그아웃'}
+                </div>
             </div>
         </div>
     );

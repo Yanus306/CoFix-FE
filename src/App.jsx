@@ -69,7 +69,6 @@ function AppContent() {
           <Route path="/report" element={<Report />} />
           <Route path="/review-note" element={<ReviewNote />} />
           <Route path="/ai-chat" element={<AiChat />} />
-          
           <Route path="/ide-code" element={<IdeCode />} />
         </Route>
       </Routes>

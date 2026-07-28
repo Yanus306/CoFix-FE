@@ -156,7 +156,9 @@ export default function ReviewDetail({ sessionId, review }) {
           ) : (
             <div className="w-full flex-1 border border-white-5 rounded-2xl px-[1.5vw] py-[1.2vh] text-gray400 text-[1.65vh] overflow-y-auto leading-relaxed">
               {guideText ? (
-                <ReactMarkdown>{guideText}</ReactMarkdown>
+                <div className="prose prose-invert max-w-none">
+                  <ReactMarkdown>{guideText}</ReactMarkdown>
+                </div>
               ) : (
                 <span className="text-gray400">
                   (등록된 가이드 내용이 없습니다.)
