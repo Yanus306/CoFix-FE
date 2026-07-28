@@ -16,32 +16,33 @@ function SideNav() {
     
     const [isModalOpen, setIsModalOpen] = useState(false);
     
-    // 💡 닉네임을 state로 관리하여 로그인 직후에도 화면이 즉시 갱신되도록 함
+    // 💡 닉네임을 state로 관리하여 변경 감지 가능하게 설정
     const [nickname, setNickname] = useState(() => {
         return localStorage.getItem('nickname') || '사용자';
     });
     
     const modalRef = useRef(null);
 
-    // 💡 로컬 스토리지의 닉네임 변경을 감지하여 사이드바 닉네임 동기화
+    // 💡 로그인 직후나 로컬 스토리지 변경 시 사이드바 닉네임 즉시 업데이트
     useEffect(() => {
-        const handleStorageChange = () => {
+        const updateNickname = () => {
             const currentNickname = localStorage.getItem('nickname') || '사용자';
             setNickname(currentNickname);
         };
 
-        // window 객체에 커스텀 이벤트나 storage 이벤트를 통한 감지 설정 가능
-        window.addEventListener('storage', handleStorageChange);
+        // 다른 탭이나 창에서의 스토리지 변경 감지
+        window.addEventListener('storage', updateNickname);
         
-        // 로그인 직후 같은 탭 내에서 localStorage가 변경될 때를 위한 폴링 또는 커스텀 이벤트 체크
-        // (Login.jsx에서 로그인 성공 시 window.dispatchEvent(new Event('storage'))를 호출해주면 완벽합니다)
+        // 같은 앱 내에서 로그인 성공 시 커스텀 이벤트(login-success)를 받기 위한 리스너
+        window.addEventListener('login-success', updateNickname);
         
         return () => {
-            window.removeEventListener('storage', handleStorageChange);
+            window.removeEventListener('storage', updateNickname);
+            window.removeEventListener('login-success', updateNickname);
         };
     }, []);
 
-    // 모달을 열 때마다 최신 닉네임을 로컬 스토리지에서 한 번 더 불러오도록 안전장치 추가
+    // 모달을 열 때마다 최신 닉네임으로 갱신하는 안전장치
     const handleToggleModal = () => {
         if (!isModalOpen) {
             const latestNickname = localStorage.getItem('nickname') || '사용자';
@@ -109,7 +110,7 @@ function SideNav() {
                 >
                     <div className="w-[1.77vh] h-[1.77vh] rounded-[50%] bg-gray-200"></div>
                     
-                    {/* 💡 사이드바 하단 사용자 칸에 동기화된 닉네임 출력 */}
+                    {/* 💡 동기화된 닉네임 출력 */}
                     <div className="text-[1.85vh] font-bold text-gray400">{nickname}</div>
                 </div>
 

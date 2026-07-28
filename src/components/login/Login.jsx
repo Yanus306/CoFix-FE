@@ -66,6 +66,7 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
           // 💡 가져온 닉네임을 저장하여 사이드바와 모달에서 쓰게 함
           if (data.nickname) {
             localStorage.setItem('nickname', data.nickname);
+            window.dispatchEvent(new Event('login-success'));
           }
         } else {
           console.log(`오류 내용: ${data.message || '정보를 불러오지 못했습니다.'}`);
