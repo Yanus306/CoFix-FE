@@ -2,19 +2,25 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function useAuthFlow() {
+  const navigate = useNavigate(); 
+
+  // 💡 새로고침 시 localStorage에 token이 있으면 곧바로 true로 초기화
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return !!localStorage.getItem('token');
+  }); 
+  
+  const [isConnected, setIsConnected] = useState(() => {
+    return !!localStorage.getItem('token');
+  });
+
   const [isModalOpen, setIsModalOpen] = useState(false);   
   const [isModalOpen1, setIsModalOpen1] = useState(false); 
   const [isDoneOpen, setIsDoneOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);  
-  
-  const [isConnected, setIsConnected] = useState(false);
   const [isWaitingForIde, setIsWaitingForIde] = useState(false);
-
-  const navigate = useNavigate(); 
 
   useEffect(() => {
     if (isWaitingForIde && isConnected) {
-      setIsWaitingForIde(false); 
+      setIsWaitingForIde(false);  
       setIsDoneOpen(true);  
     }
   }, [isConnected, isWaitingForIde]);
@@ -42,7 +48,6 @@ export default function useAuthFlow() {
     navigate('/dashboard');
   };
 
-  // 컴포넌트에서 쓸 상태와 함수들을 객체로 반환
   return {
     isModalOpen, setIsModalOpen,
     isModalOpen1, setIsModalOpen1,
