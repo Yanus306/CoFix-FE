@@ -16,7 +16,40 @@ function SideNav() {
     
     const [isModalOpen, setIsModalOpen] = useState(false);
     
+    // 💡 닉네임을 state로 관리하여 변경 감지 가능하게 설정
+    const [nickname, setNickname] = useState(() => {
+        return localStorage.getItem('nickname') || '사용자';
+    });
+    
     const modalRef = useRef(null);
+
+    // 💡 로그인 직후나 로컬 스토리지 변경 시 사이드바 닉네임 즉시 업데이트
+    useEffect(() => {
+        const updateNickname = () => {
+            const currentNickname = localStorage.getItem('nickname') || '사용자';
+            setNickname(currentNickname);
+        };
+
+        // 다른 탭이나 창에서의 스토리지 변경 감지
+        window.addEventListener('storage', updateNickname);
+        
+        // 같은 앱 내에서 로그인 성공 시 커스텀 이벤트(login-success)를 받기 위한 리스너
+        window.addEventListener('login-success', updateNickname);
+        
+        return () => {
+            window.removeEventListener('storage', updateNickname);
+            window.removeEventListener('login-success', updateNickname);
+        };
+    }, []);
+
+    // 모달을 열 때마다 최신 닉네임으로 갱신하는 안전장치
+    const handleToggleModal = () => {
+        if (!isModalOpen) {
+            const latestNickname = localStorage.getItem('nickname') || '사용자';
+            setNickname(latestNickname);
+        }
+        setIsModalOpen(!isModalOpen);
+    };
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -46,13 +79,13 @@ function SideNav() {
                                 key={item.path} 
                                 onClick={() => navigate(item.path)}
                                 className={`
-                                flex items-center w-full h-[7.12vh] px-[2.3vw] rounded-[1.04vw] 
-                                text-[1.85vh] transition-colors cursor-pointer
-                                ${isActive
+                                    flex items-center w-full h-[7.12vh] px-[2.3vw] rounded-[1.04vw] 
+                                    text-[1.85vh] transition-colors cursor-pointer
+                                    ${isActive
                                         ? 'bg-purple500-10 border-[0.09vh] border-purple500-20 text-purple400 font-bold'
                                         : 'text-gray400 border-[0.09vh] border-transparent hover:bg-white-5'
                                     }
-                            `}
+                                `}
                             >
                                 {item.name}
                             </button>
@@ -73,17 +106,19 @@ function SideNav() {
 
                 <div 
                     className="flex items-center gap-[0.73vw] cursor-pointer"
-                    onClick={() => setIsModalOpen(!isModalOpen)}
+                    onClick={handleToggleModal}
                 >
-                    <div className="w-[1.77vw] h-[1.77vw] rounded-[50%] bg-gray-200"></div>
-                    <div className="text-[1.85vh] font-bold text-gray400">사용자</div>
+                    <div className="w-[1.77vh] h-[1.77vh] rounded-[50%] bg-gray-200"></div>
+                    
+                    {/* 💡 동기화된 닉네임 출력 */}
+                    <div className="text-[1.85vh] font-bold text-gray400">{nickname}</div>
                 </div>
 
                 <img 
                     src={SettingIcon} 
                     alt="settings" 
                     className="w-[1.46vw] cursor-pointer"
-                    onClick={() => setIsModalOpen(!isModalOpen)}
+                    onClick={handleToggleModal}
                 />
             </div>
         </div>
