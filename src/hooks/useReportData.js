@@ -25,7 +25,6 @@ export function useReportData() {
     const fetchAllData = async () => {
       try {
         const token = localStorage.getItem("token"); 
-        console.log("현재 가져온 토큰 값:", token);
         const headers = { Authorization: `Bearer ${token}` };
 
         // 👉 2. 수정된 부분: fetch 대신 위에서 만든 fetchJson을 사용합니다.
