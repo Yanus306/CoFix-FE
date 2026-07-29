@@ -19,19 +19,60 @@ export default function AiChatList({
   const itemsPerPage = 7;
   const totalDataCount = sessions.length;
 
+  const getValidTime = (dateInput) => {
+    if (!dateInput) return Date.now();
+
+    let parsedDate;
+    if (Array.isArray(dateInput)) {
+      parsedDate = new Date(dateInput[0], dateInput[1] - 1, dateInput[2], dateInput[3] || 0, dateInput[4] || 0);
+    } else {
+      parsedDate = new Date(dateInput);
+    }
+
+    if (isNaN(parsedDate.getTime())) {
+      return Date.now(); 
+    }
+    return parsedDate.getTime();
+  };
+
+  // 날짜 변환 함수
+  const formatDate = (dateInput) => {
+    const date = new Date(getValidTime(dateInput));
+    
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    return `${yyyy}.${mm}.${dd}`; 
+  };
+
+  // 최신순 정렬
+  const sortedSessions = sessions
+    // 배열의 원래 순서 기억
+    .map((session, index) => ({ ...session, _originalIndex: index })) 
+    .sort((a, b) => {
+      const timeA = getValidTime(a.updatedAt || a.date);
+      const timeB = getValidTime(b.updatedAt || b.date);
+
+      if (timeB === timeA) {
+        return b._originalIndex - a._originalIndex;
+      }
+      
+      return timeB - timeA; 
+    });
+
+  // 정렬된 배열 기준으로 페이지네이션 자르기
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentSessions = sessions.slice(startIndex, startIndex + itemsPerPage);
+  const currentSessions = sortedSessions.slice(startIndex, startIndex + itemsPerPage);
 
   const handleMenuClick = (e, id) => {
     e.stopPropagation();
     setOpenMenuId(openMenuId === id ? null : id);
   };
 
-  // 이름 변경 핸들러
   const handleEditStart = (e, session) => {
     e.stopPropagation();
     setEditingId(session.id);
-    setEditValue(session.title);
+    setEditValue(session.title || "");
     setOpenMenuId(null);
   };
 
@@ -42,14 +83,6 @@ export default function AiChatList({
     setEditingId(null);
   };
 
-  const handleEditKeyDown = (e) => {
-    if (e.key === "Enter") {
-      handleEditSubmit();
-    } else if (e.key === "Escape") {
-      setEditingId(null);
-    }
-  };
-
   // 수정 모드 진입 시 input에 자동 포커스
   useEffect(() => {
     if (editingId && inputRef.current) {
@@ -57,22 +90,19 @@ export default function AiChatList({
     }
   }, [editingId]);
 
-  // 삭제 핸들러
   const handleDelete = (e, id) => {
     e.stopPropagation();
     if (onDeleteSession) {
       onDeleteSession(id);
     }
-    setOpenMenuId(null); // 메뉴 닫기
+    setOpenMenuId(null);
   };
 
   return (
     <div className="flex flex-col justify-between w-full h-full">
       <div className="flex flex-col w-full h-[75.37vh]">
         <div className="flex justify-between items-center w-full h-[2.69vh] mb-[2.6vh]">
-          <div className="text-[2.22vh] font-bold text-white">
-            이전 채팅 세션
-          </div>
+          <div className="text-[2.22vh] font-bold text-white">이전 채팅 세션</div>
           <div
             onClick={onNewChat}
             className="flex justify-center items-center w-[4.17vw] h-[2.22vh] gap-[0.78vw] text-[1.11vh] text-gray400 bg-gray800-50 border-[0.09vh] border-white-5 rounded-[0.74vh] cursor-pointer"
@@ -97,7 +127,7 @@ export default function AiChatList({
               >
                 <div className="flex w-full justify-between items-center">
                   <div className=" text-gray400 text-[1.11vh]">
-                    {session.date}
+                    {formatDate(session.updatedAt || session.date)}
                   </div>
 
                   <div className="relative">
@@ -105,19 +135,8 @@ export default function AiChatList({
                       onClick={(e) => handleMenuClick(e, session.id)}
                       className="text-gray400 hover:text-white cursor-pointer transition-colors p-[0.5vh]"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={2}
-                        stroke="currentColor"
-                        className="w-[1.5vh] h-[1.5vh] mr-[-0.5vw]"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
-                        />
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-[1.5vh] h-[1.5vh] mr-[-0.5vw]">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
                       </svg>
                     </div>
 
@@ -143,7 +162,6 @@ export default function AiChatList({
                   </div>
                 </div>
 
-                {/* 드롭다운 */}
                 <div className="w-full truncate text-gray400 text-[1.85vh]">
                   {isEditing ? (
                     <input
@@ -151,7 +169,6 @@ export default function AiChatList({
                       value={editValue}
                       onChange={(e) => setEditValue(e.target.value)}
                       onBlur={() => {
-                        // 포커스를 잃었을 때 저장
                         if (editValue.trim() !== "" && onRenameSession) {
                           onRenameSession(session.id, editValue);
                         }
@@ -159,9 +176,7 @@ export default function AiChatList({
                       }}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
-                          // 엔터키 눌렸을 때 중복 실행 방지
                           if (e.nativeEvent.isComposing) return;
-
                           if (editValue.trim() !== "" && onRenameSession) {
                             onRenameSession(session.id, editValue);
                           }
@@ -170,11 +185,11 @@ export default function AiChatList({
                           setEditingId(null);
                         }
                       }}
-                      onClick={(e) => e.stopPropagation()} // 클릭 시 세션 이동 방지
+                      onClick={(e) => e.stopPropagation()}
                       className="w-full bg-transparent outline-none border-b border-gray400 text-white"
                     />
                   ) : (
-                    session.title
+                    session.title || "새로운 채팅" 
                   )}
                 </div>
               </div>
