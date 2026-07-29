@@ -55,12 +55,19 @@ export function useAiChatDetail(sessionId, initialMessages, isNewChat, onCreateS
       if (!msgRes.ok) throw new Error("메시지 전송 실패");
 
       const msgData = await msgRes.json();
-      const formattedMessages = msgData.messages.map((msg, index) => ({
-        id: index,
-        role: msg.user === 0 ? "user" : "ai",
-        message: msg.content,
-      }));
-      setMessages(formattedMessages);
+      console.log("📡 백엔드 메시지 응답 데이터:", msgData);
+
+      // 백엔드가 실제로 주는 데이터 구조(aiChatResponse)에 맞춰 파싱합니다.
+      if (msgData.aiChatResponse) {
+        const newAiMessage = {
+          id: Date.now(), // 고유 ID 부여
+          role: msgData.aiChatResponse.user === 0 ? "user" : "ai",
+          message: msgData.aiChatResponse.content,
+        };
+        
+        // 기존 대화 기록(prev)을 유지한 상태에서 새 AI 메시지를 맨 뒤에 추가합니다.
+        setMessages((prev) => [...prev, newAiMessage]);
+      }
 
       if (isNewChat && onCreateSession) {
         onCreateSession(activeSessionId);
