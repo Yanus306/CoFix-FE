@@ -52,7 +52,7 @@ export default function AiChatDetail({
         <div className="w-full h-[0.09vh] mb-[2.22vh] bg-gray400" />
       </div>
 
-      <div className="flex-1 w-full overflow-y-auto">
+      <div className="flex-1 w-full overflow-y-auto pr-[1vw]">
         <SlideFadeIn animationKey={sessionId === null ? "new-chat" : "active-chat"}>
           <div className="flex flex-col w-full">
             {messages.map((chat) => (
