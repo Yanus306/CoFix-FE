@@ -31,7 +31,7 @@ export default function ChatBubble({ role, message }) {
       >
         {/* 문자열이면 마크다운으로, React 컴포넌트면 그대로 출력 */}
         {isString ? (
-          <div className="prose prose-invert max-w-none whitespace-pre-wrap break-words text-gray200">
+          <div className="prose prose-invert max-w-none whitespace-pre-wrap wrap-break-words text-gray200">
             <ReactMarkdown>{message}</ReactMarkdown>
           </div>
         ) : isReactElement ? (
