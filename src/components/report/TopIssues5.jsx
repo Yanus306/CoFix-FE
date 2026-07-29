@@ -1,15 +1,7 @@
-const fetchedData = [
-    { title: "중첩 반복문", count: 24 },
-    { title: "변수명 불일치", count: 20 },
-    { title: "예외 처리 누락", count: 12 },
-    { title: "괄호 및 기호 누락", count: 8 },
-    { title: "최대 9글자까지", count: 5 },
-];
-
-function TopIssues5() {
-    const issueData = fetchedData.map((item, index) => {
+function TopIssues5({ data }) {
+    const issueData = data.map((item, index) => {
         let color = "text-gray300"; 
-        if (index === 0) color = "text-red400"; 
+        if (index === 0) color = "text-red400";
         else if (index === 1) color = "text-yellow400";
 
         return {
