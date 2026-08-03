@@ -7,9 +7,7 @@ export const useInfoApi = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  /**
-   * 사용자 정보 조회 요청 함수 (필요할 때 수동으로 호출)
-   */
+
   const fetchUserInfo = async () => {
     setIsLoading(true);
     setError(null);
