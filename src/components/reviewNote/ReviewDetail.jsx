@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { mockReviewList } from "../../mocks/reviewdetaildata";
-import { mockCodeList } from "../../mocks/codeareadata";
 import SlideFadeIn from "../../shared/SlideFadeIn";
+import { fetchVulnerabilityDetail } from "../../hooks/ReviewNoteDetailApi";
+import { updateGuide } from "../../hooks/GuideApi";
 
 // ```javascript 등 마크다운 백틱 문법을 제거해 주는 유틸 함수
 const cleanCodeString = (rawCode) => {
@@ -18,29 +18,31 @@ const cleanCodeString = (rawCode) => {
 export default function ReviewDetail({ sessionId, review }) {
   const [isEditing, setIsEditing] = useState(false);
   const [guideText, setGuideText] = useState("");
+  const [detailData, setDetailData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const matchedReviewMock = mockReviewList.find(
-    (item) => item.id === review?.id,
-  );
-  const matchedCodeMock = mockCodeList.find((item) => item.id === review?.id);
-
-  const rawCodeContent =
-    review?.codeMarkdown || matchedCodeMock?.codeMarkdown || "";
-  const codeContent = cleanCodeString(rawCodeContent);
-
-  const initialGuide =
-    review?.guide ||
-    review?.guideMarkdown ||
-    matchedReviewMock?.guideMarkdown ||
-    matchedReviewMock?.guide ||
-    "";
-
+  // 리뷰 ID가 변경될 때마다 백엔드 API 호출
   useEffect(() => {
-    if (review) {
-      setGuideText(initialGuide);
+    if (!review?.id) return;
+
+    const loadDetailData = async () => {
+      setIsLoading(true);
+      const result = await fetchVulnerabilityDetail(review.id);
+
+      if (result.success) {
+        setDetailData(result.data);
+        const guide = result.data.guide || result.data.guideMarkdown || review?.guide || "";
+        setGuideText(guide);
+      } else {
+        const fallbackGuide = review?.guide || review?.guideMarkdown || "";
+        setGuideText(fallbackGuide);
+      }
+      setIsLoading(false);
       setIsEditing(false);
-    }
-  }, [review, initialGuide]);
+    };
+
+    loadDetailData();
+  }, [review?.id]);
 
   if (!review) {
     return (
@@ -48,32 +50,56 @@ export default function ReviewDetail({ sessionId, review }) {
     );
   }
 
+  const rawCodeContent = detailData?.codeMarkdown || detailData?.code || review?.codeMarkdown || "";
+  const codeContent = cleanCodeString(rawCodeContent);
+
+  const initialGuide = detailData?.guide || detailData?.guideMarkdown || review?.guide || review?.guideMarkdown || "";
+
   const handleEditClick = () => setIsEditing(true);
   const handleCancelClick = () => {
     setGuideText(initialGuide);
     setIsEditing(false);
   };
-  const handleSaveClick = () => {
-    console.log("저장할 가이드 내용:", guideText);
-    review.guide = guideText;
+  const handleSaveClick = async () => {
+  const id = review?.id;
+  if (!id) return;
+
+  setIsLoading(true);
+  const result = await updateGuide(id, guideText);
+  setIsLoading(false);
+
+  if (result.success) {
+    if (detailData) {
+      setDetailData({ ...detailData, guide: guideText });
+    } else {
+      review.guide = guideText;
+    }
     setIsEditing(false);
-  };
+  } else {
+    alert("가이드 저장에 실패했습니다. 다시 시도해주세요.");
+  }
+};
 
   return (
-    <SlideFadeIn animationKey={sessionId === null ? "new-chat" : "active-chat"}>
+   <SlideFadeIn
+  animationKey={sessionId}
+  className={review ? "active-chat" : "new-chat"}
+>
       <div className="w-full h-full flex flex-col text-white animate-fade-in overflow-hidden">
         {/* 1. 상단 헤더 영역 */}
         <div className="flex flex-col border-b border-white-5 px-[2.5vw] shrink-0">
-          <div className="text-[2.6vh] tracking-tight leading-snug mb-[0.8vh]">
-            {review.content}
-          </div>
+       <div className="text-[2.6vh] tracking-tight leading-snug mb-[0.8vh]">
+  {detailData?.title || review.title}
+</div>
 
           <div className="flex items-center gap-[1vw] text-gray400 text-[1.55vh] mb-[1.5vh]">
-            <div>프로젝트: 2026_알고리즘_과제</div>
+            <div>프로젝트: {detailData?.fileName || review.fileName}</div>
             <div className="text-[1.4vh]">|</div>
             <div>
               <span className="mr-[0.3vw]">발생일:</span>
-              {review.date}
+             {detailData?.createdAt
+  ? new Date(detailData.createdAt).toLocaleDateString("ko-KR")
+  : ""}
             </div>
           </div>
         </div>
@@ -85,18 +111,20 @@ export default function ReviewDetail({ sessionId, review }) {
           </div>
 
           <div className="flex-1 min-h-0 bg-gray900 border border-purple500-20 p-[1vw] text-[1.4vh] overflow-y-auto leading-relaxed custom-code-highlight">
-            {codeContent ? (
-              <SyntaxHighlighter
-                language="javascript"
-                style={vscDarkPlus}
-                customStyle={{
-                  margin: 0,
-                  padding: 0,
-                  background: "transparent",
-                  fontSize: "1.4vh",
-                  lineHeight: "1.6",
-                }}
-              >
+            {isLoading ? (
+              <span className="text-gray400">코드 불러오는 중...</span>
+            ) : codeContent ? (
+             <SyntaxHighlighter
+  language="javascript"
+  style={vscDarkPlus}
+  customStyle={{
+    background: "transparent",
+    margin: 0,
+    padding: 0,
+    fontSize: "1.4vh",
+    lineHeight: "1.6",
+  }}
+>
                 {codeContent}
               </SyntaxHighlighter>
             ) : (
@@ -155,7 +183,9 @@ export default function ReviewDetail({ sessionId, review }) {
             />
           ) : (
             <div className="w-full flex-1 border border-white-5 rounded-2xl px-[1.5vw] py-[1.2vh] text-gray400 text-[1.65vh] overflow-y-auto leading-relaxed">
-              {guideText ? (
+              {isLoading ? (
+                <span className="text-gray400">가이드 불러오는 중...</span>
+              ) : guideText ? (
                 <div className="prose prose-invert max-w-none">
                   <ReactMarkdown>{guideText}</ReactMarkdown>
                 </div>
