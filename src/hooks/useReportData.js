@@ -60,9 +60,13 @@ export function useReportData() {
 
         // 개발자 핵심 역량 분석 세팅
         const radar = improveRes.map((item) => ({
-          subject: item.name,
-          score: item.count,
-          fullMark: 100, 
+            subject: item.name, 
+            
+            score: item.count,
+            
+            fullMark: 100,
+            
+            description: item.description 
         }));
         setRadarData(radar);
 
