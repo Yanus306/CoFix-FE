@@ -1,7 +1,9 @@
 export async function fetchVulnerabilityDetail(id) {
   try {
-    const token = localStorage.getItem("accessToken") || "YOUR_SECRET_TOKEN"; // 실제 토큰 관리 방식에 맞게 조정
-    const response = await fetch(`https://cofix.jongyeol.kr/vulnerability/detail/${id}`, {
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+    const token = localStorage.getItem("token") || "YOUR_SECRET_TOKEN"; // 실제 토큰 관리 방식에 맞게 조정
+    
+    const response = await fetch(`${API_BASE_URL}/vulnerability/detail/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
