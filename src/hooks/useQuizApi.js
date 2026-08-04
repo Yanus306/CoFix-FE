@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export function useQuizApi(difficulty) {
+export function useQuizApi(difficulty, issues = []) {
   const [quizList, setQuizList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -10,48 +10,65 @@ export function useQuizApi(difficulty) {
   useEffect(() => {
     const fetchQuiz = async () => {
       try {
+        setLoading(true);
         const token = localStorage.getItem("token");
         const headers = {
           "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         };
 
-        // 로컬스토리지나 상위에서 저장한 유저의 약점 목록을 가져오거나 기본값 설정
-        const top2 = JSON.parse(
-          localStorage.getItem("top2Vulnerabilities") || "[]",
-        );
-        const vulnerabilities =
-          top2.length > 0
-            ? top2.map((v) => v.dataset || "syntax_structure") // 한글 title 대신 dataset(영어) 사용
-            : ["syntax_structure"];
+        let vulnerabilities = [];
 
-        console.log("퀴즈 요청 데이터:", {
+        // 1. 먼저 웹소켓 데이터(issues)에서 id를 뽑아봅니다.
+        if (issues && issues.length > 0) {
+          vulnerabilities = issues.map((v) => v.id).filter(Boolean);
+        }
+
+        // 💡 2. [필살기] 데이터가 없다면 대기하지 않고 API 서버에서 직접 ID를 긁어옵니다!
+        if (vulnerabilities.length === 0) {
+          console.log("⚡ 웹소켓 데이터가 없어 서버에서 취약점 ID를 직접 조회합니다...");
+          const vulnRes = await fetch(`${BASE_URL}/vulnerability`, { headers });
+          
+          if (vulnRes.ok) {
+            const vulnData = await vulnRes.json();
+            // 백엔드가 주는 배열에서 id만 쏙쏙 뽑아냅니다.
+            vulnerabilities = vulnData.map((v) => v.id).filter(Boolean);
+          }
+        }
+
+        // 3. 서버에도 진짜 약점이 단 하나도 없다면 그때만 에러 처리
+        if (vulnerabilities.length === 0) {
+          throw new Error("서버에 등록된 약점(ID)이 없습니다. 약점 분석 후 퀴즈를 생성할 수 있습니다.");
+        }
+
+        console.log("🔥 퀴즈 생성 최종 요청 데이터:", {
           difficulty,
           vulnerability: vulnerabilities,
         });
 
+        // 4. 뽑아낸 id로 퀴즈 생성 POST 요청!
         const response = await fetch(`${BASE_URL}/quiz`, {
           method: "POST",
           headers,
           body: JSON.stringify({
             difficulty: difficulty || "medium",
-            vulnerability: vulnerabilities,
-            count: 5, 
+            vulnerability: vulnerabilities, // 백엔드가 애타게 찾던 그 'id' 배열입니다.
+            count: 5,
           }),
         });
 
         if (!response.ok) {
-          // 💡 백엔드에서 내려주는 ErrorResponse의 message를 파싱합니다.
           const errorData = await response.json().catch(() => ({}));
-          throw new Error(`HTTP ${response.status}: ${errorData.message || '서버에서 퀴즈를 생성할 수 없습니다.'}`);
+          throw new Error(
+            `HTTP ${response.status}: ${errorData.message || "서버에서 퀴즈를 생성할 수 없습니다."}`
+          );
         }
 
         const data = await response.json();
 
-        // 백엔드 응답 구조를 프론트엔드 포맷에 맞게 매핑
         const formattedQuiz = data.map((item) => ({
-          title: item.question || "맞춤 퀴즈",
-          question: item.explain || item.question,
+          title: "맞춤 퀴즈", 
+          question: item.question,    
           codeSnippet: item.code ? item.code.content : null,
           language: item.code ? item.code.language : "javascript",
           options: item.choices || [],
@@ -61,7 +78,7 @@ export function useQuizApi(difficulty) {
 
         setQuizList(formattedQuiz);
       } catch (err) {
-        console.error("퀴즈를 불러오는데 실패했습니다.", err);
+        console.error("🚨 퀴즈 생성 실패:", err);
         setError(err);
       } finally {
         setLoading(false);
@@ -69,7 +86,7 @@ export function useQuizApi(difficulty) {
     };
 
     fetchQuiz();
-  }, [difficulty]);
+  }, [difficulty, JSON.stringify(issues)]);
 
   return { quizList, loading, error };
 }

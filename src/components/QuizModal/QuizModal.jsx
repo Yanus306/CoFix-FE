@@ -3,7 +3,7 @@ import QuizDifficulty from "./QuizDifficulty";
 import QuizLoading from "./QuizLoading";
 import QuizPlay from "./QuizPlay";
 
-function QuizModal({ isOpen, onClose }) {
+function QuizModal({ isOpen, onClose, issues }) {
   const [step, setStep] = useState('difficulty');
   const [difficulty, setDifficulty] = useState(null); 
 
@@ -45,6 +45,7 @@ function QuizModal({ isOpen, onClose }) {
           {step === 'loading' && (
             <QuizLoading 
               difficulty={difficulty} 
+              issues={issues}
               onComplete={() => setStep('play')} 
             />
           )}

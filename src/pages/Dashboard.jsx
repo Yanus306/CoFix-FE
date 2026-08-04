@@ -31,7 +31,7 @@ function Dashboard() {
             <div className="flex w-full h-[23.24vh] justify-between items-center">
                 {/* TOP 2 패널로 데이터 전달 */}
                 <VulnerabilityTop2 issues={vulnerabilities} />
-                <CustomQuiz />
+                <CustomQuiz issues={vulnerabilities} />
             </div>
         </div>
     )

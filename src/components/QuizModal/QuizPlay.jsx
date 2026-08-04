@@ -2,16 +2,16 @@ import QuizQuestion from "./QuizQuestion";
 import { useQuizLogic } from "./useQuizLogic";
 import { useQuizApi } from "../../hooks/useQuizApi"; 
 
-function QuizPlay({ difficulty = "medium", onClose }) { 
+function QuizPlay({ difficulty = "medium", issues, onClose }) { 
   const difficultyMapping = {
     easy: { label: "쉬움", style: "bg-green500-10 border-green500-20" },
     medium: { label: "보통", style: "bg-yellow400-10 border-yellow400-20" },
     hard: { label: "어려움", style: "bg-red500-10 border-red500-20" },
   };
   const currentDifficulty = difficultyMapping[difficulty] || difficultyMapping.medium;
-
-  const { quizList, loading, error } = useQuizApi(difficulty);
-
+  
+  const { quizList, loading, error } = useQuizApi(difficulty, issues);
+  
   const {
     currentQuestionIndex,
     currentQuizData,
