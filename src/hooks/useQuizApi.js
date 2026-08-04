@@ -19,24 +19,23 @@ export function useQuizApi(difficulty, issues = []) {
 
         let vulnerabilities = [];
 
-        // 1. 먼저 웹소켓 데이터(issues)에서 id를 뽑아봅니다.
+        // 웹소켓 데이터에서 id 추출
         if (issues && issues.length > 0) {
           vulnerabilities = issues.map((v) => v.id).filter(Boolean);
         }
 
-        // 💡 2. [필살기] 데이터가 없다면 대기하지 않고 API 서버에서 직접 ID를 긁어옵니다!
+        // 데이터가 없다면 대기하지 않고 API 서버에서 직접 ID를 긁어옴
         if (vulnerabilities.length === 0) {
           console.log("⚡ 웹소켓 데이터가 없어 서버에서 취약점 ID를 직접 조회합니다...");
           const vulnRes = await fetch(`${BASE_URL}/vulnerability`, { headers });
           
           if (vulnRes.ok) {
             const vulnData = await vulnRes.json();
-            // 백엔드가 주는 배열에서 id만 쏙쏙 뽑아냅니다.
             vulnerabilities = vulnData.map((v) => v.id).filter(Boolean);
           }
         }
 
-        // 3. 서버에도 진짜 약점이 단 하나도 없다면 그때만 에러 처리
+        // 서버에도 진짜 약점이 단 하나도 없다면 그때만 에러 처리
         if (vulnerabilities.length === 0) {
           throw new Error("서버에 등록된 약점(ID)이 없습니다. 약점 분석 후 퀴즈를 생성할 수 있습니다.");
         }
@@ -46,13 +45,13 @@ export function useQuizApi(difficulty, issues = []) {
           vulnerability: vulnerabilities,
         });
 
-        // 4. 뽑아낸 id로 퀴즈 생성 POST 요청!
+        // id로 퀴즈 생성 POST 요청
         const response = await fetch(`${BASE_URL}/quiz`, {
           method: "POST",
           headers,
           body: JSON.stringify({
             difficulty: difficulty || "medium",
-            vulnerability: vulnerabilities, // 백엔드가 애타게 찾던 그 'id' 배열입니다.
+            vulnerability: vulnerabilities, 
             count: 5,
           }),
         });
@@ -65,6 +64,8 @@ export function useQuizApi(difficulty, issues = []) {
         }
 
         const data = await response.json();
+
+        console.log("📥 BE 응답 원본 데이터 (Raw Data):", data);
 
         const formattedQuiz = data.map((item) => ({
           title: "맞춤 퀴즈", 
