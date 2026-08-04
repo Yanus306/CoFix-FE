@@ -1,13 +1,28 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import Pagination from "../Pagination";
-import { MOCK_REVIEWS, BADGE_COLORS } from "../../mocks/reviewdata";
+import { fetchReviewNoteList } from "../../hooks/ReviewNoteApi";
+import { BADGE_COLORS } from "../../mocks/reviewdata";
 
 export default function ReviewList({ selectedReviewId, onSelectReview }) {
   // 상태 관리 (목록 관련)
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 7;
   const [isLatestSort, setIsLatestSort] = useState(true);
-  const [reviews] = useState(MOCK_REVIEWS);
+  const [reviews, setReviews] = useState([]);
+const [isLoading, setIsLoading] = useState(false);
+
+useEffect(() => {
+  const loadReviews = async () => {
+    setIsLoading(true);
+    const result = await fetchReviewNoteList();
+    if (result.success) {
+      setReviews(result.data);
+    }
+    setIsLoading(false);
+  };
+
+  loadReviews();
+}, []);
 
   // 휠 스크롤 디바운스용 참조
   const wheelTimeoutRef = useRef(null);
@@ -20,13 +35,13 @@ export default function ReviewList({ selectedReviewId, onSelectReview }) {
 
   // 날짜 기준 리뷰 정렬
   const sortedReviews = useMemo(() => {
-    return [...reviews].sort((a, b) => {
-      if (a.date === b.date) return 0;
-      return isLatestSort
-        ? b.date.localeCompare(a.date)
-        : a.date.localeCompare(b.date);
-    });
-  }, [reviews, isLatestSort]);
+  return [...reviews].sort((a, b) => {
+    if (a.createdAt === b.createdAt) return 0;
+    return isLatestSort
+      ? b.createdAt.localeCompare(a.createdAt)
+      : a.createdAt.localeCompare(b.createdAt);
+  });
+}, [reviews, isLatestSort]);
 
   // 페이지네이션 연산
   const totalDataCount = sortedReviews.length;
@@ -90,27 +105,27 @@ export default function ReviewList({ selectedReviewId, onSelectReview }) {
               >
                 {/* 뱃지 및 날짜 */}
                 <div className="flex justify-between items-center w-full">
-                  <span className="text-gray400 text-[1.11vh]">
-                    {item.date}
-                  </span>
-                  <span
-                    className={`border text-[1.11vh] px-[0.8vw] py-[0.2vh] rounded-2xl ${
-                      BADGE_COLORS[item.badgeType] ||
-                      "bg-gray700 border-white-5 text-gray400"
-                    }`}
-                  >
-                    {item.badge}
-                  </span>
+                 <span className="text-gray400 text-[1.11vh]">
+  {new Date(item.createdAt).toLocaleDateString("ko-KR")}
+</span>
+<span
+  className={`border text-[1.11vh] px-[0.8vw] py-[0.2vh] rounded-2xl ${
+    BADGE_COLORS[item.label] ||
+    "bg-gray700 border-white-5 text-gray400"
+  }`}
+>
+  {item.label}
+</span>
                 </div>
 
                 {/* 실수 내용 요약 (isActive 여부에 따라 글자색 전환) */}
-                <div
-                  className={`text-[1.85vh] text-left tracking-tight truncate w-full transition-colors ${
-                    isActive ? "text-gray200" : "text-gray400"
-                  }`}
-                >
-                  {item.content}
-                </div>
+               <div
+  className={`text-[1.85vh] text-left tracking-tight truncate w-full transition-colors ${
+    isActive ? "text-gray200" : "text-gray400"
+  }`}
+>
+  {item.title}
+</div>
               </div>
             );
           })}
