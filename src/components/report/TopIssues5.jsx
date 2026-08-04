@@ -1,3 +1,5 @@
+import Tooltip from '../report/Tooltip';
+
 function TopIssues5({ data }) {
     const issueData = data.map((item, index) => {
         let color = "text-gray300"; 
@@ -6,9 +8,10 @@ function TopIssues5({ data }) {
 
         return {
             rank: `${index + 1}위`,   
-            title: item.title,    
+            title: item.title || item.name,    
             hoverText: `${item.count}회`,  
-            colorClass: color   
+            colorClass: color,
+            description: item.description || "해당 취약점에 대한 설명이 없습니다." 
         };
     });
 
@@ -16,20 +19,24 @@ function TopIssues5({ data }) {
         <div className="panel-base justify-center w-full h-[23.89vh] gap-[2.41vh]">
             <div className="panel-title">AI 감지 누적 최다 취약점 TOP 5</div>
 
+
             <div className="flex flex-col justify-between items-center w-[33.44vw] h-[11.57vh]">
-                
-                <div className="flex justify-center items-center w-full h-[5.09vh] gap-[1.25vw]">
-                    {issueData.slice(0, 2).map((item, index) => (
-                        <IssueItem key={index} data={item} />
-                    ))}
-                </div>
+                    <div className="flex justify-center items-center w-full h-[5.09vh] gap-[1.25vw]">
+                        {issueData.slice(0, 2).map((item, index) => (
+                            <Tooltip key={`top-${index}`} text={item.description}>
+                                <IssueItem key={index} data={item} />
+                            </Tooltip>
+                        ))}
+                    </div>
 
-                <div className="flex justify-center items-center w-full h-[5.09vh] gap-[1.25vw]">
-                    {issueData.slice(2, 5).map((item, index) => (
-                        <IssueItem key={index} data={item} />
-                    ))}
-                </div>
 
+                    <div className="flex justify-center items-center w-full h-[5.09vh] gap-[1.25vw]">
+                        {issueData.slice(2, 5).map((item, index) => (
+                            <Tooltip key={`bottom-${index}`} text={item.description}>
+                                <IssueItem key={index} data={item} />
+                            </Tooltip>
+                        ))}
+                    </div>
             </div>
         </div>
     );
