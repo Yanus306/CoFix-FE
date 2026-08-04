@@ -1,6 +1,7 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import Pagination from "../Pagination";
 import { fetchReviewNoteList } from "../../hooks/ReviewNoteApi";
+import { BADGE_COLORS } from "../../mocks/reviewdata";
 
 export default function ReviewList({ selectedReviewId, onSelectReview }) {
   // 상태 관리 (목록 관련)
