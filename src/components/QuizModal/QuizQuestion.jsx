@@ -13,7 +13,7 @@ function QuizQuestion({
   return (
     <div className="flex flex-col w-full mb-[2vh] overflow-y-auto pr-[2vw]">
       <div className="mb-[1.1111vh] text-[2.2222vh] font-bold text-gray400">
-        {currentQuizData.title}
+        문제 {currentQuestionIndex + 1}.
         <span className="text-[1.5vh] ml-[0.8vw] font-normal text-gray-500">
           ({currentQuestionIndex + 1} / {totalLength})
         </span>
