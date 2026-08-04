@@ -8,6 +8,9 @@ export function useQuizApi(difficulty, issues = []) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    setLoading(true);
+    setError(null);
+
     const fetchQuiz = async () => {
       try {
         setLoading(true);
