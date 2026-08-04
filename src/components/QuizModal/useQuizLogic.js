@@ -1,16 +1,18 @@
 import { useState } from "react";
 
-export function useQuizLogic({ quizList, onClose }) {
+export function useQuizLogic({ quizList = [], onClose }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [checkedStatus, setCheckedStatus] = useState({});
 
-  const currentQuizData = quizList[currentQuestionIndex];
+  // quizList가 아직 비어있다면 에러가 나지 않도록 빈 객체 반환
+  const currentQuizData = quizList[currentQuestionIndex] || {};
   
   const isAnswerSelected = selectedAnswers[currentQuestionIndex] !== undefined;
   const isAnswerChecked = checkedStatus[currentQuestionIndex] === true;
   
-  const isCorrect = selectedAnswers[currentQuestionIndex] === currentQuizData.answerIndex;
+  // currentQuizData가 비어있을 때를 대비
+  const isCorrect = selectedAnswers[currentQuestionIndex] === currentQuizData?.answerIndex;
 
   const handleOptionClick = (index) => {
     if (isAnswerChecked) return; 

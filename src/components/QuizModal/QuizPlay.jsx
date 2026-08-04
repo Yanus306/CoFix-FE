@@ -1,6 +1,6 @@
-import { mockQuizList } from "../../mocks/quizData"; 
 import QuizQuestion from "./QuizQuestion";
 import { useQuizLogic } from "./useQuizLogic";
+import { useQuizApi } from "../../hooks/useQuizApi"; 
 
 function QuizPlay({ difficulty = "medium", onClose }) { 
   const difficultyMapping = {
@@ -9,6 +9,8 @@ function QuizPlay({ difficulty = "medium", onClose }) {
     hard: { label: "어려움", style: "bg-red500-10 border-red500-20" },
   };
   const currentDifficulty = difficultyMapping[difficulty] || difficultyMapping.medium;
+
+  const { quizList, loading, error } = useQuizApi(difficulty);
 
   const {
     currentQuestionIndex,
@@ -20,7 +22,15 @@ function QuizPlay({ difficulty = "medium", onClose }) {
     handleOptionClick,
     handleMainButtonClick,
     handlePrevClick
-  } = useQuizLogic({ quizList: mockQuizList, onClose });
+  } = useQuizLogic({ quizList, onClose });
+
+  if (loading) {
+    return <div className="flex justify-center items-center w-full h-full text-white">맞춤 퀴즈를 생성하는 중입니다...</div>;
+  }
+
+  if (error || !quizList || quizList.length === 0) {
+    return <div className="flex justify-center items-center w-full h-full text-red-400">퀴즈를 불러오지 못했습니다.</div>;
+  }
 
   return (
     <div className="flex flex-col justify-between w-full h-full">
@@ -37,7 +47,7 @@ function QuizPlay({ difficulty = "medium", onClose }) {
         <QuizQuestion 
           currentQuizData={currentQuizData}
           currentQuestionIndex={currentQuestionIndex}
-          totalLength={mockQuizList.length}
+          totalLength={quizList.length}
           isAnswerChecked={isAnswerChecked}
           selectedAnswer={selectedAnswer}
           isCorrect={isCorrect}
@@ -65,7 +75,7 @@ function QuizPlay({ difficulty = "medium", onClose }) {
         >
           {!isAnswerChecked 
             ? "정답 확인" 
-            : (currentQuestionIndex === mockQuizList.length - 1 ? "나가기" : "다음")
+            : (currentQuestionIndex === quizList.length - 1 ? "나가기" : "다음")
           }
         </button>
       </div>
