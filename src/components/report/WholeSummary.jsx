@@ -1,4 +1,8 @@
+import { useTimeFormat } from '../../hooks/useTimeFormat'; 
+
 function WholeSummary({ data }) {
+    const formatTime = useTimeFormat();
+
     return (
         <div className="panel-base justify-center w-full h-[14.63vh] gap-[2.04vh]">
             <div className="panel-title">누적 코딩 수치 요약</div>
@@ -6,7 +10,7 @@ function WholeSummary({ data }) {
             <div className="flex gap-[2.5vw] text-[2.2vh]">
                 <div className="flex gap-[1.25vw]">
                     <div className="font-bold">총 코딩 시간</div>
-                    <div>{data.codingTime}h</div> 
+                    <div>{formatTime(data?.codingTime || 0)}</div>
                 </div>
                 <div>|</div>
                 <div className="flex gap-[1.25vw]">

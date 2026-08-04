@@ -1,16 +1,12 @@
+import { useTimeFormat } from "../../hooks/useTimeFormat";
+
 function CodingSummary({ 
     filePath = "대기 중...", 
     lastCodingTime = 0, 
     lastTypingWpm = 0, 
     vulnerabilityCount = 0 
 }) {
-    // 코딩 시간 포맷팅 함수
-    const formatTime = (minutes) => {
-        if (!minutes) return "0h 0m";
-        const h = Math.floor(minutes / 60);
-        const m = minutes % 60;
-        return `${h > 0 ? h + 'h ' : ''}${m}m`;
-    };
+    const formatTime = useTimeFormat()
 
     return (
         <div className="panel-base justify-center w-full h-[20vh] gap-[1.11vh]">
