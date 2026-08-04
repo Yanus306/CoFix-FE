@@ -93,7 +93,9 @@ export default function ReviewDetail({ sessionId, review }) {
 </div>
 
           <div className="flex items-center gap-[1vw] text-gray400 text-[1.55vh] mb-[1.5vh]">
-            <div>프로젝트: {detailData?.fileName || review.fileName}</div>
+            <div>프로젝트: {detailData?.project || review.project}</div>
+             <div className="text-[1.4vh]">|</div>
+             <div>파일이름: {detailData?.fileName || review.fileName}</div>
             <div className="text-[1.4vh]">|</div>
             <div>
               <span className="mr-[0.3vw]">발생일:</span>
