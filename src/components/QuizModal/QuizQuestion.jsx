@@ -13,7 +13,7 @@ function QuizQuestion({
   return (
     <div className="flex flex-col w-full mb-[2vh] overflow-y-auto pr-[2vw]">
       <div className="mb-[1.1111vh] text-[2.2222vh] font-bold text-gray400">
-        {currentQuizData.title}
+        문제 {currentQuestionIndex + 1}.
         <span className="text-[1.5vh] ml-[0.8vw] font-normal text-gray-500">
           ({currentQuestionIndex + 1} / {totalLength})
         </span>
@@ -47,7 +47,7 @@ function QuizQuestion({
       )}
 
       {/* 객관식 선택지 영역 */}
-      <div className="flex justify-between mx-[2vw] mb-[2vh]">
+      <div className="flex flex-col gap-[1vh] mx-[2vw] mb-[2vh]">
         {currentQuizData.options.map((option, index) => {
           let optionStyle = "bg-white-3 border-white-5 text-gray-300";
 
@@ -68,9 +68,10 @@ function QuizQuestion({
             <button
               key={index}
               onClick={() => onOptionClick(index)}
-              className={`flex justify-center items-center min-w-[1vw] h-[2.7vh] px-[1.2vw] text-[1.4815vh] rounded-[1.04vw] transition-colors border-[0.09vh] ${optionStyle} ${isAnswerChecked ? "cursor-default" : "cursor-pointer"}`}
+              className={`flex justify-start items-center w-full min-h-[4vh] px-[1.5vw] py-[1vh] text-[1.4815vh] rounded-[1.04vw] transition-colors border-[0.09vh] text-left leading-relaxed ${optionStyle} ${isAnswerChecked ? "cursor-default" : "cursor-pointer"}`}
             >
-              {option}
+              <span className="font-bold mr-[1vw]">{index + 1}.</span>
+              <span>{option}</span>
             </button>
           );
         })}

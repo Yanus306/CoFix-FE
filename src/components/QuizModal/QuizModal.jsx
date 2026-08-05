@@ -3,9 +3,10 @@ import QuizDifficulty from "./QuizDifficulty";
 import QuizLoading from "./QuizLoading";
 import QuizPlay from "./QuizPlay";
 
-function QuizModal({ isOpen, onClose }) {
+function QuizModal({ isOpen, onClose, issues }) {
   const [step, setStep] = useState('difficulty');
-  const [difficulty, setDifficulty] = useState(null); 
+  const [difficulty, setDifficulty] = useState(null);
+  const [quizList, setQuizList] = useState([]);
 
   if (!isOpen) return null;
 
@@ -14,10 +15,17 @@ function QuizModal({ isOpen, onClose }) {
     setStep('loading');
   };
 
+  // 로딩(API 호출)이 완료됐을 때 호출됨
+  const handleQuizReady = (fetchedQuizList) => {
+    setQuizList(fetchedQuizList);
+    setStep('play');
+  };
+
   const handleCloseAndReset = () => {
-    setStep('difficulty'); 
-    setDifficulty(null);  
-    onClose();   
+    setStep('difficulty');
+    setDifficulty(null);
+    setQuizList([]);
+    onClose();
   };
 
   return (
@@ -41,16 +49,18 @@ function QuizModal({ isOpen, onClose }) {
           {step === 'difficulty' && (
             <QuizDifficulty onNext={handleNextStep} />
           )}
-          
+
           {step === 'loading' && (
-            <QuizLoading 
-              difficulty={difficulty} 
-              onComplete={() => setStep('play')} 
+            <QuizLoading
+              difficulty={difficulty}
+              issues={issues}
+              onComplete={handleQuizReady}
+              onError={() => setStep('difficulty')} // 실패 시 처리 방식은 원하는 대로 조정
             />
           )}
-          
+
           {step === 'play' && (
-            <QuizPlay difficulty={difficulty} onClose={handleCloseAndReset} />
+            <QuizPlay difficulty={difficulty} quizList={quizList} onClose={handleCloseAndReset} />
           )}
         </div>
       </div>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import QuizModal from "../../QuizModal/QuizModal";
 
-function CustomQuiz() {
+function CustomQuiz({ issues }) { 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -20,7 +20,11 @@ function CustomQuiz() {
         </button>
       </div>
 
-      <QuizModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <QuizModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        issues={issues} 
+      />
     </>
   );
 }
