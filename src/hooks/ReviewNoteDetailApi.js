@@ -1,14 +1,9 @@
+import { authFetch } from "../api/client";
+
 export async function fetchVulnerabilityDetail(id) {
   try {
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-    const token = localStorage.getItem("token") || "YOUR_SECRET_TOKEN"; // 실제 토큰 관리 방식에 맞게 조정
-    
-    const response = await fetch(`${API_BASE_URL}/vulnerability/detail/${id}`, {
+    const response = await authFetch(`/vulnerability/detail/${id}`, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
     });
 
     if (!response.ok) {
