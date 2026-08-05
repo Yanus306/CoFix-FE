@@ -1,34 +1,18 @@
 import { useState } from 'react';
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+import { authFetch } from "../api/client";
 
 export const useInfoApi = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  /**
-   * 사용자 정보 조회 요청 함수 (필요할 때 수동으로 호출)
-   */
   const fetchUserInfo = async () => {
     setIsLoading(true);
     setError(null);
 
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-      setError('인증 토큰이 없습니다.');
-      setIsLoading(false);
-      return { success: false, message: '인증 토큰이 없습니다.' };
-    }
-
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/info`, {
+      const response = await authFetch('/auth/info', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
       });
 
       const data = await response.json().catch(() => ({}));
@@ -45,6 +29,10 @@ export const useInfoApi = () => {
         message: data.message || '사용자 정보를 불러오는데 실패했습니다.',
       };
     } catch (err) {
+      if (err.message === 'Unauthorized') {
+        return { success: false, message: '세션이 만료되었습니다.' };
+      }
+
       setError('서버와 연결할 수 없습니다.');
       return {
         success: false,
