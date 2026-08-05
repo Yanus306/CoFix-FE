@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import logo from '../../assets/logo.png';
 import { useLoginApi } from '../../hooks/LoginApi';
+import gitlogo from '../../assets/gitlogo.png';
+import googlelogo from '../../assets/googlelogo.png';
 
 function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
   const [username, setUsername] = useState('');
@@ -98,12 +100,12 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
     <div 
       onClick={handleClose}
       className={`fixed inset-0 bg-black/50 z-50 flex items-center justify-center transition-all duration-500 ${
-        isOpen ? 'opacity-100 visible backdrop-blur-[0.18vh]' : 'opacity-0 invisible backdrop-blur-none'
+        isOpen ? 'opacity-100 visible backdrop-blur-[0.18vh]' : 'opacity-100 invisible backdrop-blur-none'
       }`}
     >
       <div 
         onClick={(e) => e.stopPropagation()}
-        className={`relative w-[39vw] min-w-[16.66vw] max-w-[39.06vw] h-[80vh] min-h-[46.3vh] max-h-[72.22vh] bg-gray700 border-white-5 border-2 rounded-md flex justify-center items-center flex-col gap-[1.48vh] bg-center shadow-2xl select-none transition-all duration-500 ease-out ${
+        className={`relative w-[39vw] min-w-[16.66vw] max-w-[39.06vw] h-[80vh] min-h-[46.3vh] max-h-[72.22vh] bg-gray700 border-white-5 border-2 rounded-md flex justify-center items-center flex-col gap-[1.2vh] bg-center shadow-2xl select-none transition-all duration-500 ease-out ${
           isOpen 
             ? 'opacity-100 translate-y-0' 
             : 'opacity-0 translate-y-4'
@@ -116,15 +118,15 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
           &times;
         </button>
         
-        <div className="p-[2.4vh]">
+        <div className="p-0">
           <img 
             src={logo} 
             alt="로고" 
-            className="w-full h-[18vh] max-h-[16.66vh] object-cover rounded-full shadow-lg flex justify-center items-center"
+            className="w-full h-[16vh] max-h-[15vh] object-cover rounded-full shadow-lg flex justify-center items-center"
           />
         </div>
         
-        <div className="text-gray200 w-full text-left px-[4.16vw] mt-[1.85vh] font-bold text-[1.85vh] flex justify-between items-center">
+        <div className="text-gray200 w-full text-left px-[4.16vw] font-bold text-[1.85vh] flex justify-between items-center mt-[1.2vh]">
           <span>아이디</span>
           {loginError && (
             <span className="text-red400 text-[1.29vh] font-semibold">
@@ -145,7 +147,7 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
           }`}
         />
 
-        <div className="text-gray200 w-full text-left px-[4.16vw] mt-[1.85vh] font-bold text-[1.85vh]">비밀번호</div>
+        <div className="text-gray200 w-full text-left px-[4.16vw] mt-[1.2vh] font-bold text-[1.85vh] ">비밀번호</div>
         <input 
           type="password" 
           value={password}
@@ -162,12 +164,35 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
         <button 
           onClick={handleLoginSubmit}
           disabled={isLoading}
-          className="w-[15vw] max-w-[15.1vw] h-[8vh] max-h-[7.4vh] bg-gray800-50 border-white-5 border rounded-4xl cursor-pointer text-purple400 flex justify-center items-center text-[3.24vh] mt-[3.7vh] font-bold hover:bg-gray700 transition-all focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-[15vw] max-w-[15vw] py-[0.6vh] bg-gray800-50 border-white-5 border rounded-2xl cursor-pointer text-purple400 flex justify-center items-center text-[3.24vh] mt-[2vh] font-bold hover:bg-gray700 transition-all focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? '로그인 중...' : '로그인'}
         </button>
 
-        <div className="text-gray200 w-fit text-center mt-[1.85vh] text-[1.2vh]">
+        {/* 💡 로그인 버튼 아래 양옆 구분선 및 '또는' 텍스트 (단위 통일 완료) */}
+        <div className="w-[30vw] max-w-[29.68vw] flex items-center my-[2.2vh]">
+          <div className="grow border-t border-gray600"></div>
+          <span className="text-gray200 text-[1.2vh] px-[1vw]">또는</span>
+          <div className="grow border-t border-gray600"></div>
+        </div>
+
+        {/* 💡 소셜 로그인 버튼 영역 (왼쪽 구글, 오른쪽 깃허브) */}
+        <div className="w-[30vw] max-w-[29.68vw] flex justify-center gap-[1.5vw]">
+          <button 
+            type="button"
+            className="w-[5vh] h-[5vh] max-h-[4.63vh] bg-gray800-50 border border-white-5 rounded-full flex justify-center items-center hover:bg-gray700 transition-all cursor-pointer focus:outline-none shadow-md"
+          >
+            <img src={googlelogo} alt="구글 로그인" className="w-[2.2vh] h-[2.2vh] object-contain" />
+          </button>
+          <button 
+            type="button"
+            className="w-[5vh] h-[5vh] max-h-[4.63vh] bg-gray800-50 border border-white-5 rounded-full flex justify-center items-center hover:bg-gray700 transition-all cursor-pointer focus:outline-none shadow-md"
+          >
+            <img src={gitlogo} alt="깃허브 로그인" className="w-[2.2vh] h-[2.2vh] object-contain" />
+          </button>
+        </div>
+
+        <div className="text-gray200 w-fit text-center mt-[2vh] text-[1.2vh]">
           <span>계정이 없으신가요? </span>
           <button
             onClick={onSignUpClick} 
