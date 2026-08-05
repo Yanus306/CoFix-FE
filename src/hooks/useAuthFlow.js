@@ -34,11 +34,6 @@ export default function useAuthFlow() {
     setIsModalOpen1(false);   
     setIsConnected(false);  
     setIsWaitingForIde(true); 
-
-    // Mock API
-    setTimeout(() => {
-      setIsConnected(true);
-    }, 5000);
   };
 
   const handleLoginSuccess = () => {
