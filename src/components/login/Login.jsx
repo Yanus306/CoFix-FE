@@ -126,7 +126,7 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
           />
         </div>
         
-        <div className="text-gray200 w-full text-left px-[4.16vw] font-bold text-[1.85vh] flex justify-between items-center">
+        <div className="text-gray200 w-full text-left px-[4.16vw] font-bold text-[1.85vh] flex justify-between items-center mt-[1.2vh]">
           <span>아이디</span>
           {loginError && (
             <span className="text-red400 text-[1.29vh] font-semibold">
@@ -147,7 +147,7 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
           }`}
         />
 
-        <div className="text-gray200 w-full text-left px-[4.16vw] mt-[1vh] font-bold text-[1.85vh] ">비밀번호</div>
+        <div className="text-gray200 w-full text-left px-[4.16vw] mt-[1.2vh] font-bold text-[1.85vh] ">비밀번호</div>
         <input 
           type="password" 
           value={password}
@@ -170,7 +170,7 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
         </button>
 
         {/* 💡 로그인 버튼 아래 양옆 구분선 및 '또는' 텍스트 (단위 통일 완료) */}
-        <div className="w-[30vw] max-w-[29.68vw] flex items-center my-[1vh]">
+        <div className="w-[30vw] max-w-[29.68vw] flex items-center my-[2.2vh]">
           <div className="grow border-t border-gray600"></div>
           <span className="text-gray200 text-[1.2vh] px-[1vw]">또는</span>
           <div className="grow border-t border-gray600"></div>
@@ -192,7 +192,7 @@ function Login({ isOpen, onClose, onSignUpClick, onLoginSuccess }) {
           </button>
         </div>
 
-        <div className="text-gray200 w-fit text-center mt-[0.8vh] text-[1.2vh]">
+        <div className="text-gray200 w-fit text-center mt-[2vh] text-[1.2vh]">
           <span>계정이 없으신가요? </span>
           <button
             onClick={onSignUpClick} 
