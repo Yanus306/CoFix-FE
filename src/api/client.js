@@ -39,7 +39,8 @@ export const authFetch = async (url, options = {}) => {
 
         localStorage.removeItem('token');
         localStorage.removeItem('userInfo'); // 필요에 따라 추가
-
+        localStorage.removeItem('nickname');
+        
         alert('로그인 세션이 만료되었습니다. 다시 로그인해 주세요.');
         window.location.href = '/';
       }
