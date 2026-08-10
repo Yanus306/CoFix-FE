@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 const fetchJson = async (url, options) => {
-  const response = await fetch(url, options);
+  const response = await authFetch(url, options);
   if (!response.ok) {
     if (response.status === 401) {
       throw new Error("401_UNAUTHORIZED");
