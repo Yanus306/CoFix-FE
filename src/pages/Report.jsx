@@ -4,10 +4,14 @@ import SkillRadar from "../components/report/SkillRadar/SkillRadar";
 import TopIssues5 from "../components/report/TopIssues5";
 import BadgeList from "../components/report/BadgeList";
 import IssueChart from "../components/report/IssueChart/IssueChart";
+import { useSessionCheck } from "../hooks/SessionExpiry";
 
 function Report() {
   const { summary, topIssues, radarData, chartData, loading } = useReportData();
 
+  useSessionCheck();
+
+  
   if (loading) return <div className="flex justify-center items-center w-full h-full text-white">데이터를 불러오는 중입니다...</div>;
 
   return (

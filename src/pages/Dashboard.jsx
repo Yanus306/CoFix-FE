@@ -3,16 +3,14 @@ import VulnerabilityMain from '../components/dashboard/VulnerabilityScanner/Vuln
 import VulnerabilityTop2 from '../components/dashboard/VulnerabilityTop2';
 import CustomQuiz from '../components/dashboard/CustomQuiz/CustomQuiz';
 import { useDashboardWebSocket } from '../hooks/useDashboardWebSocket';
+import { useSessionCheck } from "../hooks/SessionExpiry";
 
 function Dashboard() {
-    // 토큰 가져오는 로직
-    // const token = localStorage.getItem('accessToken'); 
-    
-    // 커스텀 훅으로 실시간 데이터 구독
-    // const dashboardData = useDashboardWebSocket(token);
-    const dashboardData = useDashboardWebSocket(); // 토큰 없이 호출
 
-    // 취약점 배열 안전하게 추출
+    useSessionCheck();
+
+    const dashboardData = useDashboardWebSocket();
+
     const vulnerabilities = dashboardData.dashboardVulnerabilities;
 
     return (
