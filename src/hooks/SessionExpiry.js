@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import { authFetch } from "../api/client"; // 실제 경로에 맞게 수정
 
-const CHECK_INTERVAL = 90 * 1000; // 1분 30초
+const CHECK_INTERVAL = 5 * 1000; // 5초
 
 export function useSessionCheck() {
   const lastCheckedAt = useRef(0);
