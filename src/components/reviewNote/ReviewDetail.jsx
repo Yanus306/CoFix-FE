@@ -119,27 +119,29 @@ export default function ReviewDetail({ sessionId, review }) {
             <div className="text-gray400 text-[1.55vh]">문제코드</div>
           </div>
 
-          <div className="flex-1 min-h-0 min-w-0 bg-gray900 border border-purple500-20 p-[1vw] text-[1.4vh] overflow-auto leading-relaxed custom-code-highlight">
-            {isLoading ? (
-              <span className="text-gray400">코드 불러오는 중...</span>
-            ) : codeContent ? (
-              <SyntaxHighlighter
-                language="javascript"
-                style={vscDarkPlus}
-                customStyle={{
-                  background: "transparent",
-                  margin: 0,
-                  padding: 0,
-                  fontSize: "1.4vh",
-                  lineHeight: "1.6",
-                  overflow: "visible",
-                }}
-              >
-                {codeContent}
-              </SyntaxHighlighter>
-            ) : (
-              <span className="text-gray400">(등록된 코드가 없습니다.)</span>
-            )}
+          <div className="flex-1 min-h-0 min-w-0 flex flex-col bg-gray900 border border-purple500-20 px-[2.5vw] pt-[1vw]">
+            <div className="flex-1 min-h-0 min-w-0 overflow-auto pb-[0.5vw] text-[1.4vh] leading-relaxed custom-code-highlight">
+              {isLoading ? (
+                <span className="text-gray400">코드 불러오는 중...</span>
+              ) : codeContent ? (
+                <SyntaxHighlighter
+                  language="javascript"
+                  style={vscDarkPlus}
+                  customStyle={{
+                    background: "transparent",
+                    margin: 0,
+                    padding: 0,
+                    fontSize: "1.4vh",
+                    lineHeight: "1.6",
+                    overflow: "visible",
+                  }}
+                >
+                  {codeContent}
+                </SyntaxHighlighter>
+              ) : (
+                <span className="text-gray400">(등록된 코드가 없습니다.)</span>
+              )}
+            </div>
           </div>
         </div>
 
