@@ -177,12 +177,14 @@ export default function ReviewDetail({ sessionId, review }) {
 
           {/* 가이드 본문/편집 입력 */}
           {isEditing ? (
-            <textarea
-              value={guideText}
-              onChange={(e) => setGuideText(e.target.value)}
-              placeholder="개념 요약 및 가이드를 작성해 보세요."
-              className="w-full flex-1 border border-white-5 focus:border-white-5 rounded-2xl px-[1.5vw] py-[1.2vh] text-gray200 text-[1.65vh] resize-none leading-relaxed bg-transparent outline-none focus:outline-none focus:ring-0"
-            />
+            <div className="w-full flex-1 flex border border-white-5 rounded-2xl px-[1.5vw] py-[1.2vh]">
+              <textarea
+                value={guideText}
+                onChange={(e) => setGuideText(e.target.value)}
+                placeholder="개념 요약 및 가이드를 작성해 보세요."
+                className="w-full h-full bg-transparent text-gray200 text-[1.65vh] resize-none leading-relaxed border-none outline-none focus:outline-none focus:ring-0 p-0 m-0"
+              />
+            </div>
           ) : (
             <div className="w-full flex-1 border border-white-5 rounded-2xl px-[1.5vw] py-[1.2vh] text-gray400 text-[1.65vh] overflow-y-auto leading-relaxed">
               {isLoading ? (
