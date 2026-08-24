@@ -70,16 +70,27 @@ export function Create_logic({ onClose1, onSignUpComplete }) {
     });
 
     if (result.success) {
-      // 회원가입 성공 시 곧바로 로그인(토큰 발급) 진행
       try {
         const loginResult = await loginUser({ 
           username: username, 
           password: password 
         });
         
-        // 백엔드 로그인 API 응답에 토큰이 포함되어 있다면 localStorage에 저장
-        if (loginResult.success && loginResult.token) {
-          localStorage.setItem('token', loginResult.token);
+        if (loginResult.success && loginResult.data) {
+          const token = loginResult.data.token || loginResult.data.accessToken; 
+          
+          if (token) {
+            // 토큰 저장
+            localStorage.setItem('token', token);
+            
+            // 입력했던 이름(name)을 닉네임으로 로컬 스토리지에 저장
+            localStorage.setItem('nickname', name);
+            
+            // SideNav가 눈치채고 닉네임을 바로 바꾸도록 이벤트(신호) 발송
+            window.dispatchEvent(new Event('login-success'));
+            
+            console.log("토큰 및 닉네임 저장 완료!");
+          }
         }
       } catch (error) {
         console.error("자동 로그인 처리 중 오류 발생:", error);
