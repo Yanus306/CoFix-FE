@@ -10,7 +10,15 @@ function IdeCode() {
     // 인증 코드 받아오는 함수
     const fetchAuthCode = async () => {
       try {
-        const token = localStorage.getItem("accessToken"); 
+        const token = localStorage.getItem("token"); 
+
+        // 토큰 Null 체크 로직 추가
+        if (!token) {
+          setCopyStatus("로그인이 필요합니다.");
+          console.error("토큰을 찾을 수 없습니다.");
+          return; 
+        }
+
         const API_URL = `${import.meta.env.VITE_API_BASE_URL}/auth/code/generate`;
 
         const response = await fetch(API_URL, {
