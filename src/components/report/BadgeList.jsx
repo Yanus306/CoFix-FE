@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import BadgeSetting from './BadgeSetting';
-import { BADGE_DATA } from './badgeData'; // 💡 분리된 데이터 파일 임포트
+import { BADGE_DATA } from './badgedata'; // 💡 분리된 데이터 파일 임포트
 
 import badgeSetting from '../../assets/badge/badge-setting.png';
 
