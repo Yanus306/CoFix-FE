@@ -31,7 +31,17 @@ export function useDashboardWebSocket() {
       if (!isMounted) return;
       try {
         const data = JSON.parse(event.data);
-        setDashboardData((prev) => ({ ...prev, ...data }));
+        console.log("📥 [대시보드] 웹소켓 실시간 데이터 수신:", data);
+
+        setDashboardData((prev) => {
+          return {
+            ...prev,
+            ...data,
+            dashboardVulnerabilities: data.dashboardVulnerabilities !== undefined 
+                                      ? data.dashboardVulnerabilities 
+                                      : [],
+          };
+        });
       } catch (error) {
         console.error("웹소켓 데이터 파싱 에러:", error);
       }
