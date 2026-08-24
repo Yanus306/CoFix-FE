@@ -1,13 +1,9 @@
 import { useState, useEffect } from "react";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
+import { authFetch } from "../api/client"; // 실제 경로에 맞게 수정
 
 const fetchJson = async (url, options) => {
-  const response = await fetch(url, options);
+  const response = await authFetch(url, options);
   if (!response.ok) {
-    if (response.status === 401) {
-      throw new Error("401_UNAUTHORIZED");
-    }
     throw new Error(`HTTP error! status: ${response.status}`);
   }
   return response.json();
@@ -27,15 +23,12 @@ export function useReportData() {
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const headers = { Authorization: `Bearer ${token}` };
-
         const [summaryRes, categoryRes, improveRes, dailyRes] =
           await Promise.all([
-            fetchJson(`${API_BASE}/codingState/summary`, { headers }),
-            fetchJson(`${API_BASE}/vulnerability/category`, { headers }),
-            fetchJson(`${API_BASE}/codingState/improve`, { headers }),
-            fetchJson(`${API_BASE}/codingState/daily`, { headers }),
+            fetchJson(`/codingState/summary`),
+            fetchJson(`/vulnerability/category`),
+            fetchJson(`/codingState/improve`),
+            fetchJson(`/codingState/daily`),
           ]);
 
         // 누적 코딩 수치 요약 세팅
@@ -85,12 +78,8 @@ export function useReportData() {
           setChartData(chart);
         }
       } catch (error) {
-        //  401 에러 발생 시 화면이 터지지 않고 알림을 띄웁니다.
+        // authFetch가 401이면 이미 내부적으로 로그아웃 처리(alert + 리다이렉트)를 함
         console.error("데이터를 불러오는데 실패했습니다.", error);
-        if (error.message === "401_UNAUTHORIZED") {
-          alert("로그인이 만료되었거나 권한이 없습니다. 다시 로그인해주세요.");
-          window.location.href = "/dashboard";
-        }
       } finally {
         setLoading(false);
       }

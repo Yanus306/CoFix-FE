@@ -1,20 +1,15 @@
 import { useState, useEffect } from "react";
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { authFetch } from "../api/client"; // 실제 경로에 맞게 수정
 
 export function useAiChat() {
   const [sessions, setSessions] = useState([]);
   const [currentMessages, setCurrentMessages] = useState([]);
   const [currentSessionId, setCurrentSessionId] = useState(null);
 
-  const getToken = () => localStorage.getItem("token");
-
   // 방 목록 불러오기
   const fetchSessions = async () => {
     try {
-      const response = await fetch(`${BASE_URL}/chat`, {
-        headers: { Authorization: `Bearer ${getToken()}` },
-      });
+      const response = await authFetch(`/chat`);
       if (response.ok) {
         const data = await response.json();
         const formattedSessions = data.map((item) => ({
@@ -48,9 +43,7 @@ export function useAiChat() {
   const handleSessionClick = async (sessionId) => {
     setCurrentSessionId(sessionId);
     try {
-      const response = await fetch(`${BASE_URL}/chat/${sessionId}/message`, {
-        headers: { Authorization: `Bearer ${getToken()}` },
-      });
+      const response = await authFetch(`/chat/${sessionId}/message`);
       if (response.ok) {
         const data = await response.json();
         const formattedMessages = data.messages.map((msg, index) => ({
@@ -74,12 +67,8 @@ export function useAiChat() {
   // 채팅 이름 변경
   const handleRenameSession = async (id, newTitle) => {
     try {
-      const response = await fetch(`${BASE_URL}/chat/${id}/name`, {
+      const response = await authFetch(`/chat/${id}/name`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`,
-        },
         body: JSON.stringify({ name: newTitle }),
       });
 
@@ -100,9 +89,8 @@ export function useAiChat() {
   // 채팅방 삭제
   const handleDeleteSession = async (id) => {
     try {
-      const response = await fetch(`${BASE_URL}/chat/${id}`, {
+      const response = await authFetch(`/chat/${id}`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${getToken()}` },
       });
 
       if (response.ok) {

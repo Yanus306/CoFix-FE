@@ -24,6 +24,7 @@ export function useLogoutApi() {
       if (response.ok) {
         localStorage.removeItem('token');
         localStorage.removeItem('userInfo');
+        localStorage.removeItem('nickname');
 
         return { success: true, status: response.status };
       } else {
