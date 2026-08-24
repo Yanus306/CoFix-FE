@@ -21,7 +21,7 @@ function BadgeSettingModal({
                     <div>
                         <h3 className="text-[2.2vh] font-bold text-slate-100 flex items-center gap-[0.8vh]">
                             <span className="w-[1vh] h-[1vh] rounded-full bg-[#8262EF]"></span>
-                            대표 뱃지 설정
+                            대표 배지 설정
                         </h3>
                         <p className="text-[1.4vh] text-purple-200/60 mt-[0.4vh]">클릭하는 순서대로 1, 2, 3번에 등록됩니다.</p>
                     </div>
@@ -76,7 +76,7 @@ function BadgeSettingModal({
                 {/* 전체 보유 뱃지 목록 */}
                 <div className="flex flex-col gap-[1.2vh]">
                     <p className="text-[1.5vh] text-purple-200/80 font-bold flex items-center gap-[0.8vh]">
-                        전체 보유 뱃지 
+                        전체 보유 배지 
                         <span className="text-[1.2vh] px-[0.8vh] py-[0.2vh] bg-[#8262EF]/20 text-[#8262EF] rounded-full border border-[#8262EF]/30">
                             {allBadges.length}
                         </span>
