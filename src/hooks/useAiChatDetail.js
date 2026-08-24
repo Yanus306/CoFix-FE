@@ -1,13 +1,10 @@
 import { useState, useEffect } from "react";
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { authFetch } from "../api/client"; // 실제 경로에 맞게 수정
 
 export function useAiChatDetail(sessionId, initialMessages, isNewChat, onCreateSession) {
   const [messages, setMessages] = useState(initialMessages);
   const [inputValue, setInputValue] = useState("");
   const [isAiTyping, setIsAiTyping] = useState(false);
-
-  const getToken = () => localStorage.getItem("token");
 
   useEffect(() => {
     setMessages(initialMessages);
@@ -32,9 +29,8 @@ export function useAiChatDetail(sessionId, initialMessages, isNewChat, onCreateS
 
       // 새 채팅인 경우 방 먼저 생성
       if (isNewChat) {
-        const createRes = await fetch(`${BASE_URL}/chat`, {
+        const createRes = await authFetch(`/chat`, {
           method: "POST",
-          headers: { Authorization: `Bearer ${getToken()}` },
         });
         if (!createRes.ok) throw new Error("방 생성 실패");
 
@@ -43,12 +39,8 @@ export function useAiChatDetail(sessionId, initialMessages, isNewChat, onCreateS
       }
 
       // 메시지 전송
-      const msgRes = await fetch(`${BASE_URL}/chat/${activeSessionId}/message`, {
+      const msgRes = await authFetch(`/chat/${activeSessionId}/message`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`,
-        },
         body: JSON.stringify({ message: userText }),
       });
 
