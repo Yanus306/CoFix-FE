@@ -31,7 +31,8 @@ export default function ReviewDetail({ sessionId, review }) {
 
       if (result.success) {
         setDetailData(result.data);
-        const guide = result.data.guide || result.data.guideMarkdown || review?.guide || "";
+        const guide =
+          result.data.guide || result.data.guideMarkdown || review?.guide || "";
         setGuideText(guide);
       } else {
         const fallbackGuide = review?.guide || review?.guideMarkdown || "";
@@ -50,10 +51,16 @@ export default function ReviewDetail({ sessionId, review }) {
     );
   }
 
-  const rawCodeContent = detailData?.codeMarkdown || detailData?.code || review?.codeMarkdown || "";
+  const rawCodeContent =
+    detailData?.codeMarkdown || detailData?.code || review?.codeMarkdown || "";
   const codeContent = cleanCodeString(rawCodeContent);
 
-  const initialGuide = detailData?.guide || detailData?.guideMarkdown || review?.guide || review?.guideMarkdown || "";
+  const initialGuide =
+    detailData?.guide ||
+    detailData?.guideMarkdown ||
+    review?.guide ||
+    review?.guideMarkdown ||
+    "";
 
   const handleEditClick = () => setIsEditing(true);
   const handleCancelClick = () => {
@@ -61,47 +68,47 @@ export default function ReviewDetail({ sessionId, review }) {
     setIsEditing(false);
   };
   const handleSaveClick = async () => {
-  const id = review?.id;
-  if (!id) return;
+    const id = review?.id;
+    if (!id) return;
 
-  setIsLoading(true);
-  const result = await updateGuide(id, guideText);
-  setIsLoading(false);
+    setIsLoading(true);
+    const result = await updateGuide(id, guideText);
+    setIsLoading(false);
 
-  if (result.success) {
-    if (detailData) {
-      setDetailData({ ...detailData, guide: guideText });
+    if (result.success) {
+      if (detailData) {
+        setDetailData({ ...detailData, guide: guideText });
+      } else {
+        review.guide = guideText;
+      }
+      setIsEditing(false);
     } else {
-      review.guide = guideText;
+      alert("가이드 저장에 실패했습니다. 다시 시도해주세요.");
     }
-    setIsEditing(false);
-  } else {
-    alert("가이드 저장에 실패했습니다. 다시 시도해주세요.");
-  }
-};
+  };
 
   return (
-   <SlideFadeIn
-  animationKey={sessionId}
-  className={review ? "active-chat" : "new-chat"}
->
+    <SlideFadeIn
+      animationKey={sessionId}
+      className={review ? "active-chat" : "new-chat"}
+    >
       <div className="w-full h-full flex flex-col text-white animate-fade-in overflow-hidden">
         {/* 1. 상단 헤더 영역 */}
         <div className="flex flex-col border-b border-white-5 px-[2.5vw] shrink-0">
-       <div className="text-[2.6vh] tracking-tight leading-snug mb-[0.8vh]">
-  {detailData?.title || review.title}
-</div>
+          <div className="text-[2.6vh] tracking-tight leading-snug mb-[0.8vh]">
+            {detailData?.title || review.title}
+          </div>
 
           <div className="flex items-center gap-[1vw] text-gray400 text-[1.55vh] mb-[1.5vh]">
             <div>프로젝트: {detailData?.project || review.project}</div>
-             <div className="text-[1.4vh]">|</div>
-             <div>파일이름: {detailData?.fileName || review.fileName}</div>
+            <div className="text-[1.4vh]">|</div>
+            <div>파일이름: {detailData?.fileName || review.fileName}</div>
             <div className="text-[1.4vh]">|</div>
             <div>
               <span className="mr-[0.3vw]">발생일:</span>
-             {detailData?.createdAt
-  ? new Date(detailData.createdAt).toLocaleDateString("ko-KR")
-  : ""}
+              {detailData?.createdAt
+                ? new Date(detailData.createdAt).toLocaleDateString("ko-KR")
+                : ""}
             </div>
           </div>
         </div>
@@ -116,17 +123,17 @@ export default function ReviewDetail({ sessionId, review }) {
             {isLoading ? (
               <span className="text-gray400">코드 불러오는 중...</span>
             ) : codeContent ? (
-             <SyntaxHighlighter
-  language="javascript"
-  style={vscDarkPlus}
-  customStyle={{
-    background: "transparent",
-    margin: 0,
-    padding: 0,
-    fontSize: "1.4vh",
-    lineHeight: "1.6",
-  }}
->
+              <SyntaxHighlighter
+                language="javascript"
+                style={vscDarkPlus}
+                customStyle={{
+                  background: "transparent",
+                  margin: 0,
+                  padding: 0,
+                  fontSize: "1.4vh",
+                  lineHeight: "1.6",
+                }}
+              >
                 {codeContent}
               </SyntaxHighlighter>
             ) : (
