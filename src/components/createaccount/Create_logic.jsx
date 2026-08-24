@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { useRegisterApi } from '../../hooks/RegisterApi';
 import { useLoginApi } from '../../hooks/LoginApi'; 
 
+// 환경 변수에서 API 베이스 URL을 가져옴
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+
 export function Create_logic({ onClose1, onSignUpComplete }) {
   const [username, setUsername] = useState('');
   const [name, setName] = useState('');
@@ -121,13 +124,15 @@ export function Create_logic({ onClose1, onSignUpComplete }) {
 
   const handleGoogleLogin = () => {
     if (window.confirm('외부 페이지로 이동하시겠습니까?')) {
-      window.location.href = 'http://cofix.jongyeol.kr/oauth2/authorization/google';
+      // 하드코딩된 주소 대신 환경 변수 사용
+      window.location.href = `${API_BASE_URL}/oauth2/authorization/google`;
     }
   };
 
   const handleGithubLogin = () => {
     if (window.confirm('외부 페이지로 이동하시겠습니까?')) {
-      window.location.href = 'http://cofix.jongyeol.kr/oauth2/authorization/github';
+      // 하드코딩된 주소 대신 환경 변수 사용
+      window.location.href = `${API_BASE_URL}/oauth2/authorization/github`;
     }
   };
 

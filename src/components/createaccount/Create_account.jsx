@@ -4,6 +4,8 @@ import googlelogo from '../../assets/googlelogo.png';
 import { useRegisterApi } from '../../hooks/RegisterApi';
 import { useLoginApi } from '../../hooks/LoginApi';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+
 function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
   const [username, setUsername] = useState('');
   const [name, setName] = useState('');
@@ -66,7 +68,7 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
 
     const fullEmail = `${emailPrefix.trim()}@${emailDomain}`;
 
-    // 💡 실제 백엔드 API 호출 (목 데이터 로직 제거 완료)
+    // 실제 백엔드 API 호출
     const result = await registerUser({
       username: username,
       password: password,
@@ -271,7 +273,8 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
             type="button"
             onClick={() => {
               if (window.confirm('외부 페이지로 이동하시겠습니까?')) {
-                window.location.href = 'http://cofix.jongyeol.kr/oauth2/authorization/google';
+                // 환경 변수를 사용하여 URL 동적 생성
+                window.location.href = `${API_BASE_URL}/oauth2/authorization/google`;
               }
             }}
             className="cursor-pointer border border-white-5 bg-white w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-full font-bold text-[1.29vh] text-black flex justify-center items-center gap-[1.04vw] hover:bg-gray200 transition-all shadow-md focus:outline-none"
@@ -283,7 +286,8 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
             type="button"
             onClick={() => {
               if (window.confirm('외부 페이지로 이동하시겠습니까?')) {
-                window.location.href = 'http://cofix.jongyeol.kr/oauth2/authorization/github';
+                // 환경 변수를 사용하여 URL 동적 생성
+                window.location.href = `${API_BASE_URL}/oauth2/authorization/github`;
               }
             }}
             className="cursor-pointer border border-white-5 bg-white w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-full font-bold text-[1.29vh] text-black flex justify-center items-center gap-[1.04vw] hover:bg-gray200 transition-all shadow-md focus:outline-none"
