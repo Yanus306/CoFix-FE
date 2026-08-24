@@ -1,25 +1,57 @@
 import { useEffect, useState } from "react";
 
 function IdeCode() {
-  const authCode = "asd0fghjkl123asdf45gh67j8k9l";
+  const [authCode, setAuthCode] = useState("");
   const [copyStatus, setCopyStatus] = useState(
     "아래 인증코드를 IDE에 삽입해주세요",
   );
 
   useEffect(() => {
-    // 복사 시도 함수
-    const attemptCopy = async () => {
+    // 인증 코드 받아오는 함수
+    const fetchAuthCode = async () => {
       try {
-        await navigator.clipboard.writeText(authCode);
-        setCopyStatus("인증 코드가 클립보드에 자동 복사되었습니다!");
-      } catch (err) {
-        // 보안 정책 때문에 자동 복사가 막혔을 경우
-        console.warn("자동 복사 대기 중: 인증코드 칸을 클릭하면 복사됩니다.");
+        const token = localStorage.getItem("accessToken"); 
+        const API_URL = `${import.meta.env.VITE_API_BASE_URL}/auth/code/generate`;
+
+        const response = await fetch(API_URL, {
+          method: "POST", // API 명세에 따른 POST 요청
+          headers: {
+            "Authorization": `Bearer ${token}`, // Bearer 인증 헤더 추가
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setAuthCode(data.authCode); // 발급된 인증 코드 저장
+          
+          // 데이터가 성공적으로 받아와지면 자동 복사 시도
+          attemptCopy(data.authCode);
+        } else {
+          setCopyStatus("인증 코드 발급에 실패했습니다.");
+          console.error("인증 코드 발급 실패:", response.status);
+        }
+      } catch (error) {
+        setCopyStatus("서버 연결에 실패했습니다.");
+        console.error("API 호출 중 오류 발생:", error);
       }
     };
 
-    attemptCopy();
+    fetchAuthCode();
   }, []);
+    
+    // 복사 시도 함수
+    const attemptCopy = async (codeToCopy) => {
+    if (!codeToCopy) return;
+    try {
+      await navigator.clipboard.writeText(codeToCopy);
+      setCopyStatus("인증 코드가 클립보드에 자동 복사되었습니다!");
+    } catch (err) {
+      // 보안 정책 때문에 자동 복사가 막혔을 경우
+      console.warn("자동 복사 대기 중: 인증코드 칸을 클릭하면 복사됩니다.");
+      setCopyStatus("아래 인증코드를 클릭하여 복사해주세요");
+    }
+  };
 
   // 인증 코드 칸 클릭하면 복사
   const copyOnFirstInteraction = async () => {
