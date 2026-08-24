@@ -116,7 +116,7 @@ export default function ReviewDetail({ sessionId, review }) {
         {/* 문제 코드 영역 */}
         <div className="flex flex-col flex-1 min-h-0 min-w-0 w-[56.2vw]">
           <div className="bg-gray800-50 px-[2.5vw] py-[0.8vh] shrink-0">
-            <div className="text-gray400 text-[1.55vh]">문제코드</div>
+            <div className="text-gray400 text-[1.55vh]">문제 코드</div>
           </div>
 
           <div className="flex-1 min-h-0 min-w-0 flex flex-col bg-gray900 border border-purple500-20 px-[2.5vw] pt-[1vw]">
