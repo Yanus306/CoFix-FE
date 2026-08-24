@@ -91,7 +91,7 @@ function BadgeList() {
                 </button>
             </div>
             
-            {/* 메인 화면 대표 뱃지 3개 슬롯 영역 (고정 3슬롯) */}
+            {/* 메인 화면 대표 뱃지 3개 슬롯 영역 */}
             <div className="flex items-center justify-around w-full h-full px-[1vw]">
                 {[0, 1, 2].map((index) => {
                     const badgeId = selectedBadgeIds[index];
@@ -109,13 +109,14 @@ function BadgeList() {
                                     <div className="absolute top-[8.5vh] hidden group-hover:flex flex-col items-center z-20 pointer-events-none">
                                         <div className="w-0 h-0 border-x-[0.4vh] border-x-transparent border-b-[0.4vh] border-b-slate-900/90"></div>
                                         <div className="bg-slate-900/90 text-white p-[1vh] rounded-[1.2vh] shadow-xl backdrop-blur-sm min-w-[15vw] max-w-[20vw] text-center">
-                                            <p className="text-[1.3vh] font-bold text-[#8262EF] mb-[0.3vh]">{badge.name}</p>
+                                            {/* 💡 뱃지 이름 폰트 크기 강조 (1.3vh ➡️ 1.5vh) */}
+                                            <p className="text-[1.8vh] font-bold text-[#8262EF] mb-[0.3vh]">{badge.name}</p>
                                             <p className="text-[1.1vh] text-slate-200 font-normal leading-tight">{badge.desc}</p>
                                         </div>
                                     </div>
                                 </>
                             ) : (
-                                /* 💡 미설정 시 출력되는 원형 그레이 점선 슬롯 및 툴팁 */
+                                /* 미설정 시 출력되는 원형 그레이 점선 슬롯 및 툴팁 */
                                 <>
                                     <div 
                                         onClick={handleOpenModal}
@@ -128,11 +129,11 @@ function BadgeList() {
                                         </div>
                                     </div>
 
-                                    {/* 💬 비어있는 항목 hover 시 나타나는 '배지 등록' 툴팁 */}
+                                    {/* 비어있는 항목 hover 시 나타나는 '배지 등록' 툴팁 */}
                                     <div className="absolute top-[8.5vh] hidden group-hover:flex flex-col items-center z-20 pointer-events-none">
                                         <div className="w-0 h-0 border-x-[0.4vh] border-x-transparent border-b-[0.4vh] border-b-slate-900/90"></div>
                                         <div className="bg-slate-900/90 text-white px-[1.2vh] py-[0.8vh] rounded-[1vh] shadow-xl backdrop-blur-sm text-center whitespace-nowrap border border-slate-700/50">
-                                            <p className="text-[1.1vh] font-bold text-[#8262EF]">배지 등록</p>
+                                            <p className="text-[1.3vh] font-bold text-[#8262EF]">배지 등록</p>
                                             <p className="text-[0.95vh] text-slate-300 font-normal">클릭하여 대표 배지를 설정하세요</p>
                                         </div>
                                     </div>
