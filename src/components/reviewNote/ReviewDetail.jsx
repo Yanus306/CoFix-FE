@@ -93,7 +93,7 @@ export default function ReviewDetail({ sessionId, review }) {
       className={review ? "active-chat" : "new-chat"}
     >
       <div className="w-full h-full flex flex-col text-white animate-fade-in overflow-hidden">
-        {/* 1. 상단 헤더 영역 */}
+        {/* 상단 헤더 영역 */}
         <div className="flex flex-col border-b border-white-5 px-[2.5vw] shrink-0">
           <div className="text-[2.6vh] tracking-tight leading-snug mb-[0.8vh]">
             {detailData?.title || review.title}
@@ -113,13 +113,13 @@ export default function ReviewDetail({ sessionId, review }) {
           </div>
         </div>
 
-        {/* 2. 문제 코드 영역 */}
-        <div className="flex flex-col flex-1 min-h-0">
+        {/* 문제 코드 영역 */}
+        <div className="flex flex-col flex-1 min-h-0 min-w-0 w-[56.2vw]">
           <div className="bg-gray800-50 px-[2.5vw] py-[0.8vh] shrink-0">
             <div className="text-gray400 text-[1.55vh]">문제코드</div>
           </div>
 
-          <div className="flex-1 min-h-0 bg-gray900 border border-purple500-20 p-[1vw] text-[1.4vh] overflow-y-auto leading-relaxed custom-code-highlight">
+          <div className="flex-1 min-h-0 min-w-0 bg-gray900 border border-purple500-20 p-[1vw] text-[1.4vh] overflow-auto leading-relaxed custom-code-highlight">
             {isLoading ? (
               <span className="text-gray400">코드 불러오는 중...</span>
             ) : codeContent ? (
@@ -132,6 +132,7 @@ export default function ReviewDetail({ sessionId, review }) {
                   padding: 0,
                   fontSize: "1.4vh",
                   lineHeight: "1.6",
+                  overflow: "visible",
                 }}
               >
                 {codeContent}
@@ -142,7 +143,7 @@ export default function ReviewDetail({ sessionId, review }) {
           </div>
         </div>
 
-        {/* 3. 개념 요약 및 가이드 영역 */}
+        {/* 개념 요약 및 가이드 영역 */}
         <div className="flex flex-col flex-1 min-h-0 px-[2.5vw] pt-[1.5vh] pb-[2vh]">
           <div className="flex justify-between items-center mb-[1vh] shrink-0">
             <div className="flex flex-col gap-[0.4vh]">
