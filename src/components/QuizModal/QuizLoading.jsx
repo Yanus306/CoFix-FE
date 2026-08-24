@@ -1,14 +1,21 @@
 import { useEffect } from "react";
-import Spinner from "./Spinner"
+import Spinner from "./Spinner";
+import { useQuizApi } from "../../hooks/useQuizApi";
 
-function QuizLoading({ onComplete }) {
+function QuizLoading({ difficulty, issues, onComplete, onError }) {
+  const { quizList, loading, error } = useQuizApi(difficulty, issues);
+
   useEffect(() => {
-    const timer = setTimeout(() => {
-      onComplete();
-    }, 3000);
+    if (loading) return;
 
-    return () => clearTimeout(timer);
-  }, [onComplete]);
+    if (error || !quizList || quizList.length === 0) {
+      console.error("퀴즈 생성 실패:", error);
+      onError?.();
+      return;
+    }
+
+    onComplete(quizList);
+  }, [loading, error, quizList, onComplete, onError]);
 
   return (
     <div className="flex flex-col justify-center items-center h-full gap-[1vh]">
