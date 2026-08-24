@@ -2,6 +2,7 @@ import { useState } from 'react';
 import gitlogo from '../../assets/gitlogo.png';
 import googlelogo from '../../assets/googlelogo.png';
 import { useRegisterApi } from '../../hooks/RegisterApi';
+import { useLoginApi } from '../../hooks/LoginApi';
 
 function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
   const [username, setUsername] = useState('');
@@ -16,7 +17,12 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
   const [emailError, setEmailError] = useState('');
   const [generalError, setGeneralError] = useState('');
 
-  const { registerUser, isLoading } = useRegisterApi();
+  // 회원가입과 로그인의 로딩 상태를 각각 관리
+  const { registerUser, isLoading: isRegisterLoading } = useRegisterApi();
+  const { loginUser, isLoading: isLoginLoading } = useLoginApi();
+  
+  // 둘 중 하나라도 API 호출 중이면 버튼을 비활성화(로딩) 상태로 만듭니다.
+  const isLoading = isRegisterLoading || isLoginLoading;
 
   const resetErrors = () => {
     setUsernameError('');
@@ -69,6 +75,24 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
     });
 
     if (result.success) {
+      // 회원가입 성공 시 자동 로그인 후 토큰과 닉네임 저장
+      try {
+        const loginResult = await loginUser({ username, password });
+        
+        if (loginResult.success && loginResult.data) {
+          const token = loginResult.data.token || loginResult.data.accessToken; 
+          
+          if (token) {
+            localStorage.setItem('token', token);
+            localStorage.setItem('nickname', name);
+            window.dispatchEvent(new Event('login-success')); // 사이드바 즉시 업데이트 신호
+            console.log("토큰 및 닉네임 저장 성공!");
+          }
+        }
+      } catch (error) {
+        console.error("자동 로그인 처리 중 오류 발생:", error);
+      }
+
       onSignUpComplete();
       resetForm();
     } else {

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRegisterApi } from '../../hooks/RegisterApi';
+import { useLoginApi } from '../../hooks/LoginApi'; 
 
 export function Create_logic({ onClose1, onSignUpComplete }) {
   const [username, setUsername] = useState('');
@@ -14,7 +15,9 @@ export function Create_logic({ onClose1, onSignUpComplete }) {
   const [emailError, setEmailError] = useState('');
   const [generalError, setGeneralError] = useState('');
 
-  const { registerUser, isLoading } = useRegisterApi();
+  // 회원가입과 로그인 API 훅을 둘 다 가져옴
+  const { registerUser, isLoading: isRegisterLoading } = useRegisterApi();
+  const { loginUser, isLoading: isLoginLoading } = useLoginApi();
 
   const resetErrors = () => {
     setUsernameError('');
@@ -52,7 +55,8 @@ export function Create_logic({ onClose1, onSignUpComplete }) {
     !isPasswordMismatched;
 
   const handleSignUpSubmit = async () => {
-    if (!isFormValid || isLoading) return;
+    // 회원가입 혹은 자동 로그인 진행 중일 때는 중복 요청 방지
+    if (!isFormValid || isRegisterLoading || isLoginLoading) return;
 
     resetErrors();
 
@@ -66,6 +70,32 @@ export function Create_logic({ onClose1, onSignUpComplete }) {
     });
 
     if (result.success) {
+      try {
+        const loginResult = await loginUser({ 
+          username: username, 
+          password: password 
+        });
+        
+        if (loginResult.success && loginResult.data) {
+          const token = loginResult.data.token || loginResult.data.accessToken; 
+          
+          if (token) {
+            // 토큰 저장
+            localStorage.setItem('token', token);
+            
+            // 입력했던 이름(name)을 닉네임으로 로컬 스토리지에 저장
+            localStorage.setItem('nickname', name);
+            
+            // SideNav가 눈치채고 닉네임을 바로 바꾸도록 이벤트(신호) 발송
+            window.dispatchEvent(new Event('login-success'));
+            
+            console.log("토큰 및 닉네임 저장 완료!");
+          }
+        }
+      } catch (error) {
+        console.error("자동 로그인 처리 중 오류 발생:", error);
+      }
+
       onSignUpComplete();
       resetForm();
     } else {
@@ -120,7 +150,7 @@ export function Create_logic({ onClose1, onSignUpComplete }) {
     setEmailError,
     generalError,
     setGeneralError,
-    isLoading,
+    isLoading: isRegisterLoading || isLoginLoading, 
     isPasswordMismatched,
     isFormValid,
     handleClose,

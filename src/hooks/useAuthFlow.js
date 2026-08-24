@@ -32,6 +32,10 @@ export default function useAuthFlow() {
 
   const handleSignUpComplete = () => {
     setIsModalOpen1(false);   
+    
+    // 회원가입 성공 시 자동 로그인이 진행
+    setIsLoggedIn(true);
+
     setIsConnected(false);  
     setIsWaitingForIde(true); 
   };
