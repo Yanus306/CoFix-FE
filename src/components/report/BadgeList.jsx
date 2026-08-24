@@ -1,32 +1,8 @@
 import { useState } from 'react';
-import BadgeSettingModal from './BadgeSetting';
+import BadgeSetting from './BadgeSetting';
+import { BADGE_DATA } from './badgeData'; // 💡 분리된 데이터 파일 임포트
 
-import badgeStarter from '../../assets/badge/badge-starter.png';
-import badgeMaster from '../../assets/badge/badge-master.png';
-import badgeTotal500 from '../../assets/badge/badge-total-500.png';
 import badgeSetting from '../../assets/badge/badge-setting.png';
-
-// 💡 초기 요청 시 사용했던 기본 3개 배지만 유지
-const INITIAL_BADGES = [
-    { 
-        id: 'starter', 
-        name: '스타터 배지', 
-        desc: 'CoFix에 오신것을 환영합니다.',
-        src: badgeStarter 
-    },
-    { 
-        id: 'master', 
-        name: '마스터 배지', 
-        desc: '모든 배지를 획득하셨습니다!',
-        src: badgeMaster 
-    },
-    { 
-        id: 'total-500', 
-        name: '오답노트 500회', 
-        desc: '오답노트 500회 사용하셨습니다!',
-        src: badgeTotal500 
-    },
-];
 
 function BadgeList() {
     const [selectedBadgeIds, setSelectedBadgeIds] = useState(['starter', 'master', 'total-500']);
@@ -67,13 +43,14 @@ function BadgeList() {
 
     return (
         <div className="panel-base justify-center w-full h-[23.89vh] gap-[1vh] flex flex-col p-[1.5vh] relative">
-            {/* 상단 헤더 */}
+            {/* 상단 헤더 컨테이너 */}
             <div className="relative flex items-center justify-center w-full">
-                <div className="panel-title text-center">학습 배지</div>
+                <div className="panel-title text-center mt-[3vh]">학습 배지</div>
+                {/* 💡 top-0 적용하여 패널 우측 상단 구석에 밀착 */}
                 <button 
                     type="button"
                     onClick={handleOpenModal}
-                    className="absolute right-0 w-[2.2vh] h-[2.2vh] flex items-center justify-center cursor-pointer group"
+                    className="absolute right-0 top-0 w-[2.2vh] h-[2.2vh] flex items-center justify-center cursor-pointer group"
                     title="대표 배지 설정"
                 >
                     <img 
@@ -85,10 +62,10 @@ function BadgeList() {
             </div>
             
             {/* 메인 화면 대표 뱃지 3개 슬롯 영역 */}
-            <div className="flex items-center justify-around w-full h-full px-[1vw]">
+            <div className="flex items-center justify-around w-full h-full px-[1vw] -mt-[0.8vh]">
                 {[0, 1, 2].map((index) => {
                     const badgeId = selectedBadgeIds[index];
-                    const badge = INITIAL_BADGES.find(b => b.id === badgeId);
+                    const badge = BADGE_DATA.find(b => b.id === badgeId);
 
                     return (
                         <div key={index} className="relative flex flex-col items-center justify-center group cursor-pointer">
@@ -132,11 +109,10 @@ function BadgeList() {
                 })}
             </div>
 
-            {/* 모달 연동 */}
-            <BadgeSettingModal 
+            <BadgeSetting 
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                allBadges={INITIAL_BADGES}
+                allBadges={BADGE_DATA}
                 tempSelectedIds={tempSelectedIds}
                 replaceIndex={replaceIndex}
                 onSelectBadge={handleSelectBadge}
