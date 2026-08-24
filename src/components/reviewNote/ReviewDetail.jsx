@@ -31,7 +31,8 @@ export default function ReviewDetail({ sessionId, review }) {
 
       if (result.success) {
         setDetailData(result.data);
-        const guide = result.data.guide || result.data.guideMarkdown || review?.guide || "";
+        const guide =
+          result.data.guide || result.data.guideMarkdown || review?.guide || "";
         setGuideText(guide);
       } else {
         const fallbackGuide = review?.guide || review?.guideMarkdown || "";
@@ -50,10 +51,16 @@ export default function ReviewDetail({ sessionId, review }) {
     );
   }
 
-  const rawCodeContent = detailData?.codeMarkdown || detailData?.code || review?.codeMarkdown || "";
+  const rawCodeContent =
+    detailData?.codeMarkdown || detailData?.code || review?.codeMarkdown || "";
   const codeContent = cleanCodeString(rawCodeContent);
 
-  const initialGuide = detailData?.guide || detailData?.guideMarkdown || review?.guide || review?.guideMarkdown || "";
+  const initialGuide =
+    detailData?.guide ||
+    detailData?.guideMarkdown ||
+    review?.guide ||
+    review?.guideMarkdown ||
+    "";
 
   const handleEditClick = () => setIsEditing(true);
   const handleCancelClick = () => {
@@ -61,81 +68,84 @@ export default function ReviewDetail({ sessionId, review }) {
     setIsEditing(false);
   };
   const handleSaveClick = async () => {
-  const id = review?.id;
-  if (!id) return;
+    const id = review?.id;
+    if (!id) return;
 
-  setIsLoading(true);
-  const result = await updateGuide(id, guideText);
-  setIsLoading(false);
+    setIsLoading(true);
+    const result = await updateGuide(id, guideText);
+    setIsLoading(false);
 
-  if (result.success) {
-    if (detailData) {
-      setDetailData({ ...detailData, guide: guideText });
+    if (result.success) {
+      if (detailData) {
+        setDetailData({ ...detailData, guide: guideText });
+      } else {
+        review.guide = guideText;
+      }
+      setIsEditing(false);
     } else {
-      review.guide = guideText;
+      alert("가이드 저장에 실패했습니다. 다시 시도해주세요.");
     }
-    setIsEditing(false);
-  } else {
-    alert("가이드 저장에 실패했습니다. 다시 시도해주세요.");
-  }
-};
+  };
 
   return (
-   <SlideFadeIn
-  animationKey={sessionId}
-  className={review ? "active-chat" : "new-chat"}
->
+    <SlideFadeIn
+      animationKey={sessionId}
+      className={review ? "active-chat" : "new-chat"}
+    >
       <div className="w-full h-full flex flex-col text-white animate-fade-in overflow-hidden">
-        {/* 1. 상단 헤더 영역 */}
+        {/* 상단 헤더 영역 */}
         <div className="flex flex-col border-b border-white-5 px-[2.5vw] shrink-0">
-       <div className="text-[2.6vh] tracking-tight leading-snug mb-[0.8vh]">
-  {detailData?.title || review.title}
-</div>
+          <div className="text-[2.6vh] tracking-tight leading-snug mb-[0.8vh]">
+            {detailData?.title || review.title}
+          </div>
 
           <div className="flex items-center gap-[1vw] text-gray400 text-[1.55vh] mb-[1.5vh]">
             <div>프로젝트: {detailData?.project || review.project}</div>
-             <div className="text-[1.4vh]">|</div>
-             <div>파일이름: {detailData?.fileName || review.fileName}</div>
+            <div className="text-[1.4vh]">|</div>
+            <div>파일이름: {detailData?.fileName || review.fileName}</div>
             <div className="text-[1.4vh]">|</div>
             <div>
               <span className="mr-[0.3vw]">발생일:</span>
-             {detailData?.createdAt
-  ? new Date(detailData.createdAt).toLocaleDateString("ko-KR")
-  : ""}
+              {detailData?.createdAt
+                ? new Date(detailData.createdAt).toLocaleDateString("ko-KR")
+                : ""}
             </div>
           </div>
         </div>
 
-        {/* 2. 문제 코드 영역 */}
-        <div className="flex flex-col flex-1 min-h-0">
+        {/* 문제 코드 영역 */}
+        <div className="flex flex-col flex-1 min-h-0 min-w-0 w-[56.2vw]">
           <div className="bg-gray800-50 px-[2.5vw] py-[0.8vh] shrink-0">
-            <div className="text-gray400 text-[1.55vh]">문제코드</div>
+            <div className="text-gray400 text-[1.55vh]">문제 코드</div>
           </div>
 
-          <div className="flex-1 min-h-0 bg-gray900 border border-purple500-20 p-[1vw] text-[1.4vh] overflow-y-auto leading-relaxed custom-code-highlight">
-            {isLoading ? (
-              <span className="text-gray400">코드 불러오는 중...</span>
-            ) : codeContent ? (
-             <SyntaxHighlighter
-  language="javascript"
-  style={vscDarkPlus}
-  customStyle={{
-    background: "transparent",
-    margin: 0,
-    padding: 0,
-    fontSize: "1.4vh",
-    lineHeight: "1.6",
-  }}
->
-                {codeContent}
-              </SyntaxHighlighter>
-            ) : (
-              <span className="text-gray400">(등록된 코드가 없습니다.)</span>
-            )}
+          <div className="flex-1 min-h-0 min-w-0 flex flex-col bg-gray900 border border-purple500-20 px-[2.5vw] pt-[1vw]">
+            <div className="flex-1 min-h-0 min-w-0 overflow-auto pb-[0.5vw] text-[1.4vh] leading-relaxed custom-code-highlight">
+              {isLoading ? (
+                <span className="text-gray400">코드 불러오는 중...</span>
+              ) : codeContent ? (
+                <SyntaxHighlighter
+                  language="javascript"
+                  style={vscDarkPlus}
+                  customStyle={{
+                    background: "transparent",
+                    margin: 0,
+                    padding: 0,
+                    fontSize: "1.4vh",
+                    lineHeight: "1.6",
+                    overflow: "visible",
+                  }}
+                >
+                  {codeContent}
+                </SyntaxHighlighter>
+              ) : (
+                <span className="text-gray400">(등록된 코드가 없습니다.)</span>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* 3. 개념 요약 및 가이드 영역 */}
+        {/* 개념 요약 및 가이드 영역 */}
         <div className="flex flex-col flex-1 min-h-0 px-[2.5vw] pt-[1.5vh] pb-[2vh]">
           <div className="flex justify-between items-center mb-[1vh] shrink-0">
             <div className="flex flex-col gap-[0.4vh]">
@@ -177,12 +187,14 @@ export default function ReviewDetail({ sessionId, review }) {
 
           {/* 가이드 본문/편집 입력 */}
           {isEditing ? (
-            <textarea
-              value={guideText}
-              onChange={(e) => setGuideText(e.target.value)}
-              placeholder="개념 요약 및 가이드를 작성해 보세요."
-              className="w-full flex-1 border border-white-5 focus:border-white-5 rounded-2xl px-[1.5vw] py-[1.2vh] text-gray200 text-[1.65vh] resize-none leading-relaxed bg-transparent outline-none focus:outline-none focus:ring-0"
-            />
+            <div className="w-full flex-1 flex border border-white-5 rounded-2xl px-[1.5vw] py-[1.2vh]">
+              <textarea
+                value={guideText}
+                onChange={(e) => setGuideText(e.target.value)}
+                placeholder="개념 요약 및 가이드를 작성해 보세요."
+                className="w-full h-full bg-transparent text-gray200 text-[1.65vh] resize-none leading-relaxed border-none outline-none focus:outline-none focus:ring-0 p-0 m-0"
+              />
+            </div>
           ) : (
             <div className="w-full flex-1 border border-white-5 rounded-2xl px-[1.5vw] py-[1.2vh] text-gray400 text-[1.65vh] overflow-y-auto leading-relaxed">
               {isLoading ? (
