@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRegisterApi } from '../../hooks/RegisterApi';
+import { useLoginApi } from '../../hooks/LoginApi'; 
 
 export function Create_logic({ onClose1, onSignUpComplete }) {
   const [username, setUsername] = useState('');
@@ -14,7 +15,9 @@ export function Create_logic({ onClose1, onSignUpComplete }) {
   const [emailError, setEmailError] = useState('');
   const [generalError, setGeneralError] = useState('');
 
-  const { registerUser, isLoading } = useRegisterApi();
+  // 회원가입과 로그인 API 훅을 둘 다 가져옴
+  const { registerUser, isLoading: isRegisterLoading } = useRegisterApi();
+  const { loginUser, isLoading: isLoginLoading } = useLoginApi();
 
   const resetErrors = () => {
     setUsernameError('');
@@ -52,7 +55,8 @@ export function Create_logic({ onClose1, onSignUpComplete }) {
     !isPasswordMismatched;
 
   const handleSignUpSubmit = async () => {
-    if (!isFormValid || isLoading) return;
+    // 회원가입 혹은 자동 로그인 진행 중일 때는 중복 요청 방지
+    if (!isFormValid || isRegisterLoading || isLoginLoading) return;
 
     resetErrors();
 
@@ -66,6 +70,21 @@ export function Create_logic({ onClose1, onSignUpComplete }) {
     });
 
     if (result.success) {
+      // 회원가입 성공 시 곧바로 로그인(토큰 발급) 진행
+      try {
+        const loginResult = await loginUser({ 
+          username: username, 
+          password: password 
+        });
+        
+        // 백엔드 로그인 API 응답에 토큰이 포함되어 있다면 localStorage에 저장
+        if (loginResult.success && loginResult.token) {
+          localStorage.setItem('token', loginResult.token);
+        }
+      } catch (error) {
+        console.error("자동 로그인 처리 중 오류 발생:", error);
+      }
+
       onSignUpComplete();
       resetForm();
     } else {
@@ -120,7 +139,7 @@ export function Create_logic({ onClose1, onSignUpComplete }) {
     setEmailError,
     generalError,
     setGeneralError,
-    isLoading,
+    isLoading: isRegisterLoading || isLoginLoading, 
     isPasswordMismatched,
     isFormValid,
     handleClose,
