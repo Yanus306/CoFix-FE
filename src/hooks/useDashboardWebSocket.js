@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+const WS_BASE_URL = API_BASE_URL.replace(/^http/, 'ws');
+
 export function useDashboardWebSocket() {
   const [dashboardData, setDashboardData] = useState({
     filePath: undefined,
@@ -16,7 +19,7 @@ export function useDashboardWebSocket() {
     const token = localStorage.getItem("token"); 
     if (!token) return;
 
-    const WS_URL = "wss://cofix.jongyeol.kr/ws/dashboard/live";
+    const WS_URL = `${WS_BASE_URL}/ws/dashboard/live`;
     ws.current = new WebSocket(WS_URL);
 
     ws.current.onopen = () => {
