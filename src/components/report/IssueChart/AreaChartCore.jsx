@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react"; // 👇 useRef, useEffect 추가
+import React, { useRef, useEffect } from "react";
 import {
   AreaChart,
   Area,
@@ -10,10 +10,8 @@ import {
 function AreaChartCore({ data, visible }) {
   const chartWidth = data?.length > 5 ? `${(data.length / 5) * 100}%` : "100%";
   
-  // 스크롤되는 영역을 제어하기 위한 ref 생성
   const scrollRef = useRef(null);
 
-  // 데이터가 렌더링될 때(처음 떴을 때) 스크롤을 가장 오른쪽 끝으로 이동
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
@@ -30,6 +28,14 @@ function AreaChartCore({ data, visible }) {
             data={data}
             margin={{ top: 20, right: 0, left: 0, bottom: 20 }}
           >
+            <XAxis 
+              dataKey="date" 
+              axisLine={false} 
+              tickLine={false}
+              tick={{ fill: "transparent", fontSize: "1.2vh" }} 
+              dy={10} 
+            />
+            
             <YAxis
               width={80} 
               allowDecimals={false}
@@ -64,7 +70,13 @@ function AreaChartCore({ data, visible }) {
                 dy={10} 
               />
               
-              <YAxis hide={true} allowDecimals={false} />
+              <YAxis 
+                width={0} 
+                axisLine={false} 
+                tickLine={false} 
+                tick={false} 
+                allowDecimals={false} 
+              />
 
               <Area
                 type="linear"
