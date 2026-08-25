@@ -1,3 +1,4 @@
+import React, { useRef, useEffect } from "react"; // 👇 useRef, useEffect 추가
 import {
   AreaChart,
   Area,
@@ -7,49 +8,86 @@ import {
 } from "recharts";
 
 function AreaChartCore({ data, visible }) {
+  const chartWidth = data?.length > 5 ? `${(data.length / 5) * 100}%` : "100%";
+  
+  // 스크롤되는 영역을 제어하기 위한 ref 생성
+  const scrollRef = useRef(null);
+
+  // 데이터가 렌더링될 때(처음 떴을 때) 스크롤을 가장 오른쪽 끝으로 이동
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
+    }
+  }, [data]); 
+
   return (
-    <div className="w-[28vw] h-[26vh] mr-[2vw] outline-none pointer-events-none">
-      <ResponsiveContainer width="100%" height="100%">
-        <AreaChart
-          data={data}
-          margin={{ top: 20, right: 20, left: 20, bottom: 20 }}
-        >
-          <XAxis
-            dataKey="date"
-            axisLine={{ stroke: "rgb(75 85 99)", strokeWidth: "0.2vh" }}
-            tickLine={false}
-            tick={{ fill: "var(--color-gray400)", fontSize: "1.2vh" }}
-            dy={10} 
-          />
+    <div className="flex w-[28vw] h-[26vh] mr-[2vw]">
+      
+      {/* 고정된 Y축 영역 */}
+      <div className="w-[4.17vw] shrink-0 h-full z-10">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart
+            data={data}
+            margin={{ top: 20, right: 0, left: 0, bottom: 20 }}
+          >
+            <YAxis
+              width={80} 
+              allowDecimals={false}
+              axisLine={{ stroke: "rgb(75 85 99)", strokeWidth: "0.2vh" }}
+              tickLine={false}
+              tick={{ fill: "var(--color-gray400)", fontSize: "1.2vh" }}
+              tickFormatter={(value) => (value === 0 ? "" : `${value}건`)}
+              tickMargin={20}
+            />
+            <Area dataKey="typeA" stroke="none" fill="none" />
+            <Area dataKey="typeB" stroke="none" fill="none" />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
 
-          <YAxis
-            width={80} 
-            axisLine={{ stroke: "rgb(75 85 99)", strokeWidth: "0.2vh" }}
-            tickLine={false}
-            tick={{ fill: "var(--color-gray400)", fontSize: "1.2vh" }}
-            tickFormatter={(value) => (value === 0 ? "" : `${value}건`)}
-            tickMargin={20}
-          />
+      {/* 스크롤되는 X축 및 데이터 영역 */}
+      <div 
+        ref={scrollRef} 
+        className="flex-1 overflow-x-auto overflow-y-hidden outline-none"
+      >
+        <div style={{ width: chartWidth, height: "100%" }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart
+              data={data}
+              margin={{ top: 20, right: 20, left: 0, bottom: 20 }}
+            >
+              <XAxis
+                dataKey="date"
+                axisLine={{ stroke: "rgb(75 85 99)", strokeWidth: "0.2vh" }}
+                tickLine={false}
+                tick={{ fill: "var(--color-gray400)", fontSize: "1.2vh" }}
+                dy={10} 
+              />
+              
+              <YAxis hide={true} allowDecimals={false} />
 
-          <Area
-            type="linear"
-            dataKey="typeA"
-            stroke="rgb(143 57 248 / 60%)"
-            fill="rgb(143 57 248 / 20%)"
-            strokeWidth="0.1vh"
-            hide={!visible.typeA}
-          />
+              <Area
+                type="linear"
+                dataKey="typeA"
+                stroke="rgb(143 57 248 / 60%)"
+                fill="rgb(143 57 248 / 20%)"
+                strokeWidth="0.1vh"
+                hide={!visible.typeA}
+              />
 
-          <Area
-            type="linear"
-            dataKey="typeB"
-            stroke="rgb(59 130 246 / 60%)"
-            fill="rgb(59 130 246 / 20%)"
-            strokeWidth="0.1vh"
-            hide={!visible.typeB}
-          />
-        </AreaChart>
-      </ResponsiveContainer>
+              <Area
+                type="linear"
+                dataKey="typeB"
+                stroke="rgb(59 130 246 / 60%)"
+                fill="rgb(59 130 246 / 20%)"
+                strokeWidth="0.1vh"
+                hide={!visible.typeB}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      
     </div>
   );
 }
