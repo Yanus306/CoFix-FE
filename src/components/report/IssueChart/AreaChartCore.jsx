@@ -18,6 +18,44 @@ function AreaChartCore({ data, visible }) {
     }
   }, [data]); 
 
+  const renderCustomXAxisTick = ({ x, y, payload, index }) => {
+    const isFirst = index === 0;
+    
+    const shiftedX = isFirst ? x - 20 : x;
+
+    return (
+      <text
+        x={shiftedX} 
+        y={y}
+        dy={10}
+        textAnchor={isFirst ? "start" : "middle"}
+        fill="var(--color-gray400)"
+        fontSize="1.2vh"
+      >
+        {payload.value}
+      </text>
+    );
+  };
+
+  const renderHiddenXAxisTick = ({ x, y, payload, index }) => {
+    const isFirst = index === 0;
+    
+    const shiftedX = isFirst ? x - 20 : x; 
+
+    return (
+      <text
+        x={shiftedX}
+        y={y}
+        dy={10}
+        textAnchor={isFirst ? "start" : "middle"}
+        fill="transparent"
+        fontSize="1.2vh"
+      >
+        {payload.value}
+      </text>
+    );
+  };
+
   return (
     <div className="flex w-[28vw] h-[26vh] mr-[2vw]">
       
@@ -32,8 +70,8 @@ function AreaChartCore({ data, visible }) {
               dataKey="date" 
               axisLine={false} 
               tickLine={false}
-              tick={{ fill: "transparent", fontSize: "1.2vh" }} 
-              dy={10} 
+              interval="preserveStartEnd" 
+              tick={renderHiddenXAxisTick} 
             />
             
             <YAxis
@@ -66,8 +104,8 @@ function AreaChartCore({ data, visible }) {
                 dataKey="date"
                 axisLine={{ stroke: "rgb(75 85 99)", strokeWidth: "0.2vh" }}
                 tickLine={false}
-                tick={{ fill: "var(--color-gray400)", fontSize: "1.2vh" }}
-                dy={10} 
+                interval="preserveStartEnd" 
+                tick={renderCustomXAxisTick} 
               />
               
               <YAxis 
