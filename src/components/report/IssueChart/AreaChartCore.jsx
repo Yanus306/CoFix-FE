@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import {
   AreaChart,
   Area,
@@ -11,24 +11,37 @@ function AreaChartCore({ data, visible }) {
   const chartWidth = data?.length > 5 ? `${(data.length / 5) * 100}%` : "100%";
   
   const scrollRef = useRef(null);
+  const yAxisContainerRef = useRef(null);
+  const [yAxisWidth, setYAxisWidth] = useState(80);
 
+  // 처음 렌더링 시 스크롤을 맨 우측으로 이동
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
     }
   }, [data]); 
 
-  const renderCustomXAxisTick = ({ x, y, payload, index }) => {
-    const isFirst = index === 0;
-    
-    const shiftedX = isFirst ? x - 20 : x;
+  // 브라우저 줌(Zoom) 시 vw를 px로 실시간 변환하여 빈틈 방지
+  useEffect(() => {
+    if (!yAxisContainerRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        setYAxisWidth(entry.contentRect.width); 
+      }
+    });
+    observer.observe(yAxisContainerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
+  // X축 텍스트 렌더링 
+  const renderCustomXAxisTick = ({ x, y, payload, index }) => {
     return (
       <text
-        x={shiftedX} 
+        x={x}
         y={y}
         dy={10}
-        textAnchor={isFirst ? "start" : "middle"}
+        // 첫 번째 항목의 왼쪽이 잘리지 않도록 시작점 기준으로 정렬
+        textAnchor={index === 0 ? "start" : "middle"}
         fill="var(--color-gray400)"
         fontSize="1.2vh"
       >
@@ -38,16 +51,12 @@ function AreaChartCore({ data, visible }) {
   };
 
   const renderHiddenXAxisTick = ({ x, y, payload, index }) => {
-    const isFirst = index === 0;
-    
-    const shiftedX = isFirst ? x - 20 : x; 
-
     return (
       <text
-        x={shiftedX}
+        x={x}
         y={y}
         dy={10}
-        textAnchor={isFirst ? "start" : "middle"}
+        textAnchor={index === 0 ? "start" : "middle"}
         fill="transparent"
         fontSize="1.2vh"
       >
@@ -60,7 +69,10 @@ function AreaChartCore({ data, visible }) {
     <div className="flex w-[28vw] h-[26vh] mr-[2vw]">
       
       {/* 고정된 Y축 영역 */}
-      <div className="w-[4.17vw] shrink-0 h-full z-10">
+      <div 
+        ref={yAxisContainerRef} 
+        className="w-[4.17vw] shrink-0 h-full z-10"
+      >
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={data}
@@ -68,14 +80,14 @@ function AreaChartCore({ data, visible }) {
           >
             <XAxis 
               dataKey="date" 
-              axisLine={false} 
+              axisLine={{ stroke: "transparent", strokeWidth: "0.2vh" }} 
               tickLine={false}
               interval="preserveStartEnd" 
               tick={renderHiddenXAxisTick} 
             />
             
             <YAxis
-              width={80} 
+              width={yAxisWidth} 
               allowDecimals={false}
               axisLine={{ stroke: "rgb(75 85 99)", strokeWidth: "0.2vh" }}
               tickLine={false}
