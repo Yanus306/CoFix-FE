@@ -5,6 +5,7 @@ import {
   XAxis,
   YAxis,
   ResponsiveContainer,
+  Tooltip,
 } from "recharts";
 
 function AreaChartCore({ data, visible }) {
@@ -126,6 +127,36 @@ function AreaChartCore({ data, visible }) {
                 tickLine={false} 
                 tick={false} 
                 allowDecimals={false} 
+              />
+
+              <Tooltip 
+                cursor={{ 
+                  stroke: 'var(--color-gray400)', 
+                  strokeWidth: "0.1vh",
+                  strokeDasharray: '3 3' 
+                }}
+                contentStyle={{ 
+                  backgroundColor: 'rgba(20, 20, 30, 0.9)', 
+                  borderRadius: '0.42vw',
+                  border: 'none', 
+                  color: '#fff',
+                  padding: '1vh 1vw', 
+                  fontSize: '1.2vh' 
+                }}
+                itemStyle={{ 
+                  fontSize: '1.2vh', 
+                  paddingTop: '0.5vh', 
+                  color: 'var(--color-gray400)'
+                }}
+                labelStyle={{ 
+                  fontSize: '1.2vh', 
+                  color: 'var(--color-gray200)',
+                  marginBottom: '0.5vh'
+                }}
+                formatter={(value, name) => [
+                  `${value}건`, 
+                  name === 'typeA' ? '약점 발생 빈도' : '개선 빈도'
+                ]}
               />
 
               <Area
