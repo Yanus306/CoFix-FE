@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SettingIcon from "../../assets/SettingIcon.png";
 import UserModal from "./UserModal"; 
-import BadgeToast from "../BadgeToast"; // 💡 아까 만든 토스트 컴포넌트 불러오기
+import BadgeToast, { useBadgeToast } from "../BadgeToast"; // 💡 통합된 BadgeToast 및 useBadgeToast import
 
 function SideNav() {
     const menuItems = [
@@ -17,9 +17,9 @@ function SideNav() {
     
     const [isModalOpen, setIsModalOpen] = useState(false);
     
-    // 💡 뱃지 토스트 노출 상태 추가
-    const [showBadgeToast, setShowBadgeToast] = useState(false);
-    
+    // 💡 뱃지 큐 관리를 위한 Custom Hook 호출
+    const { currentBadgeId, triggerBadge, handleToastClose } = useBadgeToast();
+
     // 💡 닉네임을 state로 관리하여 변경 감지 가능하게 설정
     const [nickname, setNickname] = useState(() => {
         return localStorage.getItem('nickname') || '사용자';
@@ -69,6 +69,13 @@ function SideNav() {
         };
     }, []);
 
+    // 💡 테스트용: 버튼 클릭 시 뱃지 3개를 연속으로 대기열에 추가 나중에 삭제해야함
+    const handleTestTrigger = () => {
+        triggerBadge('starter');
+        triggerBadge('CA-3');
+        triggerBadge('master');
+    };
+
     return (
         <div className="panel-base no-hover flex flex-col justify-between w-[17vw] h-full py-[1.67vh] px-[0.94vw] select-none">
             <div className="flex flex-col items-center w-[15.10vw] gap-[6.57vh]">
@@ -79,6 +86,7 @@ function SideNav() {
                         const isActive = location.pathname === item.path;
 
                         return (
+                            //테스트용 버튼 삭제해야함
                             <button
                                 key={item.path} 
                                 onClick={() => navigate(item.path)}
@@ -96,9 +104,9 @@ function SideNav() {
                         );
                     })}
 
-                    {/* 💡 AI CHAT 밑에 추가된 쬐끔만한 뱃지 등장 테스트 버튼 */}
+                    {/* 💡 뱃지 연속 달성 테스트 버튼 */}
                     <button
-                        onClick={() => setShowBadgeToast(prev => !prev)}
+                        onClick={handleTestTrigger}
                         className="mt-1 text-xs text-gray-400 bg-gray-800 hover:bg-gray-700 py-1 px-2 rounded cursor-pointer self-center"
                     >
                         뱃지 등장 테스트
@@ -134,8 +142,14 @@ function SideNav() {
                 />
             </div>
 
-            {/* 💡 버튼 클릭 시 팝업 띄우기 */}
-            {showBadgeToast && <BadgeToast />}
+            {/* 💡 큐에 대기 중인 뱃지가 있으면 하나씩 순차적으로 출력 */}
+            {currentBadgeId && (
+                <BadgeToast
+                    key={currentBadgeId}
+                    badgeId={currentBadgeId}
+                    onClose={handleToastClose}
+                />
+            )}
         </div>
     );
 }
