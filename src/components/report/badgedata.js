@@ -68,21 +68,21 @@ export const BADGE_DATA = [
         name: '사람이 되었습니다.', 
         desc: '누적 출석 100일 완료하셨습니다!',
         comment: '"사람되기 이렇게 힘든일이엿나?"', 
-        src: getImg('badge-starter')
+        src: getImg('badge-ta-100')
     },
     { 
         id: 'TA-365', 
         name: '코딩과 물아일체', 
         desc: '누적 출석 365일 완료하셨습니다!',
         comment: '"깨달았다.. 코딩의 핵심!!"', 
-        src: getImg('badge-starter') 
+        src: getImg('badge-ta-365') 
     },
     { 
         id: 'TA-777', 
         name: '럭키데이', 
         desc: '누적 출석 777일 완료하셨습니다!',
         comment: '"뭔가 좋은일이 있으면 좋겠네.."', 
-         src: getImg('badge-starter') 
+         src: getImg('badge-ta-777') 
     },
     { 
         id: 'VD-100', //Vulnerability Detection 약점 발견 약자

@@ -22,6 +22,7 @@ function AppContent() {
     isConnected,
     isWaitingForIde,
     handleSwitchToSignUp,
+    handleSwitchToLogin,
     handleSignUpComplete,
     handleLoginSuccess,
   } = useAuthFlow();
@@ -39,6 +40,7 @@ function AppContent() {
         isOpen1={isModalOpen1}
         onSignUpComplete={handleSignUpComplete}
         onClose1={() => setIsModalOpen1(false)}
+        onLoginClick={handleSwitchToLogin}
       />
 
       <Create_done
