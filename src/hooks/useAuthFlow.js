@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 export default function useAuthFlow() {
   const navigate = useNavigate(); 
 
-  // 💡 새로고침 시 localStorage에 token이 있으면 곧바로 true로 초기화
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     return !!localStorage.getItem('token');
   }); 
@@ -13,7 +12,7 @@ export default function useAuthFlow() {
     return !!localStorage.getItem('token');
   });
 
-  const [isModalOpen, setIsModalOpen] = useState(false);   
+  const [isModalOpen, setIsModalOpen] = useState(false);     
   const [isModalOpen1, setIsModalOpen1] = useState(false); 
   const [isDoneOpen, setIsDoneOpen] = useState(false);
   const [isWaitingForIde, setIsWaitingForIde] = useState(false);
@@ -30,12 +29,15 @@ export default function useAuthFlow() {
     setIsModalOpen1(true);
   };
 
+  // 💡 회원가입 창에서 '로그인하러가기'를 눌렀을 때 로그인 창을 띄워주는 함수
+  const handleSwitchToLogin = () => {
+    setIsModalOpen1(false);
+    setIsModalOpen(true);
+  };
+
   const handleSignUpComplete = () => {
     setIsModalOpen1(false);   
-    
-    // 회원가입 성공 시 자동 로그인이 진행
     setIsLoggedIn(true);
-
     setIsConnected(false);  
     setIsWaitingForIde(true); 
   };
@@ -55,6 +57,7 @@ export default function useAuthFlow() {
     isConnected,
     isWaitingForIde,
     handleSwitchToSignUp,
+    handleSwitchToLogin, 
     handleSignUpComplete,
     handleLoginSuccess
   };

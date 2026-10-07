@@ -1,12 +1,9 @@
 import { useState } from 'react';
-import gitlogo from '../../assets/gitlogo.png';
-import googlelogo from '../../assets/googlelogo.png';
+import logo from '../../assets/logo.png';
 import { useRegisterApi } from '../../hooks/RegisterApi';
 import { useLoginApi } from '../../hooks/LoginApi';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
-
-function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
+function Create_account({ isOpen1, onClose1, onSignUpComplete, onLoginClick }) { 
   const [username, setUsername] = useState('');
   const [name, setName] = useState('');
   const [emailPrefix, setEmailPrefix] = useState('');
@@ -23,7 +20,6 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
   const { registerUser, isLoading: isRegisterLoading } = useRegisterApi();
   const { loginUser, isLoading: isLoginLoading } = useLoginApi();
   
-  // 둘 중 하나라도 API 호출 중이면 버튼을 비활성화(로딩) 상태로 만듭니다.
   const isLoading = isRegisterLoading || isLoginLoading;
 
   const resetErrors = () => {
@@ -77,7 +73,7 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
     });
 
     if (result.success) {
-      // 회원가입 성공 시 자동 로그인 후 토큰과 닉네임 저장
+      // 회원가입 성공 시 자동 로그인 후 토큰, 닉네임, 아이디, 이메일 저장
       try {
         const loginResult = await loginUser({ username, password });
         
@@ -87,8 +83,17 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
           if (token) {
             localStorage.setItem('token', token);
             localStorage.setItem('nickname', name);
+            localStorage.setItem('username', username);
+            localStorage.setItem('email', fullEmail); // 💡 회원가입 시 입력한 이메일 저장
+
+            // 계정 관리 모달 호환용 userInfo 객체 저장
+            localStorage.setItem('userInfo', JSON.stringify({
+              username: username,
+              nickname: name,
+              email: fullEmail,
+            }));
+
             window.dispatchEvent(new Event('login-success')); // 사이드바 즉시 업데이트 신호
-            console.log("토큰 및 닉네임 저장 성공!");
           }
         }
       } catch (error) {
@@ -121,198 +126,193 @@ function Create_account({ isOpen1, onClose1, onSignUpComplete }) {
   return (
     <div
       onClick={handleClose}
-      className={`fixed inset-0 bg-black/50 z-50 flex items-center justify-center transition-all duration-500 ${
-        isOpen1 ? 'opacity-100 visible backdrop-blur-[0.46vh]' : 'opacity-0 invisible backdrop-blur-none'
+      className={`fixed inset-0 bg-black/50 z-50 flex items-center justify-center ${
+        isOpen1 ? 'opacity-100 visible backdrop-blur-[0.18vh]' : 'opacity-0 invisible pointer-events-none'
       }`}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        onKeyDown={handleKeyDown}
-        className={`relative w-[43vw] min-w-[16.66vw] max-w-[42.7vw] h-[92vh] min-h-[55.5vh] max-h-[83.3vh] bg-gray700 border-white-5 border-2 rounded-md p-[2.22vh] shadow-2xl select-none transition-all duration-500 ease-out overflow-y-auto ${
-          isOpen1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        style={{ 
+          backgroundImage: 'linear-gradient(135deg, rgba(27, 107, 244, 0.75), rgba(213, 1, 255, 0.75))' 
+        }}
+        className={`relative w-[39.37vw] max-w-[39.37vw] h-[78vh] max-h-[78vh] p-[2px] rounded-[1rem] shadow-[0_0_70px_rgba(150,50,255,0.6)] select-none transition-all duration-400 ease-out transform ${
+          isOpen1 ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none'
         }`}
       >
-        <button
-          onClick={handleClose}
-          className="absolute top-[2.22vh] right-[1.66vw] text-gray400 hover:text-white text-[2.77vh] font-semibold cursor-pointer focus:outline-none transition-all"
+        <div
+          onKeyDown={handleKeyDown}
+          className={`w-full h-full bg-[#1F2937] border-white-5 border-2 rounded-[calc(1rem-2px)] flex items-center flex-col pt-[3vh] relative overflow-y-auto transition-opacity duration-500 delay-100 ${
+            isOpen1 ? 'opacity-100' : 'opacity-0'
+          }`}
         >
-          &times;
-        </button>
+          
+          <button
+            onClick={handleClose}
+            className="absolute top-[2.22vh] right-[1.66vw] text-gray400 hover:text-white text-[2.77vh] font-semibold cursor-pointer focus:outline-none transition-all z-10"
+          >
+            &times;
+          </button>
 
-        {/* 헤더 */}
-        <div className="text-white font-bold text-[3.24vh] text-center mt-[1.85vh]">회원가입</div>
-
-        {/* 기타/서버 오류 에러 문구 */}
-        {generalError && (
-          <div className="text-red400 text-center font-semibold text-[1.48vh] mt-[1vh]">
-            {generalError}
+          <div className="relative p-0 flex justify-center items-center">
+            <div 
+              style={{ backgroundImage: 'linear-gradient(135deg, #1B6BF4, #D501FF)' }}
+              className="absolute w-[13vh] h-[13vh] rounded-full blur-[15px] opacity-50 pointer-events-none"
+            ></div>
+            <img 
+              src={logo} 
+              alt="로고" 
+              className="relative w-[12vh] h-[12vh] max-h-[12vh] object-cover rounded-full shadow-lg flex justify-center items-center z-10 border border-white-5"
+            />
           </div>
-        )}
 
-        {/* 아이디 & 이름 라벨 */}
-        <div className="flex justify-between items-center w-full px-[1.66vw] mt-[1.11vh] font-bold text-[1.85vh] text-gray200">
-          <div className="flex items-center gap-[0.5vw]">
-            <span>아이디</span>
+          <div className="text-white font-[800] text-[3.2vh] mt-[1.2vh]">
+            회원가입
+          </div>
+
+          <div className="text-gray400 font-semibold text-[1.48vh] mt-[0.4vh]">
+            CoFix와 함께 더 나은 개발 경험을 시작해보세요.
+          </div>
+
+          {generalError && (
+            <div className="text-red400 text-center font-semibold text-[1.2vh] mt-[0.8vh]">
+              {generalError}
+            </div>
+          )}
+
+          <div className="w-[29.79vw] max-w-[29.79vw] mt-[1.6vh] relative flex items-center">
+            <input
+              name="username"
+              type="text"
+              value={username}
+              onChange={(e) => {
+                setUsername(e.target.value);
+                if (usernameError) setUsernameError('');
+                if (generalError) setGeneralError('');
+              }}
+              placeholder="아이디를 입력하세요"
+              className={`w-full h-[5.09vh] max-h-[5.09vh] bg-[#374151] border rounded-lg pl-[0.83vw] pr-[8vw] text-white placeholder-gray400 focus:outline-none transition-all text-[1.48vh] ${
+                usernameError ? 'border-red400' : 'border-white-5'
+              }`}
+            />
             {usernameError && (
-              <span className="text-red400 text-[1.29vh] font-semibold">
+              <span className="absolute right-[1vw] text-red400 text-[1.1vh] font-semibold pointer-events-none">
                 {usernameError}
               </span>
             )}
           </div>
-          <span className="text-right pr-[14.79vw]">이름</span>
-        </div>
 
-        {/* 아이디 & 이름 입력창 */}
-        <div className="w-full flex justify-between px-[2.08vw] mt-[1.11vh] gap-[0.83vw]">
-          <input
-            name="username"
-            type="text"
-            value={username}
-            onChange={(e) => {
-              setUsername(e.target.value);
-              if (usernameError) setUsernameError('');
-              if (generalError) setGeneralError('');
-            }}
-            className={`bg-gray800-50 w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-lg border text-white px-[0.83vw] focus:outline-none transition-all hover:bg-gray700 text-[1.48vh] ${
-              usernameError ? 'border-red400' : 'border-white-5'
-            }`}
-          />
-          <input
-            name="nickname"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="bg-gray800-50 w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-lg border border-white-5 text-white px-[0.83vw] focus:outline-none transition-all hover:bg-gray700 text-[1.48vh]"
-          />
-        </div>
+          <div className="w-[29.79vw] max-w-[29.79vw] mt-[1.2vh]">
+            <input
+              name="nickname"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="이름을 입력하세요"
+              className="w-full h-[5.09vh] max-h-[5.09vh] bg-[#374151] border border-white-5 rounded-lg pl-[0.83vw] text-white placeholder-gray400 focus:outline-none transition-all text-[1.48vh]"
+            />
+          </div>
 
-        {/* 이메일 라벨 및 중복 에러 */}
-        <div className="text-gray200 text-left font-bold text-[1.85vh] mt-[1.85vh] flex items-center w-full px-[1.66vw] gap-[0.5vw]">
-          <span>이메일</span>
-          {emailError && (
-            <span className="text-red400 text-[1.29vh] font-semibold">
-              {emailError}
-            </span>
-          )}
-        </div>
+          <div className="w-[29.79vw] max-w-[29.79vw] mt-[1.2vh] flex items-center gap-[0.5vw]">
+            <div className="relative flex items-center grow">
+              <input
+                name="emailPrefix"
+                type="text"
+                value={emailPrefix}
+                onChange={(e) => {
+                  setEmailPrefix(e.target.value);
+                  if (emailError) setEmailError('');
+                  if (generalError) setGeneralError('');
+                }}
+                placeholder="이메일"
+                className={`w-full h-[5.09vh] max-h-[5.09vh] bg-[#374151] border rounded-lg pl-[0.83vw] pr-[6vw] text-white placeholder-gray400 focus:outline-none transition-all text-[1.48vh] ${
+                  emailError ? 'border-red400' : 'border-white-5'
+                }`}
+              />
+              {emailError && (
+                <span className="absolute right-[0.8vw] text-red400 text-[1vh] font-semibold pointer-events-none truncate max-w-[9vw]">
+                  {emailError}
+                </span>
+              )}
+            </div>
+            <div className="text-gray200 font-bold text-[2vh]">@</div>
+            <select
+              name="emailDomain"
+              value={emailDomain}
+              onChange={(e) => setEmailDomain(e.target.value)}
+              className="w-[11.5vw] h-[5.09vh] max-h-[5.09vh] bg-[#374151] border-white-5 border rounded-lg text-white px-[0.6vw] cursor-pointer focus:outline-none transition-all text-[1.48vh]"
+            >
+              <option value="" disabled>
+                주소 선택
+              </option>
+              <option value="gmail.com">gmail.com</option>
+              <option value="naver.com">naver.com</option>
+              <option value="daum.net">daum.net</option>
+            </select>
+          </div>
 
-        {/* 이메일 입력 + @ + 도메인 선택 */}
-        <div className="w-full flex justify-between items-center px-[2.08vw] mt-[1.11vh] gap-[0.83vw]">
-          <input
-            name="emailPrefix"
-            type="text"
-            value={emailPrefix}
-            onChange={(e) => {
-              setEmailPrefix(e.target.value);
-              if (emailError) setEmailError('');
-              if (generalError) setGeneralError('');
-            }}
-            className={`bg-gray800-50 w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-lg border text-white px-[0.83vw] focus:outline-none hover:bg-gray700 transition-all text-[1.48vh] ${
-              emailError ? 'border-red400' : 'border-white-5'
-            }`}
-          />
-          <div className="text-gray200 font-bold text-[2.77vh]">@</div>
-          <select
-            name="emailDomain"
-            value={emailDomain}
-            onChange={(e) => setEmailDomain(e.target.value)}
-            className="w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] bg-gray800-50 border-white-5 border-2 rounded-md text-white px-[0.83vw] py-[0.74vh] cursor-pointer focus:outline-none hover:bg-gray700 transition-all text-[1.48vh]"
-          >
-            <option value="" disabled>
-              주소를 선택해주세요
-            </option>
-            <option value="gmail.com">gmail.com</option>
-            <option value="naver.com">naver.com</option>
-            <option value="daum.net">daum.net</option>
-          </select>
-        </div>
+          <div className="w-[29.79vw] max-w-[29.79vw] mt-[1.2vh]">
+            <input
+              name="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="비밀번호를 입력하세요"
+              className="w-full h-[5.09vh] max-h-[5.09vh] bg-[#374151] border border-white-5 rounded-lg pl-[0.83vw] text-white placeholder-gray400 focus:outline-none transition-all text-[1.48vh]"
+            />
+          </div>
 
-        {/* 비밀번호 라벨 */}
-        <div className="flex justify-between items-center w-full px-[1.66vw] mt-[1.85vh] font-bold text-[1.85vh] text-gray200">
-          비밀번호
-        </div>
-        <input
-          name="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="px-[0.83vw] ml-[2.08vw] mt-[1.11vh] w-[37vw] max-w-[36.98vw] h-[5.5vh] max-h-[4.63vh] bg-gray800-50 border border-white-5 rounded-lg focus:outline-none hover:bg-gray700 transition-all text-white text-[1.48vh]"
-        />
-
-        {/* 비밀번호 확인 라벨 & 불일치 에러 */}
-        <div className="flex justify-between items-center w-full px-[1.66vw] mt-[1.85vh] font-bold text-[1.85vh] text-gray200">
-          <div className="flex items-center gap-[0.5vw]">
-            <span>비밀번호 확인</span>
+          <div className="w-[29.79vw] max-w-[29.79vw] mt-[1.2vh] relative flex items-center">
+            <input
+              name="confirmPassword"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="비밀번호 확인"
+              className={`w-full h-[5.09vh] max-h-[5.09vh] bg-[#374151] border rounded-lg pl-[0.83vw] pr-[5vw] text-white placeholder-gray400 focus:outline-none transition-all text-[1.48vh] ${
+                isPasswordMismatched ? 'border-red400' : 'border-white-5'
+              }`}
+            />
             {isPasswordMismatched && (
-              <span className="text-red400 text-[1.29vh] font-semibold ml-[0.83vw]">
-                비밀번호가 일치하지 않습니다.
+              <span className="absolute right-[1vw] text-red400 text-[1.1vh] font-semibold pointer-events-none">
+                불일치
               </span>
             )}
           </div>
-        </div>
-        <input
-          name="confirmPassword"
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          className={`px-[0.83vw] ml-[2.08vw] mt-[1.11vh] w-[37vw] max-w-[36.98vw] h-[5.5vh] max-h-[4.63vh] bg-gray800-50 border rounded-lg focus:outline-none hover:bg-gray700 transition-all text-white text-[1.48vh] ${
-            isPasswordMismatched ? 'border-red400' : 'border-white-5'
-          }`}
-        />
 
-        {/* 구분선 */}
-        <div className="flex justify-between items-center px-[2.08vw] mt-[3.7vh]">
-          <hr className="w-[16vw] max-w-[15.62vw] border-gray400"/>
-          <div className="flex justify-center font-bold text-gray200 text-[1.85vh]">또는</div>
-          <hr className="w-[16vw] max-w-[15.62vw] border-gray400"/>
-        </div>
+          <div className="w-[29.79vw] max-w-[29.79vw] mt-[2.2vh]">
+            <button
+              type="button"
+              onClick={handleSignUpSubmit}
+              disabled={!isFormValid || isLoading}
+              style={{ backgroundImage: 'linear-gradient(to right, #1B6BF4, #D501FF)' }}
+              className={`w-full h-[7vh] max-h-[7vh] border-white-5 border rounded-4xl text-white flex justify-center items-center text-[2.05vh] font-bold transition-all focus:outline-none shadow-md ${
+                isFormValid && !isLoading
+                  ? 'cursor-pointer opacity-90 hover:opacity-100'
+                  : 'cursor-not-allowed opacity-50'
+              }`}
+            >
+              {isLoading ? '생성 중...' : '계정생성'}
+            </button>
+          </div>
 
-        {/* 소셜 로그인 버튼 (알림창 추가) */}
-        <div className="flex justify-between items-center px-[2.08vw] mt-[2.96vh] gap-[0.83vw]">
-          <button
-            type="button"
-            onClick={() => {
-              if (window.confirm('외부 페이지로 이동하시겠습니까?')) {
-                // 환경 변수를 사용하여 URL 동적 생성
-                window.location.href = `${API_BASE_URL}/oauth2/authorization/google`;
-              }
-            }}
-            className="cursor-pointer border border-white-5 bg-white w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-full font-bold text-[1.29vh] text-black flex justify-center items-center gap-[1.04vw] hover:bg-gray200 transition-all shadow-md focus:outline-none"
-          >
-            <img src={googlelogo} alt="구글 로고" className="w-[1.66vw] h-[2.96vh] object-contain" />
-            <span className="truncate">구글 계정으로 계정생성</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              if (window.confirm('외부 페이지로 이동하시겠습니까?')) {
-                // 환경 변수를 사용하여 URL 동적 생성
-                window.location.href = `${API_BASE_URL}/oauth2/authorization/github`;
-              }
-            }}
-            className="cursor-pointer border border-white-5 bg-white w-[16vw] max-w-[15.62vw] h-[5.5vh] max-h-[4.63vh] rounded-full font-bold text-[1.29vh] text-black flex justify-center items-center gap-[1.04vw] hover:bg-gray200 transition-all shadow-md focus:outline-none"
-          >
-            <img src={gitlogo} alt="깃허브 로고" className="w-[1.66vw] h-[2.96vh] object-contain" />
-            <span className="truncate">깃허브 계정으로 계정생성</span>
-          </button>
-        </div>
+          <div className="text-gray200 w-fit text-center mt-[3vh] text-[1.5vh]">
+            <span>이미 계정이 있으신가요? </span>
+            <button
+              type="button"
+              onClick={() => {
+                if (onLoginClick) {
+                  onLoginClick();
+                } else {
+                  handleClose();
+                }
+              }} 
+              className="text-sky-400 text-[1.5vh] underline cursor-pointer focus:outline-none ml-[0.1vw]"
+            >
+              로그인하러가기
+            </button>
+          </div>
 
-        {/* 계정생성 버튼 */}
-        <div className="flex justify-end px-[2.08vw] mt-[3.7vh]">
-          <button
-            type="button"
-            onClick={handleSignUpSubmit}
-            disabled={!isFormValid || isLoading}
-            className={`w-[8vw] max-w-[7.81vw] h-[7.5vh] max-h-[6.48vh] rounded-4xl border border-white-5 font-bold text-[2.31vh] transition-all focus:outline-none ${
-              isFormValid && !isLoading
-                ? 'bg-gray800-50 text-purple400 cursor-pointer hover:bg-gray700'
-                : 'bg-gray800-50 text-purple400 cursor-not-allowed opacity-60'
-            }`}
-          >
-            {isLoading ? '생성 중...' : '계정생성'}
-          </button>
         </div>
-
       </div>
     </div>
   );
